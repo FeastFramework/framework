@@ -1,0 +1,25 @@
+{
+    "name": "feast/framework",
+    "description": "Feast Framework",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Jeremy Presutti",
+            "email": "Jeremy@Presutti.us",
+            "homepage": "https://github.com/jpresutti",
+            "role": "Developer"
+        }
+    ],
+    "require-dev": {
+        "psalm/phar": "^4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Feast\\": ".",
+            "Psr\\": "Psr"
+        },
+        "files": [
+            "DependencyInjector.php"
+        ]
+    }
+}
