@@ -1,0 +1,6 @@
+
+    #[Action(name: '{controller}:{action-call}', description: '')]
+    public function {action}{type}(): void
+    {
+        // TODO Add Content
+    }

@@ -1,0 +1,119 @@
+<?php
+
+/**
+ * Copyright 2021 Jeremy Presutti <Jeremy@Presutti.us>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+declare(strict_types=1);
+
+namespace Feast\Email;
+
+
+
+function fwrite(string $path,string $data) : void
+{
+    echo $data;
+}
+
+function fclose($pipe) : void
+{
+}
+function proc_open($command,$descriptor_spec, &$pipes)
+{
+
+    if ( str_contains($command,'failure') ) { return false; }
+    $pipes = ['test','test','test'];
+    return true;
+}
+
+function proc_close($item) {
+
+}
+
+function md5($item) {
+    return 'abcdefghijk';
+}
+
+function getBody() : string
+{
+       return "To: Feast <feast@example.com>\r
+Cc: FeastyBoys <feast3@example.com>\r
+Bcc: feast2@example.com <feast2@example.com>\r
+From: Feast Framework <framework@example.com>\r
+Reply-To: No Thank You <no-reply@example.com>\r
+Subject: This is a test\r
+MIME-version: 1.0\r
+Content-Type: multipart/mixed; boundary=\"MIXEDabcdef\"\r
+\r
+If you are reading this, please use a MIME compatible e-mail client.\r
+\r
+--MIXEDabcdef\r
+Content-Type: multipart/related; boundary=\"RELabcdef\"\r
+\r
+--RELabcdef\r
+Content-Type: multipart/alternative; boundary=\"ALTabcdef\"\r
+\r
+--ALTabcdef\r
+Content-type: text/plain\r
+Content-Transfer-Encoding: 7bit\r
+\r
+Test\r
+\r
+--ALTabcdef\r
+Content-type: text/html\r
+Content-Transfer-Encoding: 7bit\r
+\r
+<p>Test</p>\r
+\r
+--ALTabcdef--\r
+\r
+--RELabcdefFeastAttachment--RELabcdef--\r
+\r
+--MIXEDabcdefTestAttachment--MIXEDabcdef--";
+}
+
+function getBodyNoCcBccReplyTo() : string
+{
+       return "To: Feast <feast@example.com>\r
+From: Feast Framework <framework@example.com>\r
+Subject: This is a test\r
+MIME-version: 1.0\r
+Content-Type: multipart/mixed; boundary=\"MIXEDabcdef\"\r
+\r
+If you are reading this, please use a MIME compatible e-mail client.\r
+\r
+--MIXEDabcdef\r
+Content-Type: multipart/related; boundary=\"RELabcdef\"\r
+\r
+--RELabcdef\r
+Content-Type: multipart/alternative; boundary=\"ALTabcdef\"\r
+\r
+--ALTabcdef\r
+Content-type: text/plain\r
+Content-Transfer-Encoding: 7bit\r
+\r
+Test\r
+\r
+--ALTabcdef\r
+Content-type: text/html\r
+Content-Transfer-Encoding: 7bit\r
+\r
+<p>Test</p>\r
+\r
+--ALTabcdef--\r
+\r
+--RELabcdefFeastAttachment--RELabcdef--\r
+\r
+--MIXEDabcdefTestAttachment--MIXEDabcdef--";
+}

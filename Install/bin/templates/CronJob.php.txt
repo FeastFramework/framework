@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Jobs\Cron;
+
+use Feast\Jobs\CronJob;
+
+class {name} extends CronJob
+{
+
+    public function run(): bool
+    {
+        return true;
+    }
+
+}

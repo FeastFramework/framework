@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Copyright 2021 Jeremy Presutti <Jeremy@Presutti.us>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+declare(strict_types=1);
+
+namespace Feast\Router;
+
+
+
+function file_put_contents(string $path,string $data) : void {
+    TempData::$data[$path] = $data;
+}
+
+function file_get_contents(string $path) : false|string {
+
+    return TempData::$data[$path] ?? false;
+}
+
+function parse_ini_file ($filename, $process_sections = false, $scanner_mode = INI_SCANNER_NORMAL) {
+    return TempData::$allowIni ? \parse_ini_file($filename, $process_sections,$scanner_mode) : false;
+}
+
+function getenv($name) {
+    if ( $name === 'APPLICATION_ENV' ) {
+        return TempData::$env;
+    }
+    return \getenv($name);
+}
+
+function file_exists($name) {
+    return TempData::$localExists;
+}
+
+class TempData {
+    public static array $data = [];
+    public static bool $allowIni = true;
+    public static string|bool $env = false;
+    public static bool $localExists = true;
+
+    public static function reset() : void {
+        self::$data = [];
+        self::$allowIni = true;
+        self::$env = false;
+        self::$localExists = true;
+    }
+}

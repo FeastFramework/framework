@@ -1,0 +1,26 @@
+<phpunit backupGlobals="true" bootstrap="./bootstrap.php" cacheResultFile="./Coverage/.phpunit.result.cache">
+    <testsuites>
+        <testsuite name="unit">
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
+    <coverage
+            includeUncoveredFiles="false"
+            processUncoveredFiles="false"
+            pathCoverage="false"
+            ignoreDeprecatedCodeUnits="true"
+            disableCodeCoverageIgnore="true"
+    >
+        <include>
+            <directory suffix=".php">../</directory>
+        </include>
+        <exclude>
+            <directory suffix=".php">../FeastTests</directory>
+            <directory>../Install</directory>
+            <file>../PsalmLoader.php</file>
+        </exclude>
+        <report>
+            <clover outputFile="clover.xml"/>
+        </report>
+    </coverage>
+</phpunit>

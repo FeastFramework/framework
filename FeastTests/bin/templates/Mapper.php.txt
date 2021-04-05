@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Mapper;
+
+use \Feast\BaseMapper;
+use \Model\{name};
+
+class {name}{classExtra} extends BaseMapper
+{
+    protected const OBJECT_NAME = {name}::class;
+    protected const PRIMARY_KEY = '{primaryKey}';
+    public const TABLE_NAME = '{table}';
+{connection}
+    /**
+     * @param int|string $value
+     * @param bool $validate
+     * @return ?{name}
+     */
+    public function findByPrimaryKey(int|string $value, bool $validate = false): ?{name}
+    {
+        $record = parent::findByPrimaryKey($value, $validate);
+        if ($record instanceof {name}) {
+            return $record;
+        }
+
+        return null;
+    }
+}

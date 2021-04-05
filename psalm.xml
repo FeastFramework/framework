@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<psalm
+        errorLevel="1"
+        totallyTyped="true"
+        autoloader="PsalmLoader.php"
+        reportMixedIssues="true"
+        allowPhpStormGenerics="true"
+        strictBinaryOperands="true"
+        allowStringToStandInForClass="true"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://getpsalm.org/schema/config"
+        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <issueHandlers>
+        <UnnecessaryVarAnnotation errorLevel="suppress" />
+        <UnusedVariable errorLevel="suppress" /><!-- THIS IS BROKEN! See Router.php line 491. Psalm-suppress also does not work -->
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <directory name="FeastTests"/>
+            </errorLevel>
+        </UndefinedClass>
+    </issueHandlers>
+    <projectFiles>
+        <directory name="Attributes"/>
+        <directory name="Collection"/>
+        <directory name="Config"/>
+        <directory name="Controllers"/>
+        <directory name="Database"/>
+        <directory name="Email"/>
+        <directory name="Enums"/>
+        <directory name="Exception"/>
+        <directory name="FeastTests"/>
+        <directory name="Form"/>
+        <directory name="HttpRequest"/>
+        <directory name="Interfaces"/>
+        <directory name="Logger"/>
+        <directory name="Profiler"/>
+        <directory name="Router"/>
+        <directory name="ServiceContainer"/>
+        <directory name="Session"/>
+        <directory name="Traits"/>
+        <file name="Autoloader.php"/>
+        <file name="BaseMapper.php"/>
+        <file name="BaseModel.php"/>
+        <file name="Binary.php"/>
+        <file name="CliArguments.php"/>
+        <file name="CliController.php"/>
+        <file name="Date.php"/>
+        <file name="FlashMessage.php"/>
+        <file name="Help.php"/>
+        <file name="HttpController.php"/>
+        <file name="Main.php"/>
+        <file name="NameHelper.php"/>
+        <file name="Partial.php"/>
+        <file name="Plugin.php"/>
+        <file name="Request.php"/>
+        <file name="Response.php"/>
+        <file name="Service.php"/>
+        <file name="Terminal.php"/>
+        <file name="View.php"/>
+        <ignoreFiles>
+            <!-- BELOW HERE INTENTIONALLY IGNORED -->
+            <file name="DependencyInjector.php"/>
+            <file name="FeastTests/bootstrap.php"/>
+            <file name="PsalmLoader.php"/>
+            <directory name="Install"/>
+            <directory name="vendor"/>
+            <directory name="Psr"/>
+        </ignoreFiles>
+    </projectFiles>
+
+</psalm>

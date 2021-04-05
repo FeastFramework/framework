@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Services;
+
+use Feast\Service;
+
+class {name} extends Service
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+}

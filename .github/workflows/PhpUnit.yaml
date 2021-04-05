@@ -1,0 +1,25 @@
+name: PHPUnit
+
+on: [push, pull_request]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: bcmath
+          coverage: xdebug
+          tools: phpunit
+      - name: Run PHPUnit
+        run: phpunit -c FeastTests/githubphpunit.xml --coverage-clover coverage.xml
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage.xml
+          flags: tests
+          name: codecov-umbrella
+          fail_ci_if_error: false

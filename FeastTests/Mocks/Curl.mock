@@ -1,0 +1,192 @@
+<?php
+
+/**
+ * Copyright 2021 Jeremy Presutti <Jeremy@Presutti.us>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+declare(strict_types=1);
+
+namespace Feast\HttpRequest;
+
+/**
+ * This file contains mocked stubs for curl functions to enable unit testing of HttpRequest/Curl.php
+ */
+
+function curl_unescape($handle, $string)
+{
+}
+
+function curl_close($handle)
+{
+}
+
+function curl_copy_handle($handle)
+{
+}
+
+function curl_errno($handle)
+{
+}
+
+function curl_error($handle)
+{
+}
+
+function curl_escape($handle, $string)
+{
+}
+
+function curl_exec($handle)
+{
+    if (str_contains($handle->url, 'https://www.google.com/html')) {
+        $handle->length = 401;
+        return \file_get_contents(__DIR__ . '/SampleResponses/GetHtml.txt');
+    }
+    if (str_contains($handle->url, 'https://www.google.com/xml')) {
+        $handle->length = 401;
+        return \file_get_contents(__DIR__ . '/SampleResponses/GetXml.txt');
+    }
+    if (str_contains($handle->url, 'https://www.google.com/json')) {
+        $handle->length = 338;
+        return \file_get_contents(__DIR__ . '/SampleResponses/GetJson.txt');
+    }
+    return false;
+}
+
+function curl_file_create($filename, $mime_type = '', $posted_filename = '')
+{
+}
+
+function curl_getinfo($handle, $option = null)
+{
+    if ($option === CURLINFO_HEADER_SIZE) {
+        return $handle->length;
+    }
+    return null;
+}
+
+function curl_init($url = null)
+{
+    if ( $url === 'https://www.google.com/not-installed' ) {
+        return false;
+    }
+    $return = new \stdClass();
+    $return->url = $url;
+    $return->length = 0;
+    return $return;
+}
+
+function curl_multi_add_handle($multi_handle, $handle)
+{
+}
+
+function curl_multi_close($multi_handle)
+{
+}
+
+function curl_multi_errno($multi_handle)
+{
+}
+
+function curl_multi_exec($multi_handle, &$still_running)
+{
+}
+
+function curl_multi_getcontent($multi_handle)
+{
+}
+
+function curl_multi_info_read($multi_handle, &$queued_messages = null)
+{
+}
+
+function curl_multi_init()
+{
+}
+
+function curl_multi_remove_handle($multi_handle, $handle)
+{
+}
+
+function curl_multi_select($multi_handle, $timeout = 1.0)
+{
+}
+
+function curl_multi_setopt($multi_handle, $option, $value)
+{
+}
+
+function curl_multi_strerror($error_code)
+{
+}
+
+function curl_pause($handle, $flags)
+{
+}
+
+function curl_reset($handle)
+{
+}
+
+function curl_setopt($handle, $option, $value)
+{
+    if ($option === CURLOPT_URL) {
+        $handle->url = $value;
+    }
+}
+
+function curl_setopt_array($handle, array $options)
+{
+}
+
+function curl_share_close($share_handle)
+{
+}
+
+function curl_share_errno($share_handle)
+{
+}
+
+function curl_share_init()
+{
+}
+
+function curl_share_setopt($share_handle, $option, $value)
+{
+}
+
+function curl_share_strerror($error_code)
+{
+}
+
+function curl_strerror($error_code)
+{
+}
+
+function curl_version($age = null)
+{
+}
+
+function file_get_contents($filename, $use_include_path = false, $context = null, $offset = 0, $length = null) {
+ if (str_contains($filename, 'https://www.google.com/html')) {
+        return \file_get_contents(__DIR__ . '/SampleResponses/SimpleGetHtml.txt');
+    }
+    if (str_contains($filename, 'https://www.google.com/xml')) {
+        return \file_get_contents(__DIR__ . '/SampleResponses/GetXml.txt');
+    }
+    if (str_contains($filename, 'https://www.google.com/json')) {
+        return \file_get_contents(__DIR__ . '/SampleResponses/GetJson.txt');
+    }
+    return false;
+}

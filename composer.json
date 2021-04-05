@@ -10,8 +10,11 @@
             "role": "Developer"
         }
     ],
+    "require": {
+        "php": "^8.0.0"
+    },
     "require-dev": {
-        "psalm/phar": "^4.3"
+        "psalm/phar": "^4.7"
     },
     "autoload": {
         "psr-4": {

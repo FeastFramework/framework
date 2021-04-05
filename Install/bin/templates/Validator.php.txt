@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Form\Validator;
+
+use Feast\Form\Field;
+use Feast\Form\Validator\Validator;
+
+class {name} implements Validator
+{
+public static function validate(
+        string $key,
+        string $value,
+        Field $field,
+        array $files,
+        array &$errors,
+        bool &$valid
+    ): void {
+        $errors[] = [$key, {name}::class];
+        $valid = false;
+    }
+}

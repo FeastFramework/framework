@@ -1,0 +1,21 @@
+HTTP/1.1 200 OK
+Date: Sun, 31 Jan 2021 00:31:57 GMT
+Server: Apache/2.4.18 (Ubuntu)
+Set-Cookie: user=mdmpd0d58gqpktf10h4dt67dkc; path=/
+Set-Cookie: userexpired=mdmpd0d58gqpktf10h4dt67dkc; path=/; expires=1
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Vary: Accept-Encoding
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=UTF-8
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Feast Framework</title>
+</head>
+<body>
+Test
+</body>
+</html>

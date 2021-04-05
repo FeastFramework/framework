@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * Copyright 2021 Jeremy Presutti <Jeremy@Presutti.us>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+declare(strict_types=1);
+
+namespace Feast\Controllers;
+
+function file_put_contents(string $path,string $data) : void {
+    FileData::$files[$path] = $data;
+    $pathDetails = explode('/',$path);
+    echo $pathDetails[count($pathDetails)-1] . $data;
+}
+
+function file_get_contents(string $path) : string|bool {
+    if ( !empty(FileData::$files[$path]) ) {
+        return FileData::$files[$path];
+    }
+    return \file_get_contents($path);
+}
+
+function file_exists($path) : bool {
+    if ( str_contains(strtolower($path),'success') ) {
+            return true;
+    }
+    if ( str_contains(strtolower($path),'cache') ) {
+            return true;
+    }
+    if ( str_contains(strtolower($path),'failure') ) {
+            return false;
+    }
+    return isset(FileData::$files[$path]) || \file_exists($path);
+}
+
+function mkdir($directory,$permissions, $recursive) : bool {
+    echo $directory . ' created';
+    return true;
+}
+function unlink($path) : bool {
+   return true;
+}
+
+function copy($path) : void {
+
+}
+
+function sleep() : void {
+
+}
+
+function exec($params) : void {
+    echo $params;
+}
+
+function passthru($params) : void {
+    echo $params;
+}
+
+function php_uname(string $format = 'a'): string
+{
+    return 'Linux';
+}
+
+function putenv(string $env): void
+{
+    echo $env;
+}
+class FileData {
+    public static array $files = [];
+    public static function reset() : void {
+        FileData::$files = [];
+    }
+}

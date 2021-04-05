@@ -1,0 +1,58 @@
+User.php<?php
+
+declare(strict_types=1);
+
+namespace Model;
+
+class User extends Generated\User
+{
+    // PLACE CUSTOM MODEL CODE HERE
+}User.php<?php
+
+declare(strict_types=1);
+
+namespace Model\Generated;
+
+use \Feast\BaseModel;
+use \Mapper\UserMapper;
+
+class User extends BaseModel
+{
+    protected const MAPPER_NAME = UserMapper::class;
+
+    public int $user_id;
+    public ?\Feast\Date $created_at;
+    public string $username;
+
+}Model class created
+UserMapper.php<?php
+
+declare(strict_types=1);
+
+namespace Mapper;
+
+use \Feast\BaseMapper;
+use \Model\User;
+
+class UserMapper extends BaseMapper
+{
+    protected const OBJECT_NAME = User::class;
+    protected const PRIMARY_KEY = 'user_id';
+    public const TABLE_NAME = 'users2';
+
+    /**
+     * @param int|string $value
+     * @param bool $validate
+     * @return ?User
+     */
+    public function findByPrimaryKey(int|string $value, bool $validate = false): ?User
+    {
+        $record = parent::findByPrimaryKey($value, $validate);
+        if ($record instanceof User) {
+            return $record;
+        }
+
+        return null;
+    }
+}
+Mapper class created
