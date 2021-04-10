@@ -1,5 +1,5 @@
 
-    #[Action(name: '{controller}:{action-call}', description: '')]
+    #[Action(description: '')]
     public function {action}{type}(): void
     {
         // TODO Add Content
