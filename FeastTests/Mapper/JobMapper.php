@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Mapper;
 
 use Feast\BaseMapper;
+use Feast\Exception\ServerFailureException;
+use Feast\ServiceContainer\NotFoundException;
 use Model\Job;
 
 class JobMapper extends BaseMapper
@@ -17,6 +19,8 @@ class JobMapper extends BaseMapper
      * @param int|string $value
      * @param bool $validate
      * @return ?Job
+     * @throws ServerFailureException
+     * @throws NotFoundException
      */
     public function findByPrimaryKey(int|string $value, bool $validate = false): ?Job
     {

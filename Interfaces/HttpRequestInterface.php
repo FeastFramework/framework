@@ -189,6 +189,16 @@ interface HttpRequestInterface
     public function clearArguments(): HttpRequestInterface;
 
     /**
+     * Set exact arguments for the request
+     *
+     * Useful for JSON requests.
+     *
+     * @param array $arguments
+     * @return HttpRequestInterface
+     */
+    public function setArguments(array $arguments): HttpRequestInterface;
+    
+    /**
      * Add multiple arguments to the request
      * Allows only for simple key => value mappings, not array values.
      *

@@ -287,6 +287,25 @@ Test
         $request->makeRequest();
     }
 
+    public function testSetArguments(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/html');
+        $request->setArguments(
+            [
+                'test' => 'feast',
+                'type' => ['text', 'pass']
+            ]
+        );
+
+        $arguments = $request->getArguments();
+        $this->assertEquals('feast', $arguments['test']);
+        $this->assertIsArray($arguments['type']);
+        $this->assertEquals('text', $arguments['type'][0]);
+        $this->assertEquals('pass', $arguments['type'][1]);
+        $request->makeRequest();
+    }
+
     public function testAddArgumentsPut(): void
     {
         $request = new Curl();

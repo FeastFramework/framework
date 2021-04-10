@@ -201,6 +201,20 @@ abstract class HttpRequest implements HttpRequestInterface
     }
 
     /**
+     * Set exact arguments for the request
+     *
+     * Useful for JSON requests.
+     *
+     * @param array $arguments
+     * @return HttpRequestInterface
+     */
+    public function setArguments(array $arguments): HttpRequestInterface
+    {
+        $this->arguments = $arguments;
+        return $this;
+    }
+
+    /**
      * Add multiple arguments to the request
      *
      * Allows only for simple key => value mappings, not array values.
