@@ -12,7 +12,7 @@
             disableCodeCoverageIgnore="true"
     >
         <include>
-            <directory suffix=".php">../Feast</directory>
+            <directory suffix=".php">.</directory>
             <file>Form.php</file>
             <file>Email.php</file>
             <file>Main.php</file>

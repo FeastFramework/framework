@@ -110,6 +110,8 @@ abstract class BaseMapper
      * @param int|string $value
      * @param bool $validate
      * @return BaseModel|null
+     * @throws ServerFailureException
+     * @throws ServiceContainer\NotFoundException
      * @noinspection PhpUnusedParameterInspection
      */
     public function findByPrimaryKey(int|string $value, bool $validate = false): ?BaseModel
@@ -127,6 +129,8 @@ abstract class BaseMapper
      * @param string $field
      * @param string|int $value
      * @return BaseModel|null
+     * @throws ServerFailureException
+     * @throws ServiceContainer\NotFoundException
      */
     public function findOneByField(string $field, string|int $value): ?BaseModel
     {
@@ -143,6 +147,8 @@ abstract class BaseMapper
      * @param string $field
      * @param mixed $value
      * @return Set
+     * @throws ServerFailureException
+     * @throws ServiceContainer\NotFoundException
      */
     public function findAllByField(string $field, mixed $value): Set
     {
@@ -178,7 +184,7 @@ abstract class BaseMapper
      *
      * @param array $fields
      * @return Set
-     * @throws ServerFailureException
+     * @throws ServerFailureException|ServiceContainer\NotFoundException
      */
     public function findAllByFields(array $fields): Set
     {
@@ -192,6 +198,8 @@ abstract class BaseMapper
      *
      * @param array $fields
      * @return ?BaseModel
+     * @throws ServerFailureException
+     * @throws ServiceContainer\NotFoundException
      */
     public function findOneByFields(array $fields): ?BaseModel
     {
@@ -205,7 +213,7 @@ abstract class BaseMapper
      *
      * @param Query|null $select
      * @return BaseModel|null
-     * @throws ServerFailureException
+     * @throws ServerFailureException|ServiceContainer\NotFoundException
      */
     public function fetchOne(Query $select = null): ?BaseModel
     {
@@ -265,12 +273,14 @@ abstract class BaseMapper
                 $recordPrimaryKey
             );
             $update->execute();
+            $this->onSave($record, false);
         } else {
             $insert = $this->connection->insert((string)static::TABLE_NAME, $recordArray);
             $insert->execute();
             $lastInsert = $this->connection->lastInsertId();
             $recordPrimaryKey = ctype_digit($lastInsert) && $lastInsert !== '0' ? (int)$lastInsert : $lastInsert;
             $record->{$primaryKey} = $recordPrimaryKey;
+            $this->onSave($record);
         }
         $record->makeOriginalModel();
     }
@@ -386,10 +396,34 @@ abstract class BaseMapper
                 $recordPrimaryKey
             );
             $statement = $update->execute();
-
+            
+            $this->onDelete($record);
             return $statement->rowCount();
         }
 
         return 0;
+    }
+
+    /**
+     * This method is called when a Model is saved.
+     *
+     * Override this in the mapper to call actions on save.
+     *
+     * @param BaseModel $record
+     * @param bool $new
+     */
+    protected function onSave(BaseModel $record, bool $new = true): void
+    {
+    }
+
+    /**
+     * This method is called when a Model is deleted.
+     *
+     * Override this in the mapper to call actions on deletion.
+     *
+     * @param BaseModel $record
+     */
+    protected function onDelete(BaseModel $record): void
+    {
     }
 }

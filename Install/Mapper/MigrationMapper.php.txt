@@ -26,5 +26,5 @@ class MigrationMapper extends BaseMapper
 {
     protected const OBJECT_NAME = Migration::class;
     protected const PRIMARY_KEY = 'primary_id';
-    protected const TABLE_NAME = 'migrations';
+    public const TABLE_NAME = 'migrations';
 }

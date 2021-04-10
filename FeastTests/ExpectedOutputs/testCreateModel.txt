@@ -54,5 +54,28 @@ class UserMapper extends BaseMapper
 
         return null;
     }
+
+    /**
+     * This method is called when a Model is saved.
+     *
+     * Update this to call actions on save.
+     *
+     * @param User $record
+     * @param bool $new
+     */
+    protected function onSave(User $record, bool $new = true): void
+    {
+    }
+
+    /**
+     * This method is called when a Model is deleted.
+     *
+     * Update this to call actions on deletion.
+     *
+     * @param User $record
+     */
+    protected function onDelete(User $record): void
+    {
+    }
 }
 Mapper class created

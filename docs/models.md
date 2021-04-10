@@ -123,6 +123,14 @@ FEAST has many methods to delete records from the database. The main methods to 
 3. `BaseMapper::delete` - This method takes a Model as an argument and will delete the corresponding record based on the
    primary key. It will return either 0 or 1 (the count deleted from the database).
 
+#### Events
+
+FEAST has methods for different database events that you can override in the child class. These events 
+can fire when a model is saved or when a model is deleted. The methods are `onSave` and `onDelete`.
+
+Note that `onDelete` will only fire if `delete` is called, rather than the other deletion methods, as delete
+is the only method that has access to a model.
+
 [Back to Top](#working-with-databases)
 
 ## Working with Migrations

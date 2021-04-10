@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/FeastFramework/framework/branch/master/graph/badge.svg?token=FBP2AKLJB3)](https://codecov.io/gh/FeastFramework/framework)
 [![Packagist](https://img.shields.io/packagist/v/feast/framework)](https://packagist.org/packages/feast/framework)
 ![License](https://img.shields.io/packagist/l/feast/framework.svg)
-[![Development Branch](https://img.shields.io/badge/docs-quickstart-green.svg)](https://docs.feast-framework.com)
+[![Docs](https://img.shields.io/badge/docs-quickstart-green.svg)](https://docs.feast-framework.com)
 ## Fast, Easy, Agile, Slim, Tested and Trans-Fat Free.
 
 ## Create a Project with FEAST

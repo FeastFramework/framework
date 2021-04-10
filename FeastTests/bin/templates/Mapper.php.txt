@@ -27,4 +27,27 @@ class {name}{classExtra} extends BaseMapper
 
         return null;
     }
+
+    /**
+     * This method is called when a Model is saved.
+     *
+     * Update this to call actions on save.
+     *
+     * @param {name} $record
+     * @param bool $new
+     */
+    protected function onSave({name} $record, bool $new = true): void
+    {
+    }
+
+    /**
+     * This method is called when a Model is deleted.
+     *
+     * Update this to call actions on deletion.
+     *
+     * @param {name} $record
+     */
+    protected function onDelete({name} $record): void
+    {
+    }
 }

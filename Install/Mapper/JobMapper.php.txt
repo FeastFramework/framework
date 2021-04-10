@@ -11,7 +11,7 @@ class JobMapper extends BaseMapper
 {
     protected const OBJECT_NAME = Job::class;
     protected const PRIMARY_KEY = 'job_id';
-    protected const TABLE_NAME = 'jobs';
+    public const TABLE_NAME = 'jobs';
 
     /**
      * @param int|string $value
