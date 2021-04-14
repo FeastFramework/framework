@@ -27,7 +27,7 @@ use Feast\Interfaces\HttpRequestInterface;
 abstract class Service
 {
 
-    protected ?HttpRequestInterface $httpRequest = null;
+    protected HttpRequestInterface $httpRequest;
 
     public function __construct()
     {
