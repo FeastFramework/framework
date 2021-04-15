@@ -26,7 +26,7 @@ use Feast\Exception\ServerFailureException;
  *
  * @package Feast\Collection
  */
-class CollectionList implements \ArrayAccess
+class CollectionList implements \ArrayAccess,Collection
 {
     use \Feast\Traits\Collection;
 

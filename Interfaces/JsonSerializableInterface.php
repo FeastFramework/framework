@@ -18,9 +18,12 @@
 
 declare(strict_types=1);
 
-namespace Feast\Collection;
+namespace Feast\Interfaces;
 
-interface Collection
-{
-    public function toArray(): array;
+interface JsonSerializableInterface {
+    /**
+     * This constructor ensures that all items have default constructor behavior.
+     * You can override in the child class, but ALL arguments MUST be optional. 
+     */
+    public function __construct();
 }

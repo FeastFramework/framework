@@ -18,9 +18,14 @@
 
 declare(strict_types=1);
 
-namespace Feast\Collection;
+namespace Feast\Attributes;
 
-interface Collection
-{
-    public function toArray(): array;
+use Attribute;
+
+#[Attribute(Attribute::TARGET_PROPERTY)]
+class JsonItem {
+    public function __construct(public ?string $name = null, public ?string $arrayOrCollectionType = null)
+    {
+        
+    }
 }

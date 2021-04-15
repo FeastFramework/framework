@@ -89,16 +89,20 @@ addition, PHP 8.0-bcmath is recommended.
 
 [Collections](collections.md)
 
+[JSON](json.md)
+
 [Services](services.md)
 
 [Forms](forms.md)
 
 ## Scheduled and Queued Jobs
+
 [Queueable Jobs](queues.md)
 
 [Scheduled Jobs](cron-jobs.md)
 
 ## Extras
+
 [Throttle Plugin](throttle.md)
 
 [Contributors](contributors.md)
