@@ -24,8 +24,7 @@ use Feast\Attributes\JsonItem;
 use Feast\Collection\Collection;
 use Feast\Collection\CollectionList;
 use Feast\Collection\Set;
-use Feast\Exception\InvalidArgumentException;
-use Feast\Interfaces\JsonSerializableInterface;
+use Feast\Exception\ServerFailureException;
 use ReflectionException;
 use ReflectionProperty;
 
@@ -37,27 +36,37 @@ class Json
      *
      * The field names are kept as is, unless a Feast\Attributes\JsonItem attribute decorates the property.
      *
-     * @param JsonSerializableInterface $object
+     * @param object $object
      * @return string
      * @throws ReflectionException
+     * @see \Feast\Attributes\JsonItem
      */
-    public static function marshal(JsonSerializableInterface $object): string
+    public static function marshal(object $object): string
     {
         $return = new \stdClass();
         $paramInfo = self::getClassParamInfo($object::class);
+        /**
+         * @var string $oldName
+         * @var array{name:string|null,type:string|null,dateFormat:string|null} $newInfo
+         */
         foreach ($paramInfo as $oldName => $newInfo) {
             $newName = $newInfo['name'];
 
             $reflected = new ReflectionProperty($object, $oldName);
             if ($reflected->isInitialized($object)) {
-                if ($object->{$oldName} instanceof JsonSerializableInterface) {
-                    $return->{$newName} = json_decode(self::marshal($object->{$oldName}));
-                } elseif (is_array($object->{$oldName})) {
-                    $return->{$newName} = self::marshalArray($object->{$oldName});
-                } elseif ($object->{$oldName} instanceof Collection) {
-                    $return->{$newName} = self::marshalArray(($object->{$oldName})->toArray());
+                $oldItem = $object->{$oldName};
+                if (is_object(
+                        $oldItem
+                    ) && $oldItem instanceof Collection === false && $oldItem instanceof Date === false) {
+                    $return->{$newName} = json_decode(self::marshal($oldItem));
+                } elseif (is_array($oldItem)) {
+                    $return->{$newName} = self::marshalArray($oldItem);
+                } elseif ($oldItem instanceof Collection) {
+                    $return->{$newName} = self::marshalArray(($oldItem)->toArray());
+                } elseif ($oldItem instanceof Date) {
+                    $return->{$newName} = $oldItem->getFormattedDate($newInfo['dateFormat']);
                 } else {
-                    $return->{$newName} = $object->{$oldName};
+                    $return->{$newName} = $oldItem;
                 }
             }
         }
@@ -65,56 +74,49 @@ class Json
     }
 
     /**
-     * Unmarshal a JSON string into a class that implements the JsonSerializableInterface.
+     * Unmarshal a JSON string into a class.
      *
-     * Property types can be decorated with the Feast\Attributes\JsonItem attribute. This type info allows layered marshalling.
+     * Property types can be decorated with the Feast\Attributes\JsonItem attribute.
+     * This type info allows layered marshalling.
      *
      * @param string $data
-     * @param class-string $className
-     * @return JsonSerializableInterface
-     * @throws ReflectionException|Exception\ServerFailureException
+     * @param class-string|object $objectOrClass
+     * @return object
+     * @throws Exception\ServerFailureException
+     * @throws ReflectionException
+     * @see \Feast\Attributes\JsonItem
      */
-    public static function unmarshal(string $data, string $className): JsonSerializableInterface
+    public static function unmarshal(string $data, string|object $objectOrClass): object
     {
-        if (is_a($className, JsonSerializableInterface::class, true) === false) {
-            throw new InvalidArgumentException($className . ' must implement JsonSerializableInterface');
+        if (is_string($objectOrClass)) {
+            try {
+                $object = new $objectOrClass();
+            } catch (\ArgumentCountError) {
+                throw new ServerFailureException(
+                    'Attempted to unmarshal into a class without a no-argument capable constructor'
+                );
+            }
+        } else {
+            $object = $objectOrClass;
         }
+        $className = $object::class;
         $jsonData = json_decode($data, true, flags: JSON_THROW_ON_ERROR);
         $paramInfo = self::getClassParamInfo($className);
-        $object = new $className();
+
         $classInfo = new \ReflectionClass($className);
         foreach ($classInfo->getProperties() as $property) {
-            $propertyName = $paramInfo[$property->getName()]['name'] ?? $property->getName();
+            $newPropertyName = $property->getName();
+            $propertyName = $paramInfo[$newPropertyName]['name'] ?? $newPropertyName;
             if (!array_key_exists($propertyName, $jsonData)) {
                 continue;
             }
-            $propertyType = (string)$property->getType();
-            $propertySubtype = (string)$paramInfo[$property->getName()]['type'];
-            if ($propertyType === 'array') {
-                self::unmarshalArray(
-                    $property,
-                    $object,
-                    $propertySubtype,
-                    $jsonData[$propertyName],
-
-                );
-            } elseif (is_a($propertyType, Set::class, true)) {
-                self::unmarshalSet(
-                    $propertySubtype,
-                    $jsonData[$propertyName],
-                    $property,
-                    $object
-                );
-            } elseif (is_a($propertyType, Collection::class, true)) {
-                self::unmarshalCollection($propertySubtype, $jsonData[$propertyName], $property, $object);
-            } elseif (is_a($propertyType, JsonSerializableInterface::class, true)) {
-                $object->{$property->getName()} = self::unmarshal(
-                    json_encode($jsonData[$propertyName]),
-                    $propertyType
-                );
-            } else {
-                $object->{$property->getName()} = $jsonData[$propertyName];
-            }
+            self::unmarshalProperty(
+                $property,
+                (string)$paramInfo[$newPropertyName]['type'],
+                $paramInfo[$newPropertyName]['dateFormat'],
+                $jsonData[$propertyName],
+                $object
+            );
         }
 
         return $object;
@@ -130,7 +132,7 @@ class Json
     ): array {
         $return = [];
         foreach ($items as $key => $item) {
-            if ($item instanceof JsonSerializableInterface) {
+            if (is_object($item)) {
                 $return[$key] = json_decode(self::marshal($item));
             } elseif (is_array($item)) {
                 $return[$key] = self::marshalArray($item);
@@ -144,7 +146,7 @@ class Json
 
     /**
      * @param class-string $class
-     * @return array
+     * @return array<array{name:string|null,type:string|null,dateFormat:string|null}>
      * @throws ReflectionException
      */
     protected static function getClassParamInfo(
@@ -155,21 +157,23 @@ class Json
         foreach ($classInfo->getProperties() as $property) {
             $name = $property->getName();
             $type = null;
+            $dateFormat = Date::ISO8601;
             $attributes = $property->getAttributes(JsonItem::class);
             foreach ($attributes as $attribute) {
                 /** @var JsonItem $attributeObject */
                 $attributeObject = $attribute->newInstance();
                 $name = $attributeObject->name ?? $name;
                 $type = $attributeObject->arrayOrCollectionType;
+                $dateFormat = $attributeObject->dateFormat;
             }
-            $return[$property->getName()] = ['name' => $name, 'type' => $type];
+            $return[$property->getName()] = ['name' => $name, 'type' => $type, 'dateFormat' => $dateFormat];
         }
         return $return;
     }
 
     /**
      * @param ReflectionProperty $property
-     * @param JsonSerializableInterface $object
+     * @param object $object
      * @param string $propertySubtype
      * @param array $jsonData
      * @throws Exception\ServerFailureException
@@ -177,20 +181,21 @@ class Json
      */
     protected static function unmarshalArray(
         ReflectionProperty $property,
-        JsonSerializableInterface $object,
+        object $object,
         string $propertySubtype,
         array $jsonData
     ): void {
-        $object->{$property->getName()} = [];
-        if (is_a($propertySubtype, JsonSerializableInterface::class, true)) {
+        $newProperty = $property->getName();
+        $object->{$newProperty} = [];
+        if (class_exists($propertySubtype, true)) {
             foreach ($jsonData as $key => $val) {
-                $object->{$property->getName()}[$key] = self::unmarshal(
+                $object->{$newProperty}[$key] = self::unmarshal(
                     json_encode($val),
                     $propertySubtype
                 );
             }
         } else {
-            $object->{$property->getName()} = $jsonData;
+            $object->{$newProperty} = $jsonData;
         }
     }
 
@@ -198,16 +203,16 @@ class Json
      * @param string $propertySubtype
      * @param array $jsonData
      * @param ReflectionProperty $property
-     * @param JsonSerializableInterface $object
+     * @param object $object
      * @throws Exception\ServerFailureException|ReflectionException
      */
     protected static function unmarshalSet(
         string $propertySubtype,
         array $jsonData,
         ReflectionProperty $property,
-        JsonSerializableInterface $object
+        object $object
     ): void {
-        if (is_a($propertySubtype, JsonSerializableInterface::class, true)) {
+        if (class_exists($propertySubtype, true)) {
             $jsonData = self::unmarshalTempArray($jsonData, $propertySubtype);
         }
         $object->{$property->getName()} = new Set(
@@ -221,16 +226,16 @@ class Json
      * @param string $propertySubtype
      * @param array $jsonData
      * @param ReflectionProperty $property
-     * @param JsonSerializableInterface $object
+     * @param object $object
      * @throws Exception\ServerFailureException|ReflectionException
      */
     protected static function unmarshalCollection(
         string $propertySubtype,
         array $jsonData,
         ReflectionProperty $property,
-        JsonSerializableInterface $object
+        object $object
     ): void {
-        if (is_a($propertySubtype, JsonSerializableInterface::class, true)) {
+        if (class_exists($propertySubtype, true)) {
             $jsonData = self::unmarshalTempArray($jsonData, $propertySubtype);
         }
         $object->{$property->getName()} = new CollectionList(
@@ -257,5 +262,60 @@ class Json
             );
         }
         return $tempArray;
+    }
+
+    /**
+     * Unmarshal a property onto the object.
+     *
+     * @param ReflectionProperty $property
+     * @param string $propertySubtype
+     * @param string $propertyDateFormat
+     * @param mixed $jsonData
+     * @param object $object
+     * @throws Exception\InvalidDateException
+     * @throws ReflectionException
+     * @throws ServerFailureException
+     */
+    protected static function unmarshalProperty(
+        ReflectionProperty $property,
+        string $propertySubtype,
+        string $propertyDateFormat,
+        mixed $jsonData,
+        object $object
+    ): void {
+        $propertyType = (string)$property->getType();
+
+        $propertyValue = $jsonData;
+        if ($propertyType === 'array') {
+            self::unmarshalArray(
+                $property,
+                $object,
+                $propertySubtype,
+                $propertyValue,
+            );
+        } elseif (is_a($propertyType, Set::class, true)) {
+            self::unmarshalSet(
+                $propertySubtype,
+                $propertyValue,
+                $property,
+                $object
+            );
+        } elseif (is_a($propertyType, Collection::class, true)) {
+            self::unmarshalCollection(
+                $propertySubtype,
+                $propertyValue,
+                $property,
+                $object
+            );
+        } elseif (is_a($propertyType, Date::class, true)) {
+            $object->{$property->getName()} = Date::createFromFormat($propertyDateFormat, $propertyValue);
+        } elseif (class_exists($propertyType, true)) {
+            $object->{$property->getName()} = self::unmarshal(
+                json_encode($propertyValue),
+                $propertyType
+            );
+        } else {
+            $object->{$property->getName()} = $propertyValue;
+        }
     }
 }

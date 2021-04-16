@@ -8,6 +8,14 @@
 
 [Getting started](#getting-started)
 
+[Getting moving](#getting-moving)
+
+[Advanced Features](#advanced-features)
+
+[Scheduled and Queued Jobs](#scheduled-and-queued-jobs)
+
+[Extras](#extras)
+
 ## What is FEAST?
 
 FEAST is a radically different PHP Framework that was built from the ground up to be an alternative to the
@@ -84,6 +92,8 @@ addition, PHP 8.0-bcmath is recommended.
 ## Advanced Features
 
 [Working with Databases](models.md)
+
+[Working with Dates](date.md)
 
 [Working with Plugins](plugin.md)
 

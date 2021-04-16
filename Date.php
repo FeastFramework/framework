@@ -6,6 +6,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -66,16 +67,18 @@ class Date
      * Create Date object from Unix Timestamp.
      *
      * @param int $timestamp
+     * @param string|null $timezone
      * @return Date
      * @throws InvalidDateException
      */
-    public static function createFromTimestamp(int $timestamp): self
+    public static function createFromTimestamp(int $timestamp, ?string $timezone = null): self
     {
         // Timestamp based
         return new self(
             date('Y', $timestamp), date('m', $timestamp), date('d', $timestamp), date('H', $timestamp),
             date('i', $timestamp),
-            date('s', $timestamp)
+            date('s', $timestamp),
+            $timezone
         );
     }
 
@@ -85,9 +88,9 @@ class Date
      * @return self
      * @throws InvalidDateException
      */
-    public static function createFromNow(): self
+    public static function createFromNow(?string $timezone = null): self
     {
-        return self::createFromTimestamp(time());
+        return self::createFromTimestamp(time(), $timezone);
     }
 
     /**
@@ -99,7 +102,7 @@ class Date
      * @return self
      * @throws InvalidDateException
      */
-    public static function createFromString(string $date): self
+    public static function createFromString(string $date, ?string $timezone = null): self
     {
         if (str_contains($date, '-') && str_contains($date, '/')) {
             throw new InvalidDateException('Invalid date string - ' . $date);
@@ -111,22 +114,44 @@ class Date
 
         return new self(
             substr($date, 0, 4), substr($date, 5, 2), substr($date, 8, 2), substr($date, 11, 2),
-            substr($date, 14, 2), substr($date, 17, 2)
+            substr($date, 14, 2), substr($date, 17, 2), $timezone
         );
+    }
+
+    /**
+     * Create a Date object from a specific format string.
+     *
+     * This function uses PHP's built in DateTime as an intermediary
+     * and follows all the rules of that class' constructor.
+     *
+     * @param string $format
+     * @param string $dateString
+     * @param string|null $timezone
+     * @return self
+     * @throws InvalidDateException
+     */
+    public static function createFromFormat(string $format, string $dateString, ?string $timezone = null): self
+    {
+        $timezoneData = isset($timezone) ? new \DateTimeZone($timezone) : null;
+        $date = \DateTime::createFromFormat($format, $dateString, $timezoneData);
+        return self::createFromTimestamp($date->getTimestamp(), $timezone);
     }
 
     public function __construct(
         string|int $year,
         string|int $month,
         string|int $day,
-        string|int $hour = '00',
-        string|int $minute = '00',
-        string|int $second = '00',
+        string|int $hour = 0,
+        string|int $minute = 0,
+        string|int $second = 0,
         string $timezone = null
     ) {
-        if (!ctype_digit($year) || !ctype_digit($month) || !ctype_digit($day) || !ctype_digit($hour) || !ctype_digit(
-                $minute
-            ) || !ctype_digit($second)) {
+        if (!ctype_digit((string)$year) ||
+            !ctype_digit((string)$month) ||
+            !ctype_digit((string)$day) ||
+            !ctype_digit((string)$hour) ||
+            !ctype_digit((string)$minute) ||
+            !ctype_digit((string)$second)) {
             throw new InvalidDateException('Invalid date');
         }
         $year = (int)$year;
@@ -255,7 +280,6 @@ class Date
     {
         return $this->getFormattedDate('L') === '1';
     }
-
 
     /**
      * Set the year.
@@ -424,7 +448,8 @@ class Date
      */
     public function getAsDateTime(): \DateTime
     {
-        return new \DateTime((string)$this);
+        $timezone = $this->timezone ? new \DateTimeZone($this->timezone) : null;
+        return new \DateTime($this->getFormattedDate(self::ISO8601), $timezone);
     }
 
     /**

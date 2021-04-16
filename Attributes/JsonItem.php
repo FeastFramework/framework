@@ -21,11 +21,22 @@ declare(strict_types=1);
 namespace Feast\Attributes;
 
 use Attribute;
+use Feast\Date;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class JsonItem {
-    public function __construct(public ?string $name = null, public ?string $arrayOrCollectionType = null)
-    {
-        
+class JsonItem
+{
+    /**
+     * JsonItem constructor.
+     *
+     * @param string|null $name
+     * @param string|null $arrayOrCollectionType
+     * @param string $dateFormat - Only used if the actual property type is a Date. This will specify the format it should be converted to in the json string.
+     */
+    public function __construct(
+        public ?string $name = null,
+        public ?string $arrayOrCollectionType = null,
+        public string $dateFormat = Date::ISO8601
+    ) {
     }
 }

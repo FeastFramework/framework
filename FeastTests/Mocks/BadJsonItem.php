@@ -18,12 +18,21 @@
 
 declare(strict_types=1);
 
-namespace Feast\Interfaces;
+namespace Mocks;
 
-interface JsonSerializableInterface {
-    /**
-     * This constructor ensures that all items have default constructor behavior.
-     * You can override in the child class, but ALL arguments MUST be optional. 
-     */
-    public function __construct();
+use Feast\Attributes\JsonItem;
+
+/**
+ * @psalm-suppress all
+ */
+class BadJsonItem
+{
+    #[JsonItem(name: 'first_name')]
+    public string $firstName;
+    #[JsonItem(name: 'last_name')]
+    public string $lastName;
+
+    public function __construct(string $explodesBecauseNotPassed)
+    {
+    }
 }

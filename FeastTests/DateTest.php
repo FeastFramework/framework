@@ -6,6 +6,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -270,6 +271,12 @@ class DateTest extends TestCase
         $this->assertEquals(date('Y-m-d ') . $expectedTimeOnly, (string)$date, 'H:i:s failed');
         $this->expectException(InvalidDateException::class);
         Date::createFromString('2018-04-05 44:33:22');
+    }
+
+    public function testCreateFromFormat(): void
+    {
+        $date = Date::createFromFormat('Y-m-d H:i:s', '2021-04-05 18:41:00');
+        $this->assertEquals('20210405184100', $date->getFormattedDate('YmdHis'));
     }
 
     public function testInvalidMonth(): void

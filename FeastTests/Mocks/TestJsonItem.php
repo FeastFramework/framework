@@ -6,6 +6,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -22,7 +23,7 @@ namespace Mocks;
 use Feast\Attributes\JsonItem;
 use Feast\Collection\Collection;
 use Feast\Collection\Set;
-use Feast\Interfaces\JsonSerializableInterface;
+use Feast\Date;
 
 /**
  * Class TestJsonItem
@@ -30,7 +31,7 @@ use Feast\Interfaces\JsonSerializableInterface;
  * @psalm-suppress all
  * @package Mocks
  */
-class TestJsonItem implements JsonSerializableInterface
+class TestJsonItem
 {
     #[JsonItem(name: 'first_name')]
     public string $firstName;
@@ -63,6 +64,11 @@ class TestJsonItem implements JsonSerializableInterface
     public int $count;
 
     public int $records;
+
+    #[JsonItem(dateFormat: 'Ymd')]
+    public Date $timestamp;
+
+    public Date $otherTimestamp;
 
     public function __construct()
     {
