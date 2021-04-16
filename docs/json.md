@@ -24,10 +24,10 @@ as an object. This includes any nested objects.
 ### The Attribute
 
 `\Feast\Attributes\JsonItem` is a PHP8 attribute that is used to decorate properties in your class to specify
-transformations on JSON data. It has three properties.
+transformations on JSON data. It has three optional properties.
 
 1. `name` - specifies an alternate name to be used when serializing to JSON as well as the name of the key for this
-   property when reading from the JSON string.
+   property when reading from the JSON string. If not supplied, the class property name will be used as the name.
 2. `arrayOrCollectionType` - used as a decorator on arrays or `\Feast\Collection\Collection` and its descendents to
    specify what the type contained inside a collection is. This can be used to mark a property as being a collection of
    another type.
