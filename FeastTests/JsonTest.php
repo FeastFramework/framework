@@ -25,10 +25,17 @@ use PHPUnit\Framework\TestCase;
 
 class JsonTest extends TestCase
 {
+    
+    public function setUp(): void
+    {
+        date_default_timezone_set('America/New_York');
+    }
+
     /**
      * @throws ReflectionException
      * @throws ServerFailureException
      */
+    
     public function testMarshal(): void
     {
         $item = new TestJsonItem();
@@ -95,8 +102,6 @@ class JsonTest extends TestCase
         $timestampOne = \Feast\Date::createFromTimestamp(1618534584);
         $timestampTwo = \Feast\Date::createFromTimestamp(1617619260);
 
-        $timestampOne->setTimezone('America/New_York');
-        $timestampTwo->setTimezone('America/New_York');
         $item->timestamp = $timestampOne;
         $item->otherTimestamp = $timestampTwo;
 
