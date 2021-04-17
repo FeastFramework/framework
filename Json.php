@@ -47,22 +47,23 @@ class Json
         $paramInfo = self::getClassParamInfo($object::class);
         /**
          * @var string $oldName
-         * @var array{name:string|null,type:string|null,dateFormat:string|null} $newInfo
+         * @var array{name:string|null,type:string|null,dateFormat:string} $newInfo
          */
         foreach ($paramInfo as $oldName => $newInfo) {
             $newName = $newInfo['name'];
 
             $reflected = new ReflectionProperty($object, $oldName);
             if ($reflected->isInitialized($object)) {
+                /** @var scalar|object|array $oldItem */
                 $oldItem = $object->{$oldName};
                 if (is_object(
                         $oldItem
                     ) && $oldItem instanceof Collection === false && $oldItem instanceof Date === false) {
-                    $return->{$newName} = json_decode(self::marshal($oldItem));
+                    $return->{$newName} = (object)json_decode(self::marshal($oldItem));
                 } elseif (is_array($oldItem)) {
                     $return->{$newName} = self::marshalArray($oldItem);
                 } elseif ($oldItem instanceof Collection) {
-                    $return->{$newName} = self::marshalArray(($oldItem)->toArray());
+                    $return->{$newName} = self::marshalArray($oldItem->toArray());
                 } elseif ($oldItem instanceof Date) {
                     $return->{$newName} = $oldItem->getFormattedDate($newInfo['dateFormat']);
                 } else {
@@ -90,6 +91,7 @@ class Json
     {
         if (is_string($objectOrClass)) {
             try {
+                /** @psalm-suppress MixedMethodCall */
                 $object = new $objectOrClass();
             } catch (\ArgumentCountError) {
                 throw new ServerFailureException(
@@ -100,21 +102,25 @@ class Json
             $object = $objectOrClass;
         }
         $className = $object::class;
+        /** @var array $jsonData */
         $jsonData = json_decode($data, true, flags: JSON_THROW_ON_ERROR);
         $paramInfo = self::getClassParamInfo($className);
 
         $classInfo = new \ReflectionClass($className);
         foreach ($classInfo->getProperties() as $property) {
             $newPropertyName = $property->getName();
+            /** @var string $propertyName */
             $propertyName = $paramInfo[$newPropertyName]['name'] ?? $newPropertyName;
             if (!array_key_exists($propertyName, $jsonData)) {
                 continue;
             }
+            /** @var scalar|array $propertyValue */
+            $propertyValue = $jsonData[$propertyName];
             self::unmarshalProperty(
                 $property,
                 (string)$paramInfo[$newPropertyName]['type'],
-                $paramInfo[$newPropertyName]['dateFormat'],
-                $jsonData[$propertyName],
+                (string)$paramInfo[$newPropertyName]['dateFormat'],
+                $propertyValue,
                 $object
             );
         }
@@ -131,9 +137,13 @@ class Json
         array $items
     ): array {
         $return = [];
+        /**
+         * @var string $key
+         * @var scalar|object|array $item
+         */
         foreach ($items as $key => $item) {
             if (is_object($item)) {
-                $return[$key] = json_decode(self::marshal($item));
+                $return[$key] = (array)json_decode(self::marshal($item));
             } elseif (is_array($item)) {
                 $return[$key] = self::marshalArray($item);
             } else {
@@ -188,6 +198,10 @@ class Json
         $newProperty = $property->getName();
         $object->{$newProperty} = [];
         if (class_exists($propertySubtype, true)) {
+            /**
+             * @var string $key
+             * @var scalar|object|array $val
+             */
             foreach ($jsonData as $key => $val) {
                 $object->{$newProperty}[$key] = self::unmarshal(
                     json_encode($val),
@@ -201,7 +215,7 @@ class Json
 
     /**
      * @param string $propertySubtype
-     * @param array $jsonData
+     * @param array<string|int|bool|float|object|array> $jsonData
      * @param ReflectionProperty $property
      * @param object $object
      * @throws Exception\ServerFailureException|ReflectionException
@@ -224,7 +238,7 @@ class Json
 
     /**
      * @param string $propertySubtype
-     * @param array $jsonData
+     * @param array<array> $jsonData
      * @param ReflectionProperty $property
      * @param object $object
      * @throws Exception\ServerFailureException|ReflectionException
@@ -248,14 +262,20 @@ class Json
     /**
      * @param array $jsonData
      * @param string $propertySubtype
-     * @return array
+     * @return array<string|int|bool|float|object|array>
      * @throws Exception\ServerFailureException
      * @throws ReflectionException
+     * @noinspection PhpDocSignatureInspection
      */
     protected static function unmarshalTempArray(array $jsonData, string $propertySubtype): array
     {
         $tempArray = [];
+        /**
+         * @var string $key
+         * @var string|int|bool|float|object|array $val
+         */
         foreach ($jsonData as $key => $val) {
+            /** @psalm-suppress ArgumentTypeCoercion */
             $tempArray[$key] = self::unmarshal(
                 json_encode($val),
                 $propertySubtype
@@ -268,9 +288,9 @@ class Json
      * Unmarshal a property onto the object.
      *
      * @param ReflectionProperty $property
-     * @param string $propertySubtype
+     * @param class-string|string $propertySubtype
      * @param string $propertyDateFormat
-     * @param mixed $jsonData
+     * @param scalar|array $propertyValue
      * @param object $object
      * @throws Exception\InvalidDateException
      * @throws ReflectionException
@@ -280,35 +300,36 @@ class Json
         ReflectionProperty $property,
         string $propertySubtype,
         string $propertyDateFormat,
-        mixed $jsonData,
+        mixed $propertyValue,
         object $object
     ): void {
         $propertyType = (string)$property->getType();
 
-        $propertyValue = $jsonData;
-        if ($propertyType === 'array') {
+        if ($propertyType === 'array' && is_array($propertyValue)) {
             self::unmarshalArray(
                 $property,
                 $object,
                 $propertySubtype,
                 $propertyValue,
             );
-        } elseif (is_a($propertyType, Set::class, true)) {
+        } elseif (is_a($propertyType, Set::class, true) && is_array($propertyValue)) {
+            /** @psalm-suppress MixedArgumentTypeCoercion */
             self::unmarshalSet(
                 $propertySubtype,
                 $propertyValue,
                 $property,
                 $object
             );
-        } elseif (is_a($propertyType, Collection::class, true)) {
+        } elseif (is_a($propertyType, Collection::class, true) && is_array($propertyValue)) {
+            /** @psalm-suppress MixedArgumentTypeCoercion */
             self::unmarshalCollection(
                 $propertySubtype,
                 $propertyValue,
                 $property,
                 $object
             );
-        } elseif (is_a($propertyType, Date::class, true)) {
-            $object->{$property->getName()} = Date::createFromFormat($propertyDateFormat, $propertyValue);
+        } elseif (is_a($propertyType, Date::class, true) && is_scalar($propertyValue)) {
+            $object->{$property->getName()} = Date::createFromFormat($propertyDateFormat, (string)$propertyValue);
         } elseif (class_exists($propertyType, true)) {
             $object->{$property->getName()} = self::unmarshal(
                 json_encode($propertyValue),

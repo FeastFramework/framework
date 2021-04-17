@@ -49,6 +49,7 @@
         <file name="FlashMessage.php"/>
         <file name="Help.php"/>
         <file name="HttpController.php"/>
+        <file name="Json.php"/>
         <file name="Main.php"/>
         <file name="NameHelper.php"/>
         <file name="Partial.php"/>

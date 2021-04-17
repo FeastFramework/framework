@@ -1,16 +1,18 @@
-[Back to Index](index.md)
+[FEAST Framework Documentation](index.md)
 
+This documentation is for the `feast/json` project found at [https://github.com/FeastFramework/json](https://github.com/FeastFramework/json).
+If you are looking for the version built into FEAST, click [here](json.md).
 # Working with JSON and Objects
 
 PHP includes a simple, built-in JSON serializer with json_encode and json_decode. However, these functions create either
 a stdClass or array, and have no flexibility beyond that. Sometimes, you just want a little more power and flexibility.
-For those cases, FEAST includes a dynamic JSON marshaller.
+For those cases, the authors of FEAST created a dynamic JSON marshaller.
 
 ## The Components
 
 ### The marshaller
 
-`\Feast\Json` is a class containing two static methods; one for marshalling and one for unmarshalling. The marshal
+`\Feast\Json\Json` is a class containing two static methods; one for marshalling and one for unmarshalling. The marshal
 method takes an object. The unmarshal method takes two parameters.
 
 1. `data` - a json string
@@ -23,15 +25,15 @@ as an object. This includes any nested objects.
 
 ### The Attribute
 
-`\Feast\Attributes\JsonItem` is a PHP8 attribute that is used to decorate properties in your class to specify
+`\Feast\Json\Attributes\JsonItem` is a PHP8 attribute that is used to decorate properties in your class to specify
 transformations on JSON data. It has three optional properties.
 
 1. `name` - specifies an alternate name to be used when serializing to JSON as well as the name of the key for this
    property when reading from the JSON string. If not supplied, the class property name will be used as the name.
-2. `arrayOrCollectionType` - used as a decorator on arrays or `\Feast\Collection\Collection` and its descendents to
-   specify what the type contained inside a collection is. This can be used to mark a property as being a collection of
+2. `arrayOrCollectionType` - used as a decorator on arrays  to
+   specify what the type contained inside an array is. This can be used to mark a property as being made up of an array of
    another type.
-3. `dateFormat` - Specifies the format to serialize into for objects of the `\Feast\Date` class. Defaults to ISO 8601.
+3. `dateFormat` - Specifies the format to serialize into for objects of PHP's built in `DateTime` class. Defaults to ISO 8601.
 
 [Back to Top](#working-with-json-and-objects)
 
@@ -49,7 +51,7 @@ class TestJsonItem
     #[JsonItem(arrayOrCollectionType: TestJsonItem::class)]
     public array $items;
     #[JsonItem(dateFormat: 'Ymd')]
-    public Date $timestamp;
+    public DateTime $timestamp;
 ```
 
 This class has four properties. The first, `$firstName` is a string, and is pulled from the `first_name` key. The second
@@ -97,7 +99,7 @@ This string will unmarshal into a class as if the below code had been called man
 $object = new TestJsonItem();
 $object->firstName = 'FEAST';
 $object->lastName = 'Framework';
-$object->timestamp = Date::createFromFormat('Ymd','20210405');
+$object->timestamp = DateTime::createFromFormat('Ymd','20210405');
 
 $secondaryObject = new TestJsonItem();
 $secondaryObject->firstName = 'Jeremy';
