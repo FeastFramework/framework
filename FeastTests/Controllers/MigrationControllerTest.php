@@ -43,7 +43,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:down'])
         );
 
-        $controller->downGet();
+        $controller->downGet($this->createStub(DatabaseDetailsInterface::class));
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('feast:migration:down {name}', $output);
     }
@@ -58,7 +58,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:down'])
         );
 
-        $controller->downGet('42_failure');
+        $controller->downGet($this->createStub(DatabaseDetailsInterface::class),'42_failure');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Migration 42_failure not found.', $output);
     }
@@ -73,7 +73,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:down'])
         );
 
-        $controller->downGet('1_migrations');
+        $controller->downGet($this->createStub(DatabaseDetailsInterface::class),'1_migrations');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Migrations Down ran successfully', $output);
     }
@@ -88,7 +88,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:up'])
         );
 
-        $controller->upGet('42_failure');
+        $controller->upGet($this->createStub(DatabaseDetailsInterface::class),'42_failure');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Migration 42_failure not found.', $output);
     }
@@ -103,7 +103,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:up'])
         );
 
-        $controller->upGet();
+        $controller->upGet($this->createStub(DatabaseDetailsInterface::class));
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('feast:migration:up {name}', $output);
     }
@@ -118,7 +118,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:down'])
         );
 
-        $controller->upGet('1_migrations');
+        $controller->upGet($this->createStub(DatabaseDetailsInterface::class),'1_migrations');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Migrations Up ran successfully', $output);
     }
@@ -133,7 +133,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:up'])
         );
 
-        $controller->upGet('2_test');
+        $controller->upGet($this->createStub(DatabaseDetailsInterface::class),'2_test');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Test Up ran successfully', $output);
     }
@@ -148,7 +148,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:up'])
         );
 
-        $controller->upGet('3_blowup');
+        $controller->upGet($this->createStub(DatabaseDetailsInterface::class),'3_blowup');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Migration Blowup failed', $output);
         $this->assertStringContainsString('Blew up', $output);
@@ -164,7 +164,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:up'])
         );
 
-        $controller->upGet('2_test');
+        $controller->upGet($this->createStub(DatabaseDetailsInterface::class),'2_test');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString(
             'Migration table does not exist. Run Migration 1_migrations before running other migrations',
@@ -242,7 +242,7 @@ class MigrationControllerTest extends TestCase
             new CliArguments(['famine', 'feast:migration:run-all'])
         );
 
-        $controller->runAllGet();
+        $controller->runAllGet($this->createStub(DatabaseDetailsInterface::class));
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Test Up ran successfully', $output);
         $this->assertStringContainsString('Migration Blowup failed', $output);

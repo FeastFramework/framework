@@ -224,6 +224,9 @@ To quickly run all migrations that have not ran up, simply run
 `php famine feast:migration:run-all` in your terminal. For more detailed or advanced usage,
 see [feast:migration](cli.md#feastmigration) in the CLI docs.
 
+If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the cache
+will automatically re-generate after migrations are ran.
+
 [Back to Top](#working-with-databases)
 
 ## Complex Queries

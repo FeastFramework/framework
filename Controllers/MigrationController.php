@@ -24,6 +24,7 @@ use Feast\Attributes\Action;
 use Feast\Attributes\Param;
 use Feast\CliController;
 use Feast\Enums\ParamType;
+use Feast\Interfaces\DatabaseDetailsInterface;
 use Mapper\MigrationMapper;
 use Model\Migration;
 
@@ -66,24 +67,40 @@ class MigrationController extends CliController
     #[Action(usage: '{name}', description: 'Run a migration up.')]
     #[Param(type: 'string', name: 'name', description: 'Migration file name (without "migration" prefix)')]
     public function upGet(
+        DatabaseDetailsInterface $dbDetails,
         ?string $name = null
     ): void {
-        $this->migrationRun($name);
+        $success = $this->migrationRun($name);
+        if ($success) {
+            $this->recacheIfExists($dbDetails);
+        }
+    }
+
+    protected function recacheIfExists(DatabaseDetailsInterface $dbDetails): void
+    {
+        if ($this->dbCacheFileExists()) {
+            $dbDetails->cache();
+        }
     }
 
     #[Action(usage: '{name}', description: 'Run a migration down.')]
     #[Param(type: 'string', name: 'name', description: 'Migration file name (without "migration" prefix)')]
     public function downGet(
+        DatabaseDetailsInterface $dbDetails,
         ?string $name = null
     ): void {
-        $this->migrationRun($name, 'down');
+        $success = $this->migrationRun($name, 'down');
+        if ($success) {
+            $this->recacheIfExists($dbDetails);
+        }
     }
 
     #[Action(description: 'Run all unran migrations up.')]
-    public function runAllGet(): void
-    {
+    public function runAllGet(
+        DatabaseDetailsInterface $dbDetails
+    ): void {
         $this->buildMigrationList();
-
+        $anyRan = false;
         foreach ($this->migrationsByName as $name => $ran) {
             $file = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'Migrations' . DIRECTORY_SEPARATOR . 'migration' . $name . '.php';
             if ($ran || !file_exists($file)) {
@@ -91,6 +108,10 @@ class MigrationController extends CliController
             }
 
             $this->migrationRun($name);
+            $anyRan = true;
+        }
+        if ($anyRan) {
+            $this->recacheIfExists($dbDetails);
         }
     }
 
@@ -120,14 +141,19 @@ class MigrationController extends CliController
         return $migrationModel;
     }
 
-    protected function migrationRun(?string $name, string $type = 'up'): void
+    /**
+     * @param string|null $name
+     * @param string $type
+     * @return bool
+     */
+    protected function migrationRun(?string $name, string $type = 'up'): bool
     {
         if (empty($name)) {
             $this->help('feast:migration:' . $type);
-            return;
+            return false;
         }
         if ($this->migrationFileExistsOrEchoError($name) === false) {
-            return;
+            return false;
         }
         /** @var string $name */
         /** @var class-string|\Feast\Database\Migration::class $class */
@@ -135,7 +161,7 @@ class MigrationController extends CliController
 
         $migrationModel = $this->getMigrationModelOrEchoError($name);
         if ($migrationModel === null) {
-            return;
+            return false;
         }
         $migrationModel->migration_id = $name;
         /**
@@ -146,6 +172,8 @@ class MigrationController extends CliController
         $migrationModel->name = $migration->getName();
 
         $this->runMigrationDownOrUp($type, $migration, $migrationModel);
+
+        return true;
     }
 
     protected function buildMigrationList(): void
@@ -222,5 +250,11 @@ class MigrationController extends CliController
                 'Migration ' . $migrationModel->name . ' failed:' . "\n" . 'Reason: ' . $exception->getMessage()
             );
         }
+    }
+
+    protected function dbCacheFileExists(): bool
+    {
+        $cachePath = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+        return file_exists($cachePath . 'database.cache');
     }
 }
