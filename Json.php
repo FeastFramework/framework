@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use DateTime;
 use Feast\Attributes\JsonItem;
 use Feast\Collection\Collection;
 use Feast\Collection\CollectionList;
@@ -58,7 +59,7 @@ class Json
                 $oldItem = $object->{$oldName};
                 if (is_object(
                         $oldItem
-                    ) && $oldItem instanceof Collection === false && $oldItem instanceof Date === false) {
+                    ) && $oldItem instanceof Collection === false && $oldItem instanceof DateTime === false && $oldItem instanceof Date === false) {
                     $return->{$newName} = (object)json_decode(self::marshal($oldItem));
                 } elseif (is_array($oldItem)) {
                     $return->{$newName} = self::marshalArray($oldItem);
@@ -66,6 +67,8 @@ class Json
                     $return->{$newName} = self::marshalArray($oldItem->toArray());
                 } elseif ($oldItem instanceof Date) {
                     $return->{$newName} = $oldItem->getFormattedDate($newInfo['dateFormat']);
+                } elseif ($oldItem instanceof DateTime) {
+                    $return->{$newName} = $oldItem->format($newInfo['dateFormat']);
                 } else {
                     $return->{$newName} = $oldItem;
                 }
@@ -330,6 +333,8 @@ class Json
             );
         } elseif (is_a($propertyType, Date::class, true) && is_scalar($propertyValue)) {
             $object->{$property->getName()} = Date::createFromFormat($propertyDateFormat, (string)$propertyValue);
+        } elseif (is_a($propertyType, DateTime::class, true) && is_scalar($propertyValue)) {
+            $object->{$property->getName()} = DateTime::createFromFormat($propertyDateFormat, (string)$propertyValue);
         } elseif (class_exists($propertyType, true)) {
             $object->{$property->getName()} = self::unmarshal(
                 json_encode($propertyValue),

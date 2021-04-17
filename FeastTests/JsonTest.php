@@ -104,10 +104,15 @@ class JsonTest extends TestCase
 
         $item->timestamp = $timestampOne;
         $item->otherTimestamp = $timestampTwo;
+        
+        $item->thirdTimestamp = DateTime::createFromFormat('U','1618534584');
+        $item->fourthTimestamp = DateTime::createFromFormat('U','1617619260');
+        $item->thirdTimestamp->setTimezone(new DateTimeZone('America/New_York'));
+        $item->fourthTimestamp->setTimezone(new DateTimeZone('America/New_York'));
 
         $data = Json::marshal($item);
         $this->assertEquals(
-            '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400"}',
+            '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400","thirdTimestamp":"2021-04-15T20:56:24-0400","fourthTimestamp":"20210405"}',
             $data
         );
     }
@@ -128,7 +133,7 @@ class JsonTest extends TestCase
 
     public function testUnmarshal(): void
     {
-        $data = '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400"}';
+        $data = '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400","thirdTimestamp":"2021-04-15T20:56:24-0400","fourthTimestamp":"20210405"}';
         /** @var TestJsonItem $result */
         $result = Json::unmarshal($data, TestJsonItem::class);
         $this->assertEquals('FEAST', $result->firstName);
@@ -149,13 +154,13 @@ class JsonTest extends TestCase
 
     public function testUnmarshalMarshal(): void
     {
-        $data = '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400"}';
+        $data = '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400","thirdTimestamp":"2021-04-15T20:56:24-0400","fourthTimestamp":"20210405"}';
         $this->assertEquals($data, Json::marshal(Json::unmarshal($data, TestJsonItem::class)));
     }
 
     public function testUnmarshalMarshalUnmarshalMarshal(): void
     {
-        $data = '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400"}';
+        $data = '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-0400","thirdTimestamp":"2021-04-15T20:56:24-0400","fourthTimestamp":"20210405"}';
         $this->assertEquals(
             $data,
             Json::marshal(

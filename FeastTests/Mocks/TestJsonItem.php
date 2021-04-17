@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Mocks;
 
+use DateTime;
 use Feast\Attributes\JsonItem;
 use Feast\Collection\Collection;
 use Feast\Collection\Set;
@@ -69,6 +70,11 @@ class TestJsonItem
     public Date $timestamp;
 
     public Date $otherTimestamp;
+    
+    public DateTime $thirdTimestamp;
+
+    #[JsonItem(dateFormat: 'Ymd')]
+    public DateTime $fourthTimestamp;
 
     public function __construct()
     {
