@@ -41,7 +41,7 @@ and pressure to release.
 
 [Bailey Dickens](https://github.com/directionalpad)
 
-Baily Dickens' contributed assistance on the Contributing guidelines, as well as general feedback on certain features of
+Bailey Dickens' contributed assistance on the Contributing guidelines, as well as general feedback on certain features of
 the Framework. In addition, he tested an early version of the framework in 2014.
 
 [German Gamboa Gonzalaz](https://github.com/germangamboa95)

@@ -19,6 +19,6 @@ For the simplest way to get started see [FeastFramework/feast](https://github.co
 
 Get started with FEAST by reading the [docs](https://docs.feast-framework.com).
 
-[Contributing to FEAST](CONTRIBUTING.md)
+[Contributing to FEAST](docs/CONTRIBUTING.md)
 
 [Contributors](docs/contributors.md)
