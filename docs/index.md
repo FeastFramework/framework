@@ -57,7 +57,8 @@ line coverage in [PHPUnit](https://github.com/sebastianbergmann/phpunit).
 FEAST is radically different from every other PHP framework to date. FEAST has been carefully designed from the ground
 up with the following principles always in mind.
 
-1. No mandatory 3rd party code dependencies - FEAST took inspiration from many sources, but was written completely from scratch.
+1. No mandatory 3rd party code dependencies - FEAST took inspiration from many sources, but was written completely from
+   scratch.
 2. Cutting edge - FEAST is designed to be used with (and indeed requires)
    the latest minor release of PHP. FEAST will leverage new features of the language whenever possible.
 3. Predictable versions - FEAST will release a new major release with each PHP version and will require that new
@@ -68,6 +69,8 @@ up with the following principles always in mind.
 
 The current release of FEAST requires PHP 8.0 and (if you wish to use the Curl service classes) PHP 8.0-curl. In
 addition, PHP 8.0-bcmath is recommended.
+
+The release plan for FEAST can be found [here](release-schedule.md).
 
 ## Getting started
 

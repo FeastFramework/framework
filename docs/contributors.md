@@ -1,4 +1,5 @@
 [Back to Index](index.md)
+
 # Contributors
 
 ## Author
@@ -11,6 +12,7 @@ persuaded to release it by developers he knows and trusts.
 ## Artwork
 
 ### Whitney M. Johnston
+
 The artwork for FEAST was graciously created by Whitney M. Johnston.
 
 ## Additional Contributors
@@ -19,13 +21,15 @@ The artwork for FEAST was graciously created by Whitney M. Johnston.
 
 #### [German Gamboa Gonzalaz](https://github.com/germangamboa95)
 
-German dedicated his time to assist in writing the foundations of the documentation for FEAST. Without his generous efforts, this project
-would not exist.
+German dedicated his time to assist in writing the foundations of the documentation for FEAST. Without his generous
+efforts, this project would not exist.
 
 ### Beta Testers
 
 #### [German Gamboa Gonzalaz](https://github.com/germangamboa95)
+
 #### [khallmark](https://github.com/khallmark)
+
 ### Sounding Board
 
 The sounding board team contributed feedback and ideas as well as pressure to finally release FEAST publicly.
@@ -34,6 +38,11 @@ The sounding board team contributed feedback and ideas as well as pressure to fi
 
 khallmark's biggest contributions were elimination of waste (javascript,bash)
 and pressure to release.
+
+[Bailey Dickens](https://github.com/directionalpad)
+
+Baily Dickens' contributed assistance on the Contributing guidelines, as well as general feedback on certain features of
+the Framework. In addition, he tested an early version of the framework in 2014.
 
 [German Gamboa Gonzalaz](https://github.com/germangamboa95)
 
@@ -44,3 +53,4 @@ and pressure to release.
 [NCafarchio](https://github.com/ncafarchio)
 
 [SgtVarmint](https://github.com/SgtVarmint)
+
