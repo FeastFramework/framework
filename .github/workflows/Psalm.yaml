@@ -30,9 +30,9 @@ jobs:
         run: composer install --prefer-dist
 
       - name: Run Psalm
-        run: psalm --show-info=true --no-diff #--report=results.sarif
+        run: psalm --show-info=true --no-diff --report=results.sarif
 
-#      - name: Upload Security Analysis results to GitHub
-#        uses: github/codeql-action/upload-sarif@v1
-#        with:
-#          sarif_file: results.sarif
+      - name: Upload Security Analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
