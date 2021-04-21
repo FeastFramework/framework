@@ -51,7 +51,7 @@ class Json
          * @var array{name:string|null,type:string|null,dateFormat:string,included:bool} $newInfo
          */
         foreach ($paramInfo as $oldName => $newInfo) {
-            if ( $newInfo['included'] === false ) {
+            if ($newInfo['included'] === false) {
                 continue;
             }
             $newName = $newInfo['name'];
@@ -60,12 +60,12 @@ class Json
             if ($reflected->isInitialized($object)) {
                 /** @var scalar|object|array $oldItem */
                 $oldItem = $object->{$oldName};
-                if (is_object(
+                if (is_array($oldItem) || $oldItem instanceof \stdClass) {
+                    $return->{$newName} = self::marshalArray((array)$oldItem);
+                } elseif (is_object(
                         $oldItem
                     ) && $oldItem instanceof Collection === false && $oldItem instanceof DateTime === false && $oldItem instanceof Date === false) {
                     $return->{$newName} = (object)json_decode(self::marshal($oldItem));
-                } elseif (is_array($oldItem)) {
-                    $return->{$newName} = self::marshalArray($oldItem);
                 } elseif ($oldItem instanceof Collection) {
                     $return->{$newName} = self::marshalArray($oldItem->toArray());
                 } elseif ($oldItem instanceof Date) {
@@ -148,10 +148,10 @@ class Json
          * @var scalar|object|array $item
          */
         foreach ($items as $key => $item) {
-            if (is_object($item)) {
+            if (is_array($item) || $item instanceof \stdClass) {
+                $return[$key] = self::marshalArray((array)$item);
+            } elseif (is_object($item)) {
                 $return[$key] = (array)json_decode(self::marshal($item));
-            } elseif (is_array($item)) {
-                $return[$key] = self::marshalArray($item);
             } else {
                 $return[$key] = $item;
             }
@@ -298,6 +298,22 @@ class Json
     }
 
     /**
+     * Unmarshal a property into stdClass.
+     *
+     * @param ReflectionProperty $property
+     * @param object $object
+     * @param array $jsonData
+     */
+    protected static function unmarshalStdClass(
+        ReflectionProperty $property,
+        object $object,
+        array $jsonData
+    ): void {
+        $newProperty = $property->getName();
+        $object->{$newProperty} = (object)json_decode(json_encode($jsonData));
+    }
+
+    /**
      * Unmarshal a property onto the object.
      *
      * @param ReflectionProperty $property
@@ -325,6 +341,8 @@ class Json
                 $propertySubtype,
                 $propertyValue,
             );
+        } elseif ($propertyType === \stdClass::class && is_array($propertyValue)) {
+            self::unmarshalStdClass($property, $object, $propertyValue);
         } elseif (is_a($propertyType, Set::class, true) && is_array($propertyValue)) {
             /** @psalm-suppress MixedArgumentTypeCoercion */
             self::unmarshalSet(

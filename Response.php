@@ -26,6 +26,8 @@ use Feast\Interfaces\ResponseInterface;
 use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
+use JsonException;
+use ReflectionException;
 
 /**
  * Manage HTTP Response.
@@ -36,6 +38,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
 
     private int $responseCode = ResponseCode::HTTP_CODE_200;
     private bool $isJson = false;
+    private object|null $jsonResponse = null;
     private ?string $redirectPath = null;
 
     /**
@@ -75,7 +78,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      * @param View $view
      * @param RouterInterface $router
      * @param string $routePath
-     * @throws \JsonException
+     * @throws JsonException|ReflectionException
      */
     public function sendResponse(View $view, RouterInterface $router, string $routePath): void
     {
@@ -86,7 +89,11 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
         }
         if ($this->isJson()) {
             header('Content-type: application/json');
-            echo json_encode($view, JSON_THROW_ON_ERROR, 4096);
+            if ($this->jsonResponse !== null) {
+                echo Json::marshal($this->jsonResponse);
+            } else {
+                echo json_encode($view, JSON_THROW_ON_ERROR, 4096);
+            }
         } else {
             $view->showView(
                 ucfirst($router->getControllerNameCamelCase()),
@@ -114,6 +121,9 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     public function setJson(bool $isJson = true): void
     {
         $this->isJson = $isJson;
+        if ($isJson === false) {
+            $this->jsonResponse = null;
+        }
     }
 
     /**
@@ -137,6 +147,17 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     {
         $this->redirectPath = $path;
         $this->setResponseCode($code);
+    }
+
+    /**
+     * Mark the Response as a JSON response and send the passed in object.
+     *
+     * @param object $response
+     */
+    public function setJsonWithResponseObject(object $response): void
+    {
+        $this->jsonResponse = $response;
+        $this->setJson();
     }
 
 }

@@ -66,11 +66,13 @@ class TestJsonItem
 
     public int $records;
 
+    public \stdClass $aClass;
+
     #[JsonItem(dateFormat: 'Ymd')]
     public Date $timestamp;
 
     public Date $otherTimestamp;
-    
+
     public DateTime $thirdTimestamp;
 
     #[JsonItem(dateFormat: 'Ymd')]
@@ -78,7 +80,7 @@ class TestJsonItem
 
     #[JsonItem(included: false)]
     public string $notIncluded;
-    
+
     public function __construct()
     {
     }

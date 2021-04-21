@@ -52,7 +52,7 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * @param string $routePath
      */
     public function sendResponse(View $view, RouterInterface $router, string $routePath): void;
-    
+
     /**
      * Check whether response is a JSON response.
      *
@@ -81,4 +81,11 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * @return string|null
      */
     public function getRedirectPath(): ?string;
+
+    /**
+     * Mark the Response as a JSON response and send the passed in object.
+     *
+     * @param object $response
+     */
+    public function setJsonWithResponseObject(object $response): void;
 }

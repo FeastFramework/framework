@@ -50,39 +50,82 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $response->redirect('Test');
-        $response->sendResponse($this->createStub(\Feast\View::class), $this->createStub(\Feast\Interfaces\RouterInterface::class), '');
+        $response->sendResponse(
+            $this->createStub(\Feast\View::class),
+            $this->createStub(\Feast\Interfaces\RouterInterface::class),
+            ''
+        );
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Location:Test',$output);
-        $this->assertEquals(302,\Feast\ResponseMock::$code);
+        $this->assertEquals('Location:Test', $output);
+        $this->assertEquals(302, \Feast\ResponseMock::$code);
     }
 
     public function testSendResponseOutputJson(): void
     {
         $response = new Response();
         $response->setJson();
-        $response->sendResponse($this->createStub(\Feast\View::class), $this->createStub(\Feast\Interfaces\RouterInterface::class), '');
+        $response->sendResponse(
+            $this->createStub(\Feast\View::class),
+            $this->createStub(\Feast\Interfaces\RouterInterface::class),
+            ''
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals('Content-type: application/json{}', $output);
-
     }
 
     public function testSendResponseOutput(): void
     {
         $response = new Response();
-        $response->sendResponse($this->createStub(\Feast\View::class), $this->createStub(\Feast\Interfaces\RouterInterface::class), '');
+        $response->sendResponse(
+            $this->createStub(\Feast\View::class),
+            $this->createStub(\Feast\Interfaces\RouterInterface::class),
+            ''
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals('', $output);
-        $this->assertEquals(200,\Feast\ResponseMock::$code);
-
-
+        $this->assertEquals(200, \Feast\ResponseMock::$code);
     }
 
     public function testIsJson(): void
     {
-        $request = new Response();
-        $this->assertFalse($request->isJson());
-        $request->setJson();
-        $this->assertTrue($request->isJson());
+        $response = new Response();
+        $this->assertFalse($response->isJson());
+        $response->setJson();
+        $this->assertTrue($response->isJson());
+    }
+
+    public function testJsonResponse(): void
+    {
+        $responseItem = new \Mocks\TestJsonItem();
+        $responseItem->firstName = 'FEAST';
+        $response = new Response();
+        $response->setJsonWithResponseObject($responseItem);
+        $this->assertTrue($response->isJson());
+        $response->sendResponse(
+            $this->createStub(\Feast\View::class),
+            $this->createStub(\Feast\Interfaces\RouterInterface::class),
+            ''
+        );
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Content-type: application/json{"first_name":"FEAST","calls":null}', $output);
+    }
+
+    public function testJsonResponseReset(): void
+    {
+        $responseItem = new \Mocks\TestJsonItem();
+        $responseItem->firstName = 'FEAST';
+        $response = new Response();
+        $response->setJsonWithResponseObject($responseItem);
+        $this->assertTrue($response->isJson());
+        $response->setJson(false);
+        $this->assertFalse($response->isJson());
+        $response->sendResponse(
+            $this->createStub(\Feast\View::class),
+            $this->createStub(\Feast\Interfaces\RouterInterface::class),
+            ''
+        );
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('', $output);
     }
 
     public function testRedirect(): void
