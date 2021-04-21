@@ -42,6 +42,7 @@ class JsonTest extends TestCase
         $item->firstName = 'FEAST';
         $item->lastName = 'Framework';
         $item->count = 4;
+        $item->notIncluded = 'Testing';
 
         $item->item = new TestJsonItem();
         $item->item->firstName = 'Jeremy';

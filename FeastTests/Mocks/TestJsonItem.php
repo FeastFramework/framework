@@ -76,6 +76,9 @@ class TestJsonItem
     #[JsonItem(dateFormat: 'Ymd')]
     public DateTime $fourthTimestamp;
 
+    #[JsonItem(included: false)]
+    public string $notIncluded;
+    
     public function __construct()
     {
     }

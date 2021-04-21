@@ -24,14 +24,16 @@ as an object. This includes any nested objects.
 ### The Attribute
 
 `\Feast\Attributes\JsonItem` is a PHP8 attribute that is used to decorate properties in your class to specify
-transformations on JSON data. It has three optional properties.
+transformations on JSON data. It has four optional properties.
 
 1. `name` - specifies an alternate name to be used when serializing to JSON as well as the name of the key for this
    property when reading from the JSON string. If not supplied, the class property name will be used as the name.
 2. `arrayOrCollectionType` - used as a decorator on arrays or `\Feast\Collection\Collection` and its descendents to
    specify what the type contained inside a collection is. This can be used to mark a property as being a collection of
    another type.
-3. `dateFormat` - Specifies the format to serialize into for objects of the `\Feast\Date` class. Defaults to ISO 8601.
+3. `dateFormat` - Specifies the format to serialize into for objects of the `\Feast\Date` class. Defaults to ISO-8601.
+4. `included` - Defaults to true. If set to false, Json strings created with the `Json::marshal` function will not
+   include the property.
 
 [Back to Top](#working-with-json-and-objects)
 
@@ -50,12 +52,15 @@ class TestJsonItem
     public array $items;
     #[JsonItem(dateFormat: 'Ymd')]
     public Date $timestamp;
+    #[JsonItem(included: false)]
+    public string $notIncluded;
 ```
 
-This class has four properties. The first, `$firstName` is a string, and is pulled from the `first_name` key. The second
+This class has five properties. The first, `$firstName` is a string, and is pulled from the `first_name` key. The second
 property is `$lastName` and behaves the same as `$firstName`. The third property is an array. This array contains other
 items of the same class. These items will marshal or unmarshal through all layers. The fourth property is an instance
-of `\Feast\Date`
+of `\Feast\Date`. The fifth property, `$notIncluded` is a string that is pulled from `notIncluded` in the JSON, but will
+NOT be marshalled back into JSON.
 
 Sample string below:
 
@@ -69,7 +74,8 @@ Sample string below:
       "last_name": "Presutti"
     }
   ],
-  "timestamp": "20210405"
+  "timestamp": "20210405",
+  "notIncluded": "Feast"
 }
 ```
 
@@ -79,7 +85,8 @@ Assuming the json string was assigned to `$string`, unmarshalling would be perfo
 Json::unmarshal($string,TestJsonItem::class);
 ```
 
-In addition, calling either of the following would return the JSON string again (in minified format).
+In addition, calling either of the following would return the JSON string again (in minified format) with `notIncluded`
+not contained in the string.
 
 ```php
 $object = Json::unmarshal($string,TestJsonItem::class);
@@ -98,6 +105,7 @@ $object = new TestJsonItem();
 $object->firstName = 'FEAST';
 $object->lastName = 'Framework';
 $object->timestamp = Date::createFromFormat('Ymd','20210405');
+$object->notIncluded = 'Feast';
 
 $secondaryObject = new TestJsonItem();
 $secondaryObject->firstName = 'Jeremy';
@@ -105,5 +113,7 @@ $secondaryObject->lastName = 'Presutti';
 
 $object->items = [$secondaryObject];
 ```
+
+Note that if the above object is marshalled it will NOT contain the `notIncluded` property.
 
 [Back to Top](#working-with-json-and-objects)

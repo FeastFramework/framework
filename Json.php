@@ -48,9 +48,12 @@ class Json
         $paramInfo = self::getClassParamInfo($object::class);
         /**
          * @var string $oldName
-         * @var array{name:string|null,type:string|null,dateFormat:string} $newInfo
+         * @var array{name:string|null,type:string|null,dateFormat:string,included:bool} $newInfo
          */
         foreach ($paramInfo as $oldName => $newInfo) {
+            if ( $newInfo['included'] === false ) {
+                continue;
+            }
             $newName = $newInfo['name'];
 
             $reflected = new ReflectionProperty($object, $oldName);
@@ -159,7 +162,7 @@ class Json
 
     /**
      * @param class-string $class
-     * @return array<array{name:string|null,type:string|null,dateFormat:string|null}>
+     * @return array<array{name:string|null,type:string|null,dateFormat:string|null,included:bool}>
      * @throws ReflectionException
      */
     protected static function getClassParamInfo(
@@ -171,6 +174,7 @@ class Json
             $name = $property->getName();
             $type = null;
             $dateFormat = Date::ISO8601;
+            $included = true;
             $attributes = $property->getAttributes(JsonItem::class);
             foreach ($attributes as $attribute) {
                 /** @var JsonItem $attributeObject */
@@ -178,8 +182,14 @@ class Json
                 $name = $attributeObject->name ?? $name;
                 $type = $attributeObject->arrayOrCollectionType;
                 $dateFormat = $attributeObject->dateFormat;
+                $included = $attributeObject->included;
             }
-            $return[$property->getName()] = ['name' => $name, 'type' => $type, 'dateFormat' => $dateFormat];
+            $return[$property->getName()] = [
+                'name' => $name,
+                'type' => $type,
+                'dateFormat' => $dateFormat,
+                'included' => $included
+            ];
         }
         return $return;
     }

@@ -32,11 +32,13 @@ class JsonItem
      * @param string|null $name
      * @param string|null $arrayOrCollectionType
      * @param string $dateFormat - Only used if the actual property type is a Date. This will specify the format it should be converted to in the json string.
+     * @param bool $included - If included is false, JSON strings from the decorated object will not include this property.
      */
     public function __construct(
         public ?string $name = null,
         public ?string $arrayOrCollectionType = null,
-        public string $dateFormat = Date::ISO8601
+        public string $dateFormat = Date::ISO8601,
+        public bool $included = true
     ) {
     }
 }
