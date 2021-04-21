@@ -82,7 +82,7 @@ class ServerFailureException extends Exception
         $responseCode = $this->getResponseCode();
         if ($responseCode !== null) {
             $response->setResponseCode($responseCode);
-            $response->sendResponse();
+            $response->sendResponseCode();
         }
         $request = di(RequestInterface::class);
         $format = $request->getArgumentString('format');

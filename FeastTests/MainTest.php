@@ -170,29 +170,7 @@ class MainTest extends TestCase
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals('Success!', $output);
     }
-
-    public function testMainWebAppRedirectPath(): void
-    {
-        $main = $this->getMain(Main::RUN_AS_WEBAPP);
-        /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
-        $router = di(RouterInterface::class);
-        $response = di(ResponseInterface::class);
-
-        $router->method('getControllerClass')->willReturn('FeastTestController');
-        $router->method('getControllerName')->willReturn('feast-test');
-        $router->method('getControllerFullyQualifiedName')->willReturn(
-            \Modules\Test\Controllers\FeastTestController::class
-        );
-
-        $router->method('getAction')->willReturn('serviceAction');
-        $router->method('getActionName')->willReturn('service');
-        $router->method('getActionMethodName')->willReturn('serviceGet');
-        $router->method('getModuleName')->willReturn('Test');
-        $response->method('getRedirectPath')->willReturnOnConsecutiveCalls(null, 'Test', 'Test');
-        $main->main();
-        $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Success!Location:Test', $output);
-    }
+    
 
     public function testMainWebAppJson(): void
     {
@@ -216,7 +194,7 @@ class MainTest extends TestCase
         $response->method('isJson')->willReturn(true);
         $main->main();
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Success!Content-type: application/json{}', $output);
+        $this->assertEquals('Success!', $output);
         unset($_SERVER['REQUEST_URI']);
     }
 
@@ -387,7 +365,7 @@ class MainTest extends TestCase
             ]
         );
         $container->add(RequestInterface::class, $request);
-        $container->add(ResponseInterface::class, $this->createStub(Response::class));
+        $container->add(ResponseInterface::class, $this->createStub(ResponseInterface::class));
         $container->add(
             \Feast\Interfaces\DatabaseFactoryInterface::class,
             $this->createStub(\Feast\Interfaces\DatabaseFactoryInterface::class)

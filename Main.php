@@ -152,29 +152,6 @@ class Main implements MainInterface
         }
     }
 
-    protected function sendResponse(
-        ResponseInterface $response,
-        RouterInterface $router,
-        RequestInterface $request,
-        View $view
-    ): void {
-        $response->sendResponse();
-        if ($response->getRedirectPath()) {
-            header('Location:' . (string)$response->getRedirectPath());
-            return;
-        }
-        if ($response->isJson()) {
-            header('Content-type: application/json');
-            echo json_encode($view, JSON_THROW_ON_ERROR,4096);
-        } else {
-            $view->showView(
-                ucfirst($router->getControllerNameCamelCase()),
-                $router->getActionNameDashes(),
-                $this->routePath
-            );
-        }
-    }
-
     protected function runControllerLoop(
         RouterInterface $router,
         RequestInterface $request,
@@ -189,7 +166,7 @@ class Main implements MainInterface
             $moduleName = $router->getModuleName();
             $this->routePath = $moduleName != 'Default' ? '/Modules/' . $moduleName . '/' : '';
 
-            $this->checkForcontrollerAndAction($controllerClass, $controllerName, $actionName);
+            $this->checkForControllerAndAction($controllerClass, $controllerName, $actionName);
             /* @var $controller ControllerInterface */
             $arguments = $this->buildDynamicParameters($controllerClass, '__construct', $request, false);
             /**
@@ -478,7 +455,7 @@ class Main implements MainInterface
         /** @var string|null $errorUrl */
         $errorUrl = $config->getSetting('error.http404.url', 'error/fourohfour');
         if (is_string($errorUrl)) {
-            $response->sendResponse();
+            $response->sendResponseCode();
             header('Location:/' . $errorUrl);
             return;
         }
@@ -491,7 +468,7 @@ class Main implements MainInterface
         ConfigInterface $config
     ): void {
         if ($exception instanceof ThrottleException) {
-            $response->sendResponse();
+            $response->sendResponseCode();
             $errorUrl = (string)$config->getSetting('error.throttle.url', 'error/rate-limit');
             header('Location:/' . $errorUrl);
             return;
@@ -514,11 +491,11 @@ class Main implements MainInterface
         // Run Plugins
         $this->runPlugins('postDispatch', $router, $request);
         if ($this->runAs === self::RUN_AS_WEBAPP) {
-            $this->sendResponse($response, $router, $request, $view);
+            $response->sendResponse($view, $router, $this->routePath);
         }
     }
 
-    protected function checkForcontrollerAndAction(
+    protected function checkForControllerAndAction(
         string $controllerClass,
         string $controllerName,
         string $actionName

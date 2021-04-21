@@ -22,6 +22,7 @@ namespace Feast\Interfaces;
 
 use Exception;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
+use Feast\View;
 
 /**
  * Manage HTTP Response codes.
@@ -41,8 +42,17 @@ interface ResponseInterface extends ServiceContainerItemInterface
     /**
      * Send http response header.
      */
-    public function sendResponse(): void;
+    public function sendResponseCode(): void;
 
+    /**
+     * Send the appropriate response.
+     *
+     * @param View $view
+     * @param RouterInterface $router
+     * @param string $routePath
+     */
+    public function sendResponse(View $view, RouterInterface $router, string $routePath): void;
+    
     /**
      * Check whether response is a JSON response.
      *

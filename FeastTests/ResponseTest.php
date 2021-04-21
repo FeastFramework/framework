@@ -24,10 +24,10 @@ use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase
 {
-    public function testResponse(): void
+    public function testResponseCode(): void
     {
         $response = new Response();
-        $response->sendResponse();
+        $response->sendResponseCode();
         $this->assertTrue(Feast\ResponseMock::$code === 200);
     }
 
@@ -35,7 +35,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $response->setResponseCode(ResponseCode::HTTP_CODE_404);
-        $response->sendResponse();
+        $response->sendResponseCode();
         $this->assertTrue(Feast\ResponseMock::$code === 404);
     }
 
@@ -44,6 +44,37 @@ class ResponseTest extends TestCase
         $response = new Response();
         $this->expectException(ResponseException::class);
         $response->setResponseCode(99999);
+    }
+
+    public function testSendResponseOutputRedirect(): void
+    {
+        $response = new Response();
+        $response->redirect('Test');
+        $response->sendResponse($this->createStub(\Feast\View::class), $this->createStub(\Feast\Interfaces\RouterInterface::class), '');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Location:Test',$output);
+        $this->assertEquals(302,\Feast\ResponseMock::$code);
+    }
+
+    public function testSendResponseOutputJson(): void
+    {
+        $response = new Response();
+        $response->setJson();
+        $response->sendResponse($this->createStub(\Feast\View::class), $this->createStub(\Feast\Interfaces\RouterInterface::class), '');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Content-type: application/json{}', $output);
+
+    }
+
+    public function testSendResponseOutput(): void
+    {
+        $response = new Response();
+        $response->sendResponse($this->createStub(\Feast\View::class), $this->createStub(\Feast\Interfaces\RouterInterface::class), '');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('', $output);
+        $this->assertEquals(200,\Feast\ResponseMock::$code);
+
+
     }
 
     public function testIsJson(): void

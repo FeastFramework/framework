@@ -23,6 +23,7 @@ namespace Feast;
 use Feast\Enums\ResponseCode;
 use Feast\Exception\ResponseException;
 use Feast\Interfaces\ResponseInterface;
+use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 
@@ -63,9 +64,36 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     /**
      * Send http response header.
      */
-    public function sendResponse(): void
+    public function sendResponseCode(): void
     {
         http_response_code($this->responseCode);
+    }
+
+    /**
+     * Send the appropriate response.
+     *
+     * @param View $view
+     * @param RouterInterface $router
+     * @param string $routePath
+     * @throws \JsonException
+     */
+    public function sendResponse(View $view, RouterInterface $router, string $routePath): void
+    {
+        $this->sendResponseCode();
+        if ($this->getRedirectPath()) {
+            header('Location:' . (string)$this->getRedirectPath());
+            return;
+        }
+        if ($this->isJson()) {
+            header('Content-type: application/json');
+            echo json_encode($view, JSON_THROW_ON_ERROR, 4096);
+        } else {
+            $view->showView(
+                ucfirst($router->getControllerNameCamelCase()),
+                $router->getActionNameDashes(),
+                $routePath
+            );
+        }
     }
 
     /**
