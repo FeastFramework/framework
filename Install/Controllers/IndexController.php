@@ -21,16 +21,9 @@ declare(strict_types=1);
 namespace Controllers;
 
 use Feast\HttpController;
-use Feast\ServiceContainer\ServiceContainer;
-use Feast\View;
 
 class IndexController extends HttpController
 {
-
-    public function __construct(View $view, ServiceContainer $di)
-    {
-        parent::__construct($di, $view);
-    }
 
     public function indexGet(): void
     {

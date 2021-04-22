@@ -29,7 +29,8 @@ class ControllerTest extends TestCase
     {
         $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $view = $this->createStub(\Feast\View::class);
-        $controller = new EmptyController($container, $view);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
 
         $this->assertFalse($controller->alwaysJson('test'));
     }
@@ -51,7 +52,8 @@ class ControllerTest extends TestCase
         $container->add(\Feast\Interfaces\RouterInterface::class, $mockRouter);
 
         $view = $this->createStub(\Feast\View::class);
-        $controller = new EmptyController($container, $view);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
         $controller->allowJsonForAction('test');
 
         $this->assertTrue($controller->jsonAllowed());
@@ -67,7 +69,8 @@ class ControllerTest extends TestCase
         $container->add(\Feast\Interfaces\RouterInterface::class, $mockRouter);
 
         $view = $this->createStub(\Feast\View::class);
-        $controller = new EmptyController($container, $view);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
         $controller->allowJsonForAction('testing');
 
         $this->assertFalse($controller->jsonAllowed());
@@ -81,7 +84,8 @@ class ControllerTest extends TestCase
         $container->add(\Feast\Interfaces\RouterInterface::class, $mockRouter);
 
         $view = $this->createStub(\Feast\View::class);
-        $controller = new EmptyController($container, $view);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
         $controller->forward();
         // If we get this far it didn't fail. The Router tests will test the individual logic pieces.
         $this->assertTrue($controller instanceof HttpController);
@@ -95,7 +99,8 @@ class ControllerTest extends TestCase
         $container->add(\Feast\Interfaces\ResponseInterface::class, $mockResponse);
 
         $view = $this->createStub(\Feast\View::class);
-        $controller = new EmptyController($container, $view);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
         $controller->externalRedirect('http://www.google.com');
         // If we get this far it didn't fail. The Router tests will test the individual logic pieces.
         $this->assertTrue($controller instanceof HttpController);
@@ -105,7 +110,8 @@ class ControllerTest extends TestCase
     {
         $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $view = $this->createStub(\Feast\View::class);
-        $controller = new EmptyController($container, $view);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
         $this->assertTrue($controller->init());
     }
 
@@ -126,9 +132,27 @@ class ControllerTest extends TestCase
         $mockResponse = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
         $container->add(\Feast\Interfaces\ResponseInterface::class, $mockResponse);
         $view = $this->createStub(\Feast\View::class);
-        $controller = new EmptyController($container, $view);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
         $controller->redirect();
         // If we get this far it didn't fail. The Router tests will test the individual logic pieces.
+        $this->assertTrue($controller instanceof HttpController);
+    }
+    
+    public function testJson(): void
+    {
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+
+        $mockRouter = $this->createStub(\Feast\Interfaces\RouterInterface::class);
+        $container->add(\Feast\Interfaces\RouterInterface::class, $mockRouter);
+
+        $mockResponse = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $container->add(\Feast\Interfaces\ResponseInterface::class, $mockResponse);
+        $view = $this->createStub(\Feast\View::class);
+        $response = $this->createStub(\Feast\Interfaces\ResponseInterface::class);
+        $controller = new EmptyController($container, $view, $response);
+        $controller->sendJsonResponse(new stdClass());
+        // If we get this far it didn't fail. The Response test will test the actual json assignment.
         $this->assertTrue($controller instanceof HttpController);
     }
 }

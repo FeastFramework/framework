@@ -23,8 +23,8 @@ namespace Feast;
 use Feast\Enums\ResponseCode;
 use Feast\Interfaces\ControllerInterface;
 use Feast\Interfaces\ResponseInterface;
-use Feast\ServiceContainer\NotFoundException;
 use Feast\Interfaces\RouterInterface;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainer;
 
 /**
@@ -34,16 +34,20 @@ abstract class HttpController implements ControllerInterface
 {
 
     public \stdClass $jsonEnabledActions;
+    public ResponseInterface $response;
 
     /**
      * Initial creation of Controller
      *
      * @param ServiceContainer $di
      * @param View $view
+     * @param ResponseInterface|null $response
+     * @throws NotFoundException
      */
-    public function __construct(public ServiceContainer $di, public View $view)
+    public function __construct(public ServiceContainer $di, public View $view, ?ResponseInterface $response = null)
     {
         $this->jsonEnabledActions = new \stdClass();
+        $this->response = $response ?? $di->get(ResponseInterface::class);
     }
 
     /**
@@ -58,7 +62,7 @@ abstract class HttpController implements ControllerInterface
 
     /**
      * Forward to another action/controller/route.
-     * 
+     *
      * The preDispatch for plugins will NOT rerun. PostDispatch runs on the final action only.
      *
      * @param string|null $action
@@ -85,11 +89,16 @@ abstract class HttpController implements ControllerInterface
         $router->forward();
     }
 
+    public function sendJsonResponse(object $responseObject): void
+    {
+        $this->response->setJsonWithResponseObject($responseObject);
+    }
+
     /**
      * Check if an action should always be JSON.
-     * 
+     *
      * Defaults to false.
-     * 
+     *
      * @param string $actionName
      * @return bool
      */
@@ -100,7 +109,7 @@ abstract class HttpController implements ControllerInterface
 
     /**
      * Redirect to another action/controller/route.
-     * 
+     *
      * Sends a redirect after post dispatch plugins are ran.
      *
      * @param string|null $action
@@ -155,7 +164,7 @@ abstract class HttpController implements ControllerInterface
 
     /**
      * Return if an action is allowed to return a JSON object.
-     * 
+     *
      * If false, format/json will have NO effect.
      *
      * @return bool

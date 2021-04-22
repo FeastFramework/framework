@@ -76,6 +76,10 @@ on the request URL.
 ### jsonAllowed
 This method returns true if the current request can be a json response and false otherwise.
 
+### sendJsonResponse
+This method takes an object as its only argument. It marks the response as a json response, and sets the passed in object as
+the object to be serialized as the response. This object will run through the [JSON Marshaller](json.md). 
+
 [Back to Top](#working-with-controllers)
 
 ## CliController
