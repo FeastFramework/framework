@@ -209,21 +209,23 @@ class Json
         array $jsonData
     ): void {
         $newProperty = $property->getName();
-        $object->{$newProperty} = [];
+        $item = [];
+        
         if (class_exists($propertySubtype, true)) {
             /**
              * @var string $key
              * @var scalar|object|array $val
              */
             foreach ($jsonData as $key => $val) {
-                $object->{$newProperty}[$key] = self::unmarshal(
+                $item[$key] = self::unmarshal(
                     json_encode($val),
                     $propertySubtype
                 );
             }
         } else {
-            $object->{$newProperty} = $jsonData;
+            $item = $jsonData;
         }
+        $object->{$newProperty} = $item;
     }
 
     /**

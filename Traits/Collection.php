@@ -123,8 +123,8 @@ trait Collection
                     $sortA = '';
                     $sortB = '';
                     foreach ($key as $k) {
-                        $sortA .= $a->$k;
-                        $sortB .= $b->$k;
+                        $sortA .= (string)$a->$k;
+                        $sortB .= (string)$b->$k;
                     }
 
                     return strcmp($sortA, $sortB);

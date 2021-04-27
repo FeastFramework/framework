@@ -291,8 +291,11 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $requestMethod = $this->getCurrentRequestMethod();
         for ($i = 0; $i < $queryStringLength; $i++) {
             $checkString = implode('/', $queryString);
-            /** @var ?RouteData $namedRoute */
-            $namedRoute = $this->routes->$requestMethod->$checkString ?? null;
+            /** @var \stdClass $routeGroup */
+            $routeGroup = $this->routes->$requestMethod;
+            /** @var ?RouteData $namedRoute
+             */
+            $namedRoute = $routeGroup->$checkString ?? null;
             if ($namedRoute !== null) {
                 $this->buildNamedRoute($arguments, $queryStringLength, $i, $namedRoute, $checkString);
                 return true;
@@ -623,11 +626,13 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      */
     public function getDefaultArguments(string $route, string $requestMethod): ?array
     {
-        if (empty($this->routes->$requestMethod->$route)) {
+        /** @var \stdClass $namedRoute */
+        $namedRoute = $this->routes->$requestMethod;
+        if (empty($namedRoute->$route)) {
             throw new Error404Exception('Route ' . $route . ' does not exist', 500);
         }
         /** @var RouteData $routeData */
-        $routeData = $this->routes->$requestMethod->$route;
+        $routeData = $namedRoute->$route;
 
         return $routeData->arguments;
     }
@@ -662,7 +667,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $path = explode('/', $path);
         $argumentsLength = count($path);
         $routePath = $path['0'];
-        $argumentChain = $argumentOrder = [];
+        $argumentChain = [];
         for ($i = 1; $i < $argumentsLength; $i++) {
             $argument = $path[$i];
             if (!str_starts_with($argument, ':')) {

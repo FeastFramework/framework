@@ -105,7 +105,7 @@ abstract class BaseModel
                     ' ',
                     $field
                 )
-            ) . ' Changed From "' . $oldModel->$field . '" to "' . $this->$field . '"';
+            ) . ' Changed From "' . (string)$oldModel->$field . '" to "' . (string)$this->$field . '"';
     }
 
     /**

@@ -300,6 +300,7 @@ abstract class BaseMapper
         }
 
         $original = get_object_vars($originalObject);
+        /** @psalm-suppress EmptyArrayAccess - This is not correct. */
         unset($original[chr(0) . '*' . chr(0) . 'originalModel']);
         if ($original === $fields) {
             return [];
