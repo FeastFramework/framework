@@ -13,7 +13,6 @@
 >
     <issueHandlers>
         <UnnecessaryVarAnnotation errorLevel="suppress" />
-        <UnusedVariable errorLevel="suppress" /><!-- THIS IS BROKEN! See Router.php line 491. Psalm-suppress also does not work -->
         <UndefinedClass>
             <errorLevel type="suppress">
                 <directory name="FeastTests"/>
