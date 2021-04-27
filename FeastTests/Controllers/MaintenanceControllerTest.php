@@ -31,6 +31,11 @@ use PHPUnit\Framework\TestCase;
 class MaintenanceControllerTest extends TestCase
 {
 
+    public function setUp(): void
+    {
+        \Feast\Controllers\unlink(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . 'maintenance-screen.phtml');
+    }
+
     public function testStartGet(): void
     {
         $config = $this->createStub(Config::class);

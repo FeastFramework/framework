@@ -84,4 +84,58 @@ class TerminalTest extends TestCase
         $this->expectOutputString('test' . "\n");
         $terminal->message('test');
     }
+
+    public function testPrompt(): void
+    {
+        $terminal = new Terminal(false);
+        \Feast\ReadlineMock::$responses = ['FEAST'];
+        $this->expectOutputString('What is your name?');
+        $result = $terminal->getInputFromPrompt('What is your name?');
+        $this->assertEquals('FEAST', $result);
+    }
+
+    public function testPromptWithDefault(): void
+    {
+        $terminal = new Terminal(false);
+        \Feast\ReadlineMock::$responses = [''];
+        $this->expectOutputString('What is your name?[FEAST]');
+        $result = $terminal->getInputFromPrompt('What is your name?', 'FEAST');
+        $this->assertEquals('FEAST', $result);
+    }
+
+    public function testPromptArrayWithSentinal(): void
+    {
+        $terminal = new Terminal(false);
+        \Feast\ReadlineMock::$responses = ['Food', 'PHP', 'To crush your enemies', 'FEAST', 'Not Feast'];
+        $this->expectOutputString('What is best in life?
+Enter \'FEAST\' when finished.
+[][][][]');
+        $result = $terminal->getArrayFromPromptWithSentinel('What is best in life?', 'FEAST');
+        $this->assertEquals(
+            [
+                'Food',
+                'PHP',
+                'To crush your enemies',
+            ],
+            $result
+        );
+    }
+    
+    public function testPromptArrayWithCount(): void
+    {
+        $terminal = new Terminal(false);
+        \Feast\ReadlineMock::$responses = ['Food', 'PHP', 'To crush your enemies', '', 'FEAST', 'Not Feast'];
+        $this->expectOutputString('What is best in life?What else is best in life?What else is best in life?What else is best in life?What else is best in life?');
+        $result = $terminal->getArrayFromPromptWithCount('What is best in life?', 4, 'What else is best in life?');
+        $this->assertEquals(
+            [
+                'Food',
+                'PHP',
+                'To crush your enemies',
+                'FEAST'
+            ],
+            $result
+        );
+
+    }
 }

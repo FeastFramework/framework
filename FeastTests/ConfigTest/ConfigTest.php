@@ -135,4 +135,9 @@ class ConfigTest extends TestCase
         $this->expectException(ConfigException::class);
         new Config(overriddenEnvironment: 'potato');
     }
+    
+    public function tearDown(): void
+    {
+        \Feast\Config\TempData::$allowIni = true;
+    }
 }

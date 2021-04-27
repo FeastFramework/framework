@@ -41,7 +41,7 @@ class Terminal
 
     /**
      * Get error text.
-     * 
+     *
      * @param string $text
      * @return string
      */
@@ -52,7 +52,7 @@ class Terminal
 
     /**
      * Get command text.
-     * 
+     *
      * @param string $text
      * @return string
      */
@@ -63,7 +63,7 @@ class Terminal
 
     /**
      * Get message text.
-     * 
+     *
      * @param string $text
      * @return string
      */
@@ -74,7 +74,7 @@ class Terminal
 
     /**
      * Reset color codes.
-     * 
+     *
      * @return string
      */
     private function resetColor(): string
@@ -84,7 +84,7 @@ class Terminal
 
     /**
      * Output an error to the console.
-     * 
+     *
      * @param string $text
      * @param bool $newLine
      */
@@ -124,4 +124,96 @@ class Terminal
         }
     }
 
+    /**
+     * Prompt for user input on the terminal.
+     *
+     * @param string $question
+     * @param string|false $default
+     * @return false|string
+     */
+    public function getInputFromPrompt(string $question, string|false $default = false): false|string
+    {
+        $prompt = $question;
+
+        if ($default !== false) {
+            $prompt .= '[' . $default . ']';
+        }
+        $value = readline($prompt);
+        if ( $value === '' || $value === false ) {
+            return $default;
+        }
+        readline_add_history($value);
+        return $value;
+    }
+
+    /**
+     * Prompt for user input on the terminal. Return when sentinelValue is entered by user.
+     *
+     * @param string $question
+     * @param string $sentinelValue
+     * @param bool $allowBlank
+     * @return array
+     */
+    public function getArrayFromPromptWithSentinel(string $question, string $sentinelValue, bool $allowBlank = false): array
+    {
+        $return = [];
+        $this->message($question);
+        $this->message('Enter \'' . $sentinelValue . '\' when finished.');
+        do {
+            $value = $this->getInputFromPrompt('[]');
+            if ($this->isValueValid($value,$allowBlank,$sentinelValue)) {
+                $return[] = $value;
+            }
+        } while ($value !== $sentinelValue);
+
+        return $return;
+    }
+    
+    /**
+     * Prompt for user input on the terminal for `count` results.
+     *
+     * This will return an array of answers. Will return when count is reached
+     *
+     * @param string $question
+     * @param int $count
+     * @param string|null $subsequentQuestion If passed in, after the first question, the prompt will change to this value.
+     * @param bool $allowBlank
+     * @return array
+     */
+    public function getArrayFromPromptWithCount(
+        string $question,
+        int $count,
+        ?string $subsequentQuestion = null,
+        bool $allowBlank = false
+    ): array {
+        $return = [];
+        for ($i = 0; $i < $count; $i++) {
+            $value = $this->getInputFromPrompt($question);
+            if ($this->isValueValid($value,$allowBlank)) {
+                $return[] = $value;
+            } else {
+                $i--;
+            }
+            
+            if ( $subsequentQuestion !== null) {
+                $question = $subsequentQuestion;
+                $subsequentQuestion = null;
+            }
+        }
+        return $return;
+    }
+
+    protected function isValueValid(string|false $value, bool $allowBlank, string|null $sentinelValue = null): bool
+    {
+        if ( $value === false ) {
+            $value = '';
+        }
+        if ( $sentinelValue !== null && $value === $sentinelValue ) {
+            return false;
+        }
+        if ( $value === '' && $allowBlank === false ) {
+            return false;
+        }
+        return true;
+    }
 }

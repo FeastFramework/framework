@@ -37,6 +37,15 @@ function passthru($data) {
     echo $data;
 }
 
+function readline($prompt): string|false {
+    echo $prompt;
+    return array_shift(ReadlineMock::$responses) ?? false;
+}
+
+function readline_add_history($prompt): void {
+
+}
+
 function header($header) {
     echo $header;
 }
@@ -46,5 +55,13 @@ class ResponseMock {
 
     public static function reset() : void {
         self::$code = null;
+    }
+}
+
+class ReadlineMock {
+    public static array $responses = [];
+    
+    public static function reset() : void {
+        self::$responses = [];
     }
 }

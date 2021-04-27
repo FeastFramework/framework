@@ -24,6 +24,12 @@ use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase
 {
+    
+    public function setUp(): void
+    {
+        di(null,\Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+    }
+
     public function testResponseCode(): void
     {
         $response = new Response();

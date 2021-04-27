@@ -33,6 +33,8 @@ class DatabaseDetailsTest extends TestCase
 {
     public function testGetConnection(): void
     {
+        /** @var \Feast\ServiceContainer\ServiceContainer $di */
+        $di = di(null, ServiceContainer::CLEAR_CONTAINER);
         $connection = $this->createStub(DatabaseInterface::class);
         $dbFactory = $this->createStub(DatabaseFactoryInterface::class);
 
@@ -48,8 +50,7 @@ class DatabaseDetailsTest extends TestCase
         $dbFactory->method('getConnection')->willReturn($connection);
         $databaseDetails = new DatabaseDetails($dbFactory);
 
-        /** @var \Feast\ServiceContainer\ServiceContainer $di */
-        $di = di(null, ServiceContainer::CLEAR_CONTAINER);
+
         $di->add(DatabaseFactoryInterface::class, $dbFactory);
         $databaseDetails->cache();
         $this->getActualOutputForAssertion();
@@ -64,6 +65,8 @@ class DatabaseDetailsTest extends TestCase
 
     public function testSetDatabaseFactory(): void
     {
+        di(null,\Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+
         $dbFactory1 = $this->createStub(DatabaseFactoryInterface::class);
         $dbFactory2 = $this->createStub(DatabaseFactoryInterface::class);
 

@@ -51,6 +51,8 @@ function mkdir($directory,$permissions, $recursive) : bool {
     return true;
 }
 function unlink($path) : bool {
+   unset(FileData::$files[$path]);
+
    return true;
 }
 
