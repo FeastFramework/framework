@@ -17,7 +17,7 @@
             <errorLevel type="suppress">
                 <file name="bootstrap.php"/>
             </errorLevel>
-        </UnusedVariable><!-- THIS IS BROKEN! See Router.php line 491. Psalm-suppress also does not work -->
+        </UnusedVariable>
         <UndefinedClass>
             <errorLevel type="suppress">
                 <directory name="FeastTests"/>
