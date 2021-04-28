@@ -102,7 +102,9 @@ The release plan for FEAST can be found [here](release-schedule.md).
 
 [Collections](collections.md)
 
-[JSON](json.md)
+[JSON Files](json.md)
+
+[CSV Files](csv.md)
 
 [Services](services.md)
 

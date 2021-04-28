@@ -29,6 +29,7 @@
         <directory name="Collection"/>
         <directory name="Config"/>
         <directory name="Controllers"/>
+        <directory name="Csv"/>
         <directory name="Database"/>
         <directory name="Email"/>
         <directory name="Enums"/>
