@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use Feast\Enums\ResponseCode;
 use Feast\Exception\Error404Exception;
 use Feast\Exception\ServerFailureException;
 use Feast\Exception\ThrottleException;
@@ -82,8 +83,7 @@ class Main implements MainInterface
         /** @var ?string $path */
         $path = $_SERVER['REQUEST_URI'] ?? null;
         if (isset($path)) {
-            array_shift($_GET);
-            $router->buildRouteForRequestUrl($path);
+            $router->buildRouteForRequestUrl(parse_url($path, PHP_URL_PATH));
         } else {
             $router->buildRouteForRequestUrl('index/index');
         }
@@ -143,7 +143,7 @@ class Main implements MainInterface
             $this->runRequest($router, $request, $response, $view);
         } catch (Error404Exception $exception) {
             if ($this->runAs === self::RUN_AS_WEBAPP) {
-                $this->handle404Exception($config, $response, $exception);
+                $this->handle404Exception($config, $exception);
             } else {
                 throw $exception;
             }
@@ -327,7 +327,7 @@ class Main implements MainInterface
 
         /** @var Plugin $plugin */
         foreach ($this->plugins as $plugin) {
-            if ( method_exists($plugin,$methodName) ) {
+            if (method_exists($plugin, $methodName)) {
                 $plugin->init($router);
                 $arguments = $this->buildDynamicParameters($plugin, $methodName, $request, false);
                 $plugin->$methodName(...$arguments);
@@ -449,14 +449,12 @@ class Main implements MainInterface
 
     protected function handle404Exception(
         ConfigInterface $config,
-        ResponseInterface $response,
         Error404Exception $exception
     ): void {
         /** @var string|null $errorUrl */
         $errorUrl = $config->getSetting('error.http404.url', 'error/fourohfour');
         if (is_string($errorUrl)) {
-            $response->sendResponseCode();
-            header('Location:/' . $errorUrl);
+            header('Location:/' . $errorUrl, true, ResponseCode::HTTP_CODE_302);
             return;
         }
         throw $exception;
