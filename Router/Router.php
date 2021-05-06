@@ -38,12 +38,13 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 use ReflectionException;
 use ReflectionMethod;
+use stdClass;
 
 class Router implements ServiceContainerItemInterface, RouterInterface
 {
     use DependencyInjected;
 
-    private \stdClass $routes;
+    private stdClass $routes;
     private string $controller = '';
     private string $action = '';
     private string $controllerName = '';
@@ -59,12 +60,12 @@ class Router implements ServiceContainerItemInterface, RouterInterface
     public function __construct(private string $runAs = Main::RUN_AS_WEBAPP)
     {
         $this->checkInjected();
-        $routes = new \stdClass();
-        $routes->GET = new \stdClass();
-        $routes->PATCH = new \stdClass();
-        $routes->DELETE = new \stdClass();
-        $routes->PUT = new \stdClass();
-        $routes->POST = new \stdClass();
+        $routes = new stdClass();
+        $routes->GET = new stdClass();
+        $routes->PATCH = new stdClass();
+        $routes->DELETE = new stdClass();
+        $routes->PUT = new stdClass();
+        $routes->POST = new stdClass();
 
         $this->routes = $routes;
     }
@@ -145,26 +146,36 @@ class Router implements ServiceContainerItemInterface, RouterInterface
 
     protected function buildNamedRoute(
         string $arguments,
-        int $queryStringLength,
-        int $i,
-        RouteData $namedRoute,
-        string $checkString
+        RouteData $namedRoute
     ): void {
-        $queryString = explode('/', $arguments);
-
-        for ($x = 0; $x < $queryStringLength - $i; $x++) {
-            array_shift($queryString);
-        }
-
+        $matches = $this->getArgumentsFromRegex($namedRoute, $arguments);
         $this->module = $namedRoute->module;
         $this->controllerName = $namedRoute->controller;
         $this->actionName = $namedRoute->action;
         $this->controller = NameHelper::getController($namedRoute->controller);
         $this->action = NameHelper::getDefaultAction($namedRoute->action);
-        $this->routeName = $checkString;
+        $this->routeName = $namedRoute->name;
 
         $isVariadic = $this->checkActionIsVariadic();
-        $this->assignArguments($namedRoute->arguments, $queryString, false, $isVariadic);
+        $this->assignArguments($namedRoute->arguments, $matches, false, $isVariadic);
+    }
+
+    /**
+     * @param RouteData $namedRoute
+     * @param string $arguments
+     * @return array<array-key,string>
+     */
+    protected function getArgumentsFromRegex(RouteData $namedRoute, string $arguments): array
+    {
+        $matches = [];
+        preg_match($namedRoute->pattern, $arguments, $matches);
+        array_shift($matches);
+        $return = [];
+        foreach ($matches as $val) {
+            $val = explode('/', $val);
+            $return = array_merge($return, $val);
+        }
+        return $return;
     }
 
     /**
@@ -188,20 +199,22 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         string $action
     ): string {
         if ($route !== '') {
-            $path = $route;
             $defaultArguments = $this->getDefaultArguments($route, $requestMethod) ?? [];
+            $routeData = $this->getRouteData($route, $requestMethod);
+            $path = $routeData->routePath;
             /**
              * @var string $key
              * @var ?string $val
              */
             foreach ($defaultArguments as $key => $val) {
-                $path .= DIRECTORY_SEPARATOR . (!empty($arguments[$key]) ? $this->getArgument(
-                        $arguments[$key]
-                    ) : ($this->getArgument($val)));
+                $argument = (!empty($arguments[$key]) ? $this->getArgument(
+                    $arguments[$key]
+                ) : ($this->getArgument($val)));
+                $path = str_replace(':' . $key, $argument, $path);
                 unset($arguments[$key]);
             }
             $arguments = array_merge($arguments, $queryString);
-            if (count($arguments) != 0) {
+            if (count($arguments) !== 0) {
                 $path .= '?' . http_build_query($arguments);
             }
         } else {
@@ -225,6 +238,9 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         }
         if (str_ends_with($path, 'index')) {
             $path = substr($path, 0, -5);
+        }
+        if (str_ends_with($path, '/',)) {
+            $path = substr($path, 0, -1);
         }
         return $path;
     }
@@ -287,22 +303,29 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             array_shift($queryString);
             $queryString[1] ??= 'index';
         }
-        $queryStringLength = count($queryString);
         $requestMethod = $this->getCurrentRequestMethod();
-        for ($i = 0; $i < $queryStringLength; $i++) {
-            $checkString = implode('/', $queryString);
-            /** @var \stdClass $routeGroup */
-            $routeGroup = $this->routes->$requestMethod;
-            /** @var ?RouteData $namedRoute
-             */
-            $namedRoute = $routeGroup->$checkString ?? null;
-            if ($namedRoute !== null) {
-                $this->buildNamedRoute($arguments, $queryStringLength, $i, $namedRoute, $checkString);
-                return true;
-            }
-            array_pop($queryString);
+        $checkString = implode('/', $queryString);
+        $namedRoute = $this->getNamedRouteForUrlPath($requestMethod, $checkString);
+        if ($namedRoute !== null) {
+            $this->buildNamedRoute($arguments, $namedRoute);
+            return true;
         }
+
         return false;
+    }
+
+    protected function getNamedRouteForUrlPath(string $requestMethod, string $checkString): ?RouteData
+    {
+        /** @var stdClass $routeGroup */
+        $routeGroup = $this->routes->$requestMethod;
+        /** @var RouteData $routeData */
+        foreach ((array)$routeGroup as $routeData) {
+            $arguments = [];
+            if (preg_match_all($routeData->pattern, $checkString, $arguments)) {
+                return $routeData;
+            }
+        }
+        return null;
     }
 
     /**
@@ -626,7 +649,14 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      */
     public function getDefaultArguments(string $route, string $requestMethod): ?array
     {
-        /** @var \stdClass $namedRoute */
+        $routeData = $this->getRouteData($route, $requestMethod);
+
+        return $routeData->arguments;
+    }
+
+    protected function getRouteData(string $route, string $requestMethod): RouteData
+    {
+        /** @var stdClass $namedRoute */
         $namedRoute = $this->routes->$requestMethod;
         if (empty($namedRoute->$route)) {
             throw new Error404Exception('Route ' . $route . ' does not exist', 500);
@@ -634,24 +664,24 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         /** @var RouteData $routeData */
         $routeData = $namedRoute->$route;
 
-        return $routeData->arguments;
+        return $routeData;
     }
 
     /**
      * Create new route. Using the Attributes is easier.
      *
-     * @param string $path
+     * @param string $fullPath
      * @param string $controller
      * @param string $action
      * @param string|null $routeName
      * @param array<string|bool> $defaults
      * @param string $httpMethod
      * @param string $module
-     * @throws Exception
+     * @throws RouteException
      * @see Path
      */
     public function addRoute(
-        string $path,
+        string $fullPath,
         string $controller,
         string $action,
         ?string $routeName = null,
@@ -664,20 +694,26 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         }
         $httpMethod = strtoupper($httpMethod);
 
-        $path = explode('/', $path);
+        $path = explode('/', $fullPath);
         $argumentsLength = count($path);
         $routePath = $path['0'];
         $argumentChain = [];
         for ($i = 1; $i < $argumentsLength; $i++) {
             $argument = $path[$i];
-            if (!str_starts_with($argument, ':')) {
-                if (count($argumentChain) != 0) {
-                    throw new RouteException('Error: route contains static elements after dynamic');
-                }
-                $routePath .= '/' . $argument;
-            } else {
+            $optional = str_starts_with($argument, '?') ? '?' : '';
+            if ($optional === '?') {
+                $argument = substr($argument, 1);
+            }
+            if (str_starts_with($argument, ':')) {
                 $argument = substr($argument, 1);
                 $argumentChain[$argument] = $defaults[$argument] ?? null;
+                if ($i !== $argumentsLength - 1) {
+                    $routePath .= '/([^/]*)';
+                } else {
+                    $routePath .= '/' . $optional . '(.*)';
+                }
+            } else {
+                $routePath .= '/' . $argument;
             }
         }
         if ($routeName === null) {
@@ -690,8 +726,9 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             throw new RouteException('Route already exists. Unique route path required');
         }
 
-        $this->routes->$httpMethod->$routePath
-            = new RouteData($module, $controller, $action, $argumentChain);
+        $this->routes->$httpMethod->$routeName = new RouteData(
+            $module, $controller, $action, $routeName, $argumentChain, $routePath, $fullPath
+        );
         $this->routeNameMap[$routeName] = $httpMethod . $routePath;
     }
 

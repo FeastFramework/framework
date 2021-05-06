@@ -22,11 +22,19 @@ namespace Feast\Router;
 
 class RouteData
 {
+    public string $pattern;
+    public string $routePath;
+
     public function __construct(
         public string $module,
         public string $controller,
         public string $action,
-        public array $arguments
+        public string $name,
+        public array $arguments,
+        string $pattern,
+        string $routePath
     ) {
+        $this->pattern = '/^' . str_replace('/', '\\/', $pattern) . '$/';
+        $this->routePath = str_replace('?:', ':', $routePath);
     }
 }

@@ -263,16 +263,6 @@ class RouterTest extends TestCase
         $router->addRoute('/im-a-teapot/:user/:pass', 'Teapot', 'ShortAndStout', null, ['test' => 'testing']);
     }
 
-    public function testRoutesWithBadPathing(): void
-    {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
-        $container->add(RequestInterface::class, new Request());
-        $router = new Router(Main::RUN_AS_WEBAPP);
-        $this->expectException(RouteException::class);
-        $router->addRoute('/im-a-teapot/:user/:pass/test', 'Teapot', 'ShortAndStout', null, ['test' => 'testing']);
-    }
-
     public function testRoutesWithNonExistentController(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -281,7 +271,61 @@ class RouterTest extends TestCase
         $router = new Router(Main::RUN_AS_WEBAPP);
         $router->addRoute('/im-a-teapot/:user/:pass', 'Teapot', 'ShortAndStout', null, ['test' => 'testing']);
         $this->expectException(Error404Exception::class);
-        $router->buildRouteForRequestUrl('im-a-teapot');
+        $router->buildRouteForRequestUrl('im-a-teapot/1/2');
+    }
+
+    public function testRoutesWithOptionalParam(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $container->add(RequestInterface::class, new Request());
+        $router = new Router(Main::RUN_AS_WEBAPP);
+        $router->addRoute('im-a-teapot/:name/?:otherArgs', 'Testing', 'Service', 'im-a-teapot', ['name' => 'testing']);
+        $router->buildRouteForRequestUrl('/im-a-teapot/test2');
+        $this->assertEquals('Testing', $router->getControllerName());
+        $this->assertEquals('im-a-teapot/testing', $router->getPath(route: 'im-a-teapot'));
+        $this->assertEquals(
+            'im-a-teapot/test2',
+            $router->getPath(
+                arguments: ['name' => 'test2', 'otherArgs' => []],
+                route: 'im-a-teapot'
+            )
+        );
+        $this->assertEquals('im-a-teapot', $router->getRouteName());
+    }
+
+    public function testRoutesWithStaticParam(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $container->add(RequestInterface::class, new Request());
+        $router = new Router(Main::RUN_AS_WEBAPP);
+        $router->addRoute(
+            'im-a-teapot/:name/arg/?:otherArgs',
+            'Testing',
+            'Service',
+            'im-a-teapot',
+            ['name' => 'testing']
+        );
+        $router->buildRouteForRequestUrl('/im-a-teapot/test2/arg');
+        $this->assertEquals('Testing', $router->getControllerName());
+        $this->assertEquals('im-a-teapot/testing/arg', $router->getPath(route: 'im-a-teapot'));
+        $this->assertEquals(
+            'im-a-teapot/test2/arg/42',
+            $router->getPath(
+                arguments: ['name' => 'test2', 'otherArgs' => '42'],
+                route: 'im-a-teapot'
+            )
+        );
+
+        $this->assertEquals(
+            'im-a-teapot/test2/arg/42/test',
+            $router->getPath(
+                arguments: ['name' => 'test2', 'otherArgs' => ['42', 'test']],
+                route: 'im-a-teapot'
+            )
+        );
+        $this->assertEquals('im-a-teapot', $router->getRouteName());
     }
 
     public function testRoutesWithNonExistentAction(): void
@@ -292,7 +336,7 @@ class RouterTest extends TestCase
         $router = new Router(Main::RUN_AS_WEBAPP);
         $router->addRoute('/im-a-teapot/:user/:pass', 'Testing', 'ShortAndStout', null, ['test' => 'testing']);
         $this->expectException(Error404Exception::class);
-        $router->buildRouteForRequestUrl('im-a-teapot');
+        $router->buildRouteForRequestUrl('im-a-teapot/2/1');
     }
 
     public function testRoutesWithNonExistentRoute(): void
@@ -311,10 +355,10 @@ class RouterTest extends TestCase
         $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $container->add(RequestInterface::class, new Request());
         $router = new Router(Main::RUN_AS_WEBAPP);
-        $router->addRoute('/im-a-teapot/:name/:otherArgs', 'Testing', 'Service', null, ['name' => 'testing']);
+        $router->addRoute('im-a-teapot/:name/:otherArgs', 'Testing', 'Service', 'im-a-teapot', ['name' => 'testing']);
         $router->buildRouteForRequestUrl('/im-a-teapot/test2/test/test3');
         $this->assertEquals('Testing', $router->getControllerName());
-        $this->assertEquals('im-a-teapot/testing/', $router->getPath(route: 'im-a-teapot'));
+        $this->assertEquals('im-a-teapot/testing', $router->getPath(route: 'im-a-teapot'));
         $this->assertEquals(
             'im-a-teapot/test2/test1/test3',
             $router->getPath(

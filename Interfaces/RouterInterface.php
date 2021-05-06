@@ -199,7 +199,7 @@ interface RouterInterface extends ServiceContainerItemInterface
     /**
      * Create new route. Using the Attributes is easier.
      *
-     * @param string $path
+     * @param string $fullPath
      * @param string $controller
      * @param string $action
      * @param string|null $routeName
@@ -210,7 +210,7 @@ interface RouterInterface extends ServiceContainerItemInterface
      * @see Path
      */
     public function addRoute(
-        string $path,
+        string $fullPath,
         string $controller,
         string $action,
         ?string $routeName = null,
