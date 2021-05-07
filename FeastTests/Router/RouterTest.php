@@ -328,6 +328,74 @@ class RouterTest extends TestCase
         $this->assertEquals('im-a-teapot', $router->getRouteName());
     }
 
+    public function testRoutesWithStaticRequiredParam(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $container->add(RequestInterface::class, new Request());
+        $router = new Router(Main::RUN_AS_WEBAPP);
+        $router->addRoute(
+            'im-a-teapot/:name/arg/:otherArgs',
+            'Testing',
+            'Service',
+            'im-a-teapot',
+            ['name' => 'testing', 'otherArgs' => ['testagain','anothertest']]
+        );
+        $router->buildRouteForRequestUrl('/im-a-teapot/test2/arg/testagain');
+        $this->assertEquals('Testing', $router->getControllerName());
+        $this->assertEquals('im-a-teapot/testing/arg/testagain/anothertest', $router->getPath(route: 'im-a-teapot'));
+        $this->assertEquals(
+            'im-a-teapot/test2/arg/42',
+            $router->getPath(
+                arguments: ['name' => 'test2', 'otherArgs' => '42'],
+                route: 'im-a-teapot'
+            )
+        );
+
+        $this->assertEquals(
+            'im-a-teapot/test2/arg/42/test',
+            $router->getPath(
+                arguments: ['name' => 'test2', 'otherArgs' => ['42', 'test']],
+                route: 'im-a-teapot'
+            )
+        );
+        $this->assertEquals('im-a-teapot', $router->getRouteName());
+    }
+
+    public function testRoutesWithStaticRequiredParamNoDefault(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $container->add(RequestInterface::class, new Request());
+        $router = new Router(Main::RUN_AS_WEBAPP);
+        $router->addRoute(
+            'im-a-teapot/:name/arg/:otherArgs',
+            'Testing',
+            'Service',
+            'im-a-teapot',
+            ['name' => 'testing']
+        );
+        $router->buildRouteForRequestUrl('/im-a-teapot/test2/arg/testagain');
+        $this->assertEquals('Testing', $router->getControllerName());
+        $this->assertEquals('im-a-teapot/testing/arg', $router->getPath(route: 'im-a-teapot'));
+        $this->assertEquals(
+            'im-a-teapot/test2/arg/42',
+            $router->getPath(
+                arguments: ['name' => 'test2', 'otherArgs' => '42'],
+                route: 'im-a-teapot'
+            )
+        );
+
+        $this->assertEquals(
+            'im-a-teapot/test2/arg/42/test',
+            $router->getPath(
+                arguments: ['name' => 'test2', 'otherArgs' => ['42', 'test']],
+                route: 'im-a-teapot'
+            )
+        );
+        $this->assertEquals('im-a-teapot', $router->getRouteName());
+    }
+
     public function testRoutesWithNonExistentAction(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
