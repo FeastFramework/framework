@@ -54,3 +54,9 @@ the Framework. In addition, he tested an early version of the framework in 2014.
 
 [SgtVarmint](https://github.com/SgtVarmint)
 
+[Eric Paulson](https://github.com/EricPaulson)
+
+# Sponsors
+The following people have supported FEAST framework's development financially.
+## [Eric Paulson](https://github.com/EricPaulson)
+Eric Paulson generously donated to FEAST when he found out about the project.
