@@ -247,9 +247,14 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
         return $var;
     }
 
+    /**
+     * @param string $key
+     * @return int|float|null
+     * @throws InvalidOptionException
+     */
     protected function objectMin(string $key): null|int|float
     {
-        $this->checkMathObjectAllowed();
+        $this->checkObjectManipulationAllowed();
         $count = count($this->array);
         if ($count === 0) {
             return null;
@@ -273,9 +278,14 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
         return $min;
     }
 
+    /**
+     * @param string $key
+     * @return int|float|null
+     * @throws InvalidOptionException
+     */
     protected function objectMax(string $key): null|int|float
     {
-        $this->checkMathObjectAllowed();
+        $this->checkObjectManipulationAllowed();
         $count = count($this->array);
         if ($count === 0) {
             return null;
@@ -300,9 +310,14 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
         return $max;
     }
 
+    /**
+     * @param string $key
+     * @return float
+     * @throws InvalidOptionException
+     */
     protected function objectSum(string $key): float
     {
-        $this->checkMathObjectAllowed();
+        $this->checkObjectManipulationAllowed();
 
         return $this->getSum($key);
     }
@@ -319,19 +334,6 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
             }
         }
         return $sum;
-    }
-
-    protected function checkMathObjectAllowed(): void
-    {
-        switch ($this->type) {
-            case 'mixed':
-            case 'string':
-            case 'array':
-            case 'bool':
-            case 'int':
-            case 'float':
-                throw new InvalidOptionException('No keys on ' . $this->type . ' elements');
-        }
     }
 
 }

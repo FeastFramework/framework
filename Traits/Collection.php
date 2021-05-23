@@ -44,6 +44,49 @@ trait Collection
     }
 
     /**
+     * Get imploded string from Collection
+     *
+     * If key is passed and the collection type is not a scalar, then the value used is for the specified
+     * key on the objects. If key is not passed, this will operate on scalar collections only. If key is passed
+     * and the collection is not an object type, or no key is passed and it is an object type, an
+     * InvalidOptionException is thrown.
+     *
+     * @param string $separator
+     * @param string|null $key
+     * @return string
+     * @throws InvalidOptionException
+     */
+    public function implode(string $separator, string|null $key = null): string
+    {
+        if ($key !== null) {
+            return $this->objectImplode($separator, $key);
+        }
+        if ( $this->isObjectType() ) {
+            throw new InvalidOptionException('Cannot operate on object set without key.');
+        }
+        return implode($separator, $this->array);
+    }
+
+    /**
+     * @param string $separator
+     * @param string $key
+     * @return string
+     * @throws InvalidOptionException
+     */
+    protected function objectImplode(string $separator, string $key): string
+    {
+        $this->checkObjectManipulationAllowed();
+        $return = [];
+        /** @var object $val */
+        foreach ($this->array as $val) {
+            if (isset($val->$key)) {
+                $return[] = (string)$val->$key;
+            }
+        }
+        return implode($separator, $return);
+    }
+
+    /**
      * Sort the collection by different sort options.
      *
      * @param $sortType
@@ -486,4 +529,22 @@ trait Collection
      * @return mixed
      */
     abstract public function offsetGet($offset): mixed;
+
+    /**
+     * @throws InvalidOptionException
+     */
+    protected function checkObjectManipulationAllowed(): void
+    {
+        if (!$this->isObjectType()) {
+            throw new InvalidOptionException('No keys on ' . $this->type . ' elements');
+        }
+    }
+
+    protected function isObjectType(): bool
+    {
+        return match ($this->type) {
+            'mixed', 'string', 'array', 'bool', 'int', 'float' => false,
+            default => true,
+        };
+    }
 }

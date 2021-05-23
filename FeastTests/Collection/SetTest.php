@@ -23,6 +23,7 @@ namespace Collection;
 use Feast\Collection\Set;
 use Feast\Exception\InvalidArgumentException;
 use Feast\Exception\InvalidOptionException;
+use Feast\Exception\ServerFailureException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -245,6 +246,9 @@ class SetTest extends TestCase
         $this->assertEquals(10, $set->sum('item'));
     }
 
+    /**
+     * @throws InvalidOptionException
+     */
     public function testSumObjectEmpty(): void
     {
         $set = new Set(stdClass::class);
@@ -257,5 +261,69 @@ class SetTest extends TestCase
         $this->expectException(InvalidOptionException::class);
 
         $set->sum('item');
+    }
+
+    /**
+     * @throws InvalidOptionException
+     * @throws ServerFailureException
+     */
+    public function testImplodeNonObject(): void
+    {
+        $set = new Set('string');
+        $set->addAll(['test','feast','jeremy']);
+        $result = $set->implode(',');
+
+        $this->assertEquals('test,feast,jeremy',$result);
+    }
+
+    /**
+     * @throws InvalidOptionException
+     * @throws ServerFailureException
+     */
+    public function testImplodeObject(): void
+    {
+        $set = new Set(stdClass::class);
+        $item1 = new stdClass();
+        $item1->name = 'test';
+        $item2 = new stdClass();
+        $item2->name = 'feast';
+        $item3 = new stdClass();
+        $item3->name = 'jeremy';
+
+        $set->addAll([$item1,$item2,$item3]);
+        $result = $set->implode(',','name');
+
+        $this->assertEquals('test,feast,jeremy',$result);
+    }
+
+    /**
+     * @throws InvalidOptionException
+     * @throws ServerFailureException
+     */
+    public function testImplodeNonObjectAsObject(): void
+    {
+        $set = new Set('string');
+        $set->addAll(['test','feast','jeremy']);
+        $this->expectException(InvalidOptionException::class);
+        $set->implode(',','name');
+    }
+
+    /**
+     * @throws InvalidOptionException
+     * @throws ServerFailureException
+     */
+    public function testImplodeObjectAsNonObject(): void
+    {
+        $set = new Set(stdClass::class);
+        $item1 = new stdClass();
+        $item1->name = 'test';
+        $item2 = new stdClass();
+        $item2->name = 'feast';
+        $item3 = new stdClass();
+        $item3->name = 'jeremy';
+
+        $set->addAll([$item1,$item2,$item3]);
+        $this->expectException(InvalidOptionException::class);
+        $set->implode(',');
     }
 }
