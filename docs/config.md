@@ -210,6 +210,8 @@ $config = [
         'name' => 'databaseName'
         'user' => 'username'
         'password' => 'password',
+        'url' => 'mysql:host=%s;port=%s;dbname=%s' // OPTIONAL: A manually specified connection string. If blank, the framework
+                                                   // will build from the other parameters
         'connectionType' => \Feast\Enums\DatabaseType::MYSQL, // For MySQL/MariaDB
         // 'connectionType' => \Feast\Enums\DatabaseType::SQLITE, // For SQLite DB
         'options' => []       # PDO Options list in array format.

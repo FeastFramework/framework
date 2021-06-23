@@ -50,6 +50,7 @@ class DatabaseTest extends TestCase
         }
         return new Database($details, PDOMock::class);
     }
+    
 
     public function testInstantiation(): void
     {
@@ -79,6 +80,19 @@ class DatabaseTest extends TestCase
         $details->connectionType = 'This Database Doesn\'t Exist';
         $this->expectException(DatabaseException::class);
         new Database($details, PDOMock::class);
+    }
+
+    public function testInstantiationWithUrl(): void
+    {
+        $details = new \stdClass();
+        $details->host = 'localhost';
+        $details->user = 'root';
+        $details->pass = 'test';
+        $details->name = 'Test';
+        $details->url = 'mysql:host=localhost;port=3306;';
+        $details->connectionType = DatabaseType::MYSQL;
+        $database = new Database($details, PDOMock::class);
+        $this->assertTrue($database instanceof Database);
     }
 
     public function testInstantiationUnknownDbClass(): void

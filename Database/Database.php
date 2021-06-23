@@ -40,16 +40,20 @@ class Database implements DatabaseInterface
 
     public function __construct(\stdClass $connectionDetails, string $pdoClass)
     {
-        $hostname = (string)$connectionDetails->host;
         $username = (string)$connectionDetails->user;
-        $port = !empty($connectionDetails->port) ? (int)$connectionDetails->port : 3306;
         $password = (string)$connectionDetails->pass;
-        $database = (string)$connectionDetails->name;
         $this->databaseType = (string)$connectionDetails->connectionType;
         $options = $this->getConfigOptions($connectionDetails);
 
         // Get connection string
-        $connectionString = $this->getConnectionString($database, $hostname, $port);
+        if ( !empty($connectionDetails->url) ) {
+            $connectionString = (string)$connectionDetails->url;
+        } else {
+            $hostname = (string)$connectionDetails->host;
+            $port = !empty($connectionDetails->port) ? (int)$connectionDetails->port : 3306;
+            $database = (string)$connectionDetails->name;
+            $connectionString = $this->getConnectionString($database, $hostname, $port);
+        }
 
         if (!is_a($pdoClass, PDO::class, true)) {
             throw new InvalidOptionException('Invalid database class specified');

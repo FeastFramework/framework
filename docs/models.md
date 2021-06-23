@@ -24,9 +24,11 @@ return [
         'name' => 'databaseName'
         'user' => 'username'
         'password' => 'password',
+        'url' => 'mysql:host=%s;port=%s;dbname=%s' // OPTIONAL: A manually specified connection string. If blank, the framework
+                                                   // will build from the other parameters
         'connectionType' => \Feast\Enums\DatabaseType::MYSQL,
         // 'connectionType' => \Feast\Enums\DatabaseType::SQLITE,     
-        'options' => [ // NOTE: the below options are not required. These are applied by default and are not required.
+        'options' => [ // NOTE: the below options are not required. The ones below are applied by default.
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
             PDO::ATTR_EMULATE_PREPARES => false
         ]
