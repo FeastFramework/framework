@@ -10,7 +10,8 @@ Dependency Injection system.
 The service container is made up of several files working together.
 
 1. `container.php` - This file is created when you first install FEAST and contains all the mappings for the built-in
-   FEAST classes. You can add your own items to the container here as well.
+   FEAST classes. These classes can be overriden by your own custom implementations of the FEAST interface. In addition,
+   You can add your own items to the container here as well.
 2. `Feast\DependencyInjector.php` - This file contains the `di` function. This function takes a class or interface name
    and any optional arguments and returns the matching item from the container.
 3. `Feast\ServiceContainer.php` - This class holds the items for the container.
@@ -36,7 +37,17 @@ FEAST uses the Service Container to automatically inject certain classes into th
 3. Plugin Pre/Post Dispatch methods.
 4. Controller Actions.
 
-Note that the container does not intercept manual calls to those functions.
+Example: 
+```php
+// Get URL Call to http://domain/test/index
+class TestController 
+{
+    public function indexGet(RequestInterface $request,string $userId)
+    // The RequestInterface will be automatically available
+    // in this method in addition to the "userId" request parameter
+```
+
+Note that the container does not intercept manual calls to any functions.
 
 In addition to items in the container, Mappers may be injected as long as they extend from the `\Feast\BaseMapper`
 class, and Models may be injected by having the primary key appear in the URL in the same name as the matching parameter
@@ -44,3 +55,24 @@ as long as they extend the `\Feast\BaseModel` class.
 
 Note that the call to `findByPrimaryKey` will pass validate => true for models on dependency injection. You can write
 your own custom rules for the validation to ensure that users do not just change urls to change what they are fetching.
+
+### What is available to the container by default
+The default installation of FEAST has the following items places into the service container.
+1. [\Feast\Interfaces\ConfigInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/ConfigInterface.php)
+2. [\Feast\Interfaces\RouterInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/RouterInterface.php)
+3. [\Feast\Interfaces\ProfilerInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/ProfilerInterface.php)
+4. [\Feast\Interfaces\DatabaseFactoryInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/DatabaseFactoryInterface.php)
+5. [\Feast\Interfaces\DatabaseDetailsInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/DatabaseDetailsInterface.php)
+6. [\Feast\Interfaces\RequestInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/RequestInterface.php)
+7. [\Feast\Interfaces\LoggerInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/LoggerInterface.php)
+8. [\Feast\Interfaces\ErrorLoggerInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/ErrorLoggerInterface.php)
+9. [\Feast\Interfaces\ResponseInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/ResponseInterface.php)
+10. [\Feast\Interfaces\MainInterface](https://github.com/FeastFramework/framework/blob/master/Interfaces/MainInterface.php)
+11. [\Feast\View](https://github.com/FeastFramework/framework/blob/master/View.php)
+    
+In addition on Web requests the following are in the service container.
+1. [\Feast\Session\Session](https://github.com/FeastFramework/framework/blob/master/Session/Session.php)
+2. [\Feast\Session\Identity](https://github.com/FeastFramework/framework/blob/master/Session/Identity.php)
+
+On CLI Requests, the following is in the service container
+1. [\Feast\CliArguments](https://github.com/FeastFramework/framework/blob/master/CliArguments.php)
