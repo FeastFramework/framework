@@ -22,6 +22,7 @@ namespace Feast\Controllers;
 
 use Feast\Attributes\Action;
 use Feast\Attributes\Param;
+use Feast\BaseModel;
 use Feast\CliController;
 use Feast\Database\TableDetails;
 use Feast\Enums\ParamType;
@@ -364,13 +365,17 @@ class CreateController extends CliController
         $template = file_get_contents(
             APPLICATION_ROOT . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $templateFile
         );
-
+        if ( !file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR) ) {
+            mkdir(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR);
+        }
         if ($overwrite || !file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR . $class . '.php')) {
             file_put_contents(
                 APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR . $class . $classExtra . '.php',
                 str_replace(
-                    ['{name}', '{classExtra}', '{map}', '{connection}', '{primaryKey}', '{table}', '{primaryType}'],
+                    ['onSave({name}','onDelete({name}','{name}', '{classExtra}', '{map}', '{connection}', '{primaryKey}', '{table}', '{primaryType}'],
                     [
+                        'onSave(\\' . BaseModel::class . '|' . $class,
+                        'onDelete(\\' . BaseModel::class . '|' . $class,
                         $class,
                         $classExtra,
                         $fields,
@@ -380,7 +385,7 @@ class CreateController extends CliController
                         $primaryType
                     ]
                     ,
-                    $template
+                    trim($template) . "\n"
                 )
             );
         }

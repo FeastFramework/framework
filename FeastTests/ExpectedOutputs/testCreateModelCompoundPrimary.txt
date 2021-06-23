@@ -7,7 +7,8 @@ namespace Model;
 class User extends Generated\User
 {
     // PLACE CUSTOM MODEL CODE HERE
-}User.php<?php
+}
+Model/Generated/ createdUser.php<?php
 
 declare(strict_types=1);
 
@@ -24,5 +25,6 @@ class User extends BaseModel
     public ?\Feast\Date $created_at;
     public string $username;
 
-}Model class created
+}
+Model class created
 Cannot generate mapper - Compound primary key

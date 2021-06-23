@@ -46,7 +46,8 @@ function file_exists($path) : bool {
     return isset(FileData::$files[$path]) || \file_exists($path);
 }
 
-function mkdir($directory,$permissions, $recursive) : bool {
+function mkdir($directory,$permissions = null, $recursive = null) : bool {
+    $directory = str_replace(APPLICATION_ROOT,'',$directory);
     echo $directory . ' created';
     return true;
 }
