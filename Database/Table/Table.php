@@ -569,13 +569,11 @@ abstract class Table
         foreach ($this->getColumns() as $column) {
             if ($column->getName() == $columnName) {
                 $this->primaryKeyName = $columnName;
-                break;
-            } else {
-                throw new DatabaseException('Provided column does not exist');
+                return $this;
             }
         }
-        
-        return $this;
+
+        throw new DatabaseException('Provided column does not exist');
     }
 
     /**

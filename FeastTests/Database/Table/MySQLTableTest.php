@@ -39,6 +39,7 @@ use Feast\Database\Column\TinyText;
 use Feast\Database\Column\VarChar;
 use Feast\Database\Database;
 use Feast\Database\Table\MySQLTable;
+use Feast\Exception\DatabaseException;
 use PHPUnit\Framework\TestCase;
 
 class MySQLTableTest extends TestCase
@@ -269,6 +270,20 @@ class MySQLTableTest extends TestCase
         $this->table->int('Test');
         $this->table->primary('Test');
         $this->assertEquals('Test', $this->table->getPrimaryKey());
+    }
+    
+    public function testPrimaryAlreadyExists(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->int('Test');
+        $this->table->primary('Test');
+        $this->table->primary('Test');
+    }
+
+    public function testPrimaryColumnDoesNotExist(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->primary('Test');
     }
 
     public function testGetDdl(): void
