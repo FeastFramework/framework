@@ -567,7 +567,7 @@ abstract class Table
         
         /** @var Column $column */
         foreach ($this->getColumns() as $column) {
-            if ($column->getName() == $columnName) {
+            if ($column->getName() === $columnName) {
                 $this->primaryKeyName = $columnName;
                 return $this;
             }
