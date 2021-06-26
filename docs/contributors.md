@@ -17,6 +17,11 @@ The artwork for FEAST was graciously created by Whitney M. Johnston.
 
 ## Additional Contributors
 
+### Developers
+The following developers have contributed code to FEAST.
+
+[ArrMeeR](https://github.com/ArrMeeR)
+
 ### Documentation
 
 #### [German Gamboa Gonzalaz](https://github.com/germangamboa95)
