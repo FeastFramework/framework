@@ -39,6 +39,7 @@ use Feast\Database\Column\TinyText;
 use Feast\Database\Column\VarChar;
 use Feast\Database\Database;
 use Feast\Database\Table\MySQLTable;
+use Feast\Exception\DatabaseException;
 use PHPUnit\Framework\TestCase;
 
 class MySQLTableTest extends TestCase
@@ -226,6 +227,7 @@ class MySQLTableTest extends TestCase
         $columns = $this->table->getColumns();
         $this->assertTrue($columns[0] instanceof Column);
         $this->assertEquals('Test', $this->table->getPrimaryKey());
+        $this->assertTrue($this->table->isPrimaryKeyAutoIncrement());
     }
 
     public function testBigInt(): void
@@ -262,16 +264,38 @@ class MySQLTableTest extends TestCase
         $columns = $this->table->getColumns();
         $this->assertTrue($columns[0] instanceof TinyInt);
     }
+    
+    public function testPrimary(): void
+    {
+        $this->table->int('Test');
+        $this->table->primary('Test');
+        $this->assertEquals('Test', $this->table->getPrimaryKey());
+    }
+    
+    public function testPrimaryAlreadyExists(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->int('Test');
+        $this->table->primary('Test');
+        $this->table->primary('Test');
+    }
+
+    public function testPrimaryColumnDoesNotExist(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->primary('Test');
+    }
 
     public function testGetDdl(): void
     {
         $this->table->tinyInt('Test');
-        $this->table->int('Test',default:4);
+        $this->table->int('Test', default:4);
         $this->table->tinyBlob('Test');
         $this->table->timestamp('test', 'CURRENT_TIMESTAMP');
+        $this->table->primary('Test');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB(255) not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP)',
+            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB(255) not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test))',
             $ddl->ddl
         );
         $this->assertEquals(['4'],$ddl->bindings);

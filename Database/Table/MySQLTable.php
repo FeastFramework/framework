@@ -81,7 +81,7 @@ class MySQLTable extends Table
         $string .= $column->getUnsignedText();
         $string .= $column->isNullable() ? ' null' : ' not null';
         $string .= $this->getDefaultAsBindingOrText($column, $bindings);
-        if (isset($this->primaryKeyName) && $this->primaryKeyName == $column->getName()) {
+        if ($this->primaryKeyAutoIncrement && $this->primaryKeyName === $column->getName()) {
             $string .= ' AUTO_INCREMENT';
         }
         return $string;

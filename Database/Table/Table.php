@@ -37,12 +37,14 @@ use Feast\Database\Column\TinyBlob;
 use Feast\Database\Column\TinyInt;
 use Feast\Database\Column\TinyText;
 use Feast\Database\Column\VarChar;
+use Feast\Exception\DatabaseException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseInterface;
 
 abstract class Table
 {
     protected ?string $primaryKeyName = null;
+    protected bool $primaryKeyAutoIncrement = false;
     protected array $columns = [];
     protected array $indexes = [];
 
@@ -544,9 +546,34 @@ abstract class Table
     public function autoIncrement(string $column, int $length = 11): static
     {
         $this->int($column, true, false, null, $length);
-        $this->primaryKeyName = $column;
-
+        $this->primary($column);
+        $this->primaryKeyAutoIncrement = true;
+        
         return $this;
+    }
+
+    /**
+     * Set primary key of a table.
+     *
+     * @param string $columnName
+     * @return static
+     * @throws ServerFailureException
+     */
+    public function primary(string $columnName): static
+    {
+        if ($this->getPrimaryKey() !== null) {
+            throw new DatabaseException('Primary key has been already set');
+        }
+        
+        /** @var Column $column */
+        foreach ($this->getColumns() as $column) {
+            if ($column->getName() === $columnName) {
+                $this->primaryKeyName = $columnName;
+                return $this;
+            }
+        }
+
+        throw new DatabaseException('Provided column does not exist');
     }
 
     /**
@@ -577,6 +604,16 @@ abstract class Table
     public function getPrimaryKey(): ?string
     {
         return $this->primaryKeyName;
+    }
+
+    /**
+     * Is primary key auto increment.
+     * 
+     * @return bool
+     */
+    public function isPrimaryKeyAutoIncrement(): bool
+    {
+        return $this->primaryKeyAutoIncrement;
     }
 
     /**

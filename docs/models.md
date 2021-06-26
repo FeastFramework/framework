@@ -216,6 +216,15 @@ parameters.
 An easier way to create an auto incrementing primary key is with the `autoIncrement` method. This method will create an
 int column with the passed in name and optional length. 
 
+#### Adding primary key
+
+FEAST can add a primary key to specified column with the `primary` method. The `primary` method takes only one parameter:
+`columnName`. Note that the column specified within this parameter must exist. Also, `primary` method can be called only 
+once per table. Otherwise, an exception will be thrown.
+
+The `autoIncrement` method already calls the `primary` method, so the `primary` method should not be called when 
+creating an auto incrementing column with the `autoIncrement` method.
+
 #### Altering tables
 
 FEAST can alter tables by using the `rawQuery` method rather than by using the TableFactory.
