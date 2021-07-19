@@ -18,6 +18,7 @@ The artwork for FEAST was graciously created by Whitney M. Johnston.
 ## Additional Contributors
 
 ### Developers
+
 The following developers have contributed code to FEAST.
 
 [ArrMeeR](https://github.com/ArrMeeR)
@@ -46,8 +47,8 @@ and pressure to release.
 
 [Bailey Dickens](https://github.com/directionalpad)
 
-Bailey Dickens' contributed assistance on the Contributing guidelines, as well as general feedback on certain features of
-the Framework. In addition, he tested an early version of the framework in 2014.
+Bailey Dickens' contributed assistance on the Contributing guidelines, as well as general feedback on certain features
+of the Framework. In addition, he tested an early version of the framework in 2014.
 
 [German Gamboa Gonzalaz](https://github.com/germangamboa95)
 
@@ -62,6 +63,9 @@ the Framework. In addition, he tested an early version of the framework in 2014.
 [Eric Paulson](https://github.com/EricPaulson)
 
 # Sponsors
+
 The following people have supported FEAST framework's development financially.
+
 ## [Eric Paulson](https://github.com/EricPaulson)
+
 Eric Paulson generously donated to FEAST when he found out about the project.

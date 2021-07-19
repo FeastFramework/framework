@@ -214,7 +214,7 @@ class CreateController extends CliController
 
         $this->writeSimpleTemplate($name, 'Plugin', $file);
         $this->terminal->message('To enable add the line below to your configs/config.php in the appropriate environment' . "\n");
-        $this->terminal->command('\'plugin.' . strtolower($name) . '\' => \'' . ucfirst($name) . '\',');
+        $this->terminal->command('\'plugin.' . strtolower($name) . '\' => \\Plugins\\' . ucfirst($name) . '::class,');
     }
 
     #[Action(usage: '{name}', description: 'Create a queueable job class from the template file.')]
