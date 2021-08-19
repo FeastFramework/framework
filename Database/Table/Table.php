@@ -513,7 +513,7 @@ abstract class Table
     /**
      * Add index to field(s).
      *
-     * @param string|array $columns
+     * @param string|array<string> $columns
      * @param string|null $name
      * @param bool $autoIncrement
      * @return static
@@ -548,7 +548,7 @@ abstract class Table
         $this->int($column, true, false, null, $length);
         $this->primary($column);
         $this->primaryKeyAutoIncrement = true;
-        
+
         return $this;
     }
 
@@ -564,7 +564,7 @@ abstract class Table
         if ($this->getPrimaryKey() !== null) {
             throw new DatabaseException('Primary key has been already set');
         }
-        
+
         /** @var Column $column */
         foreach ($this->getColumns() as $column) {
             if ($column->getName() === $columnName) {
@@ -608,7 +608,7 @@ abstract class Table
 
     /**
      * Is primary key auto increment.
-     * 
+     *
      * @return bool
      */
     public function isPrimaryKeyAutoIncrement(): bool

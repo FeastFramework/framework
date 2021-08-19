@@ -64,6 +64,7 @@ trait Collection
         if ( $this->isObjectType() ) {
             throw new InvalidOptionException('Cannot operate on object set without key.');
         }
+        /** @psalm-suppress MixedArgumentTypeCoercion - False positive */
         return implode($separator, $this->array);
     }
 

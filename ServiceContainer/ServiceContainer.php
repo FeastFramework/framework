@@ -48,6 +48,7 @@ class ServiceContainer implements ContainerInterface, ServiceContainerItemInterf
      */
     public function get($id, mixed ...$arguments): object
     {
+        /** @psalm-suppress MixedArgumentTypeCoercion - False positive */
         $parameterString = implode('.', $arguments);
 
         if (!$this->has($id, ...$arguments)) {
@@ -66,6 +67,7 @@ class ServiceContainer implements ContainerInterface, ServiceContainerItemInterf
      */
     public function has($id, mixed ...$arguments): bool
     {
+        /** @psalm-suppress MixedArgumentTypeCoercion - False positive */
         $parameterString = implode('.', $arguments);
 
         return !empty($this->dependencies[$id . $parameterString]);
@@ -81,6 +83,7 @@ class ServiceContainer implements ContainerInterface, ServiceContainerItemInterf
      */
     public function add(string $id, object $dependency, mixed ...$arguments): void
     {
+        /** @psalm-suppress MixedArgumentTypeCoercion - False positive */
         $parameterString = implode('.', $arguments);
         if ($this->has($id, ...$arguments)) {
             throw new ContainerException('Object ' . $id . ' already in container');
@@ -99,6 +102,7 @@ class ServiceContainer implements ContainerInterface, ServiceContainerItemInterf
     public function replace(string $id, object $dependency, mixed ...$arguments): void
     {
         if ($this->has($id, ...$arguments)) {
+            /** @psalm-suppress MixedArgumentTypeCoercion - False positive */
             $parameterString = implode('.', $arguments);
             unset($this->dependencies[$id . $parameterString]);
         }

@@ -503,6 +503,10 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         );
     }
 
+    /**
+     * @param string|array<string>|null $arguments
+     * @return string
+     */
     private function getArgument(string|array|null $arguments): string
     {
         if (is_null($arguments)) {

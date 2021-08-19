@@ -160,7 +160,7 @@ class JobController extends CliController
         /** @var ?QueueableJob $jobData */
         $jobData = unserialize($job->job_context);
         $success = false;
-        if ($jobData instanceof QueueableJob !== false) {
+        if ($jobData instanceof QueueableJob) {
             try {
                 $success = $jobData->run();
             } catch (\Exception) {
