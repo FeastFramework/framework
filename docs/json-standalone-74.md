@@ -1,6 +1,6 @@
 [FEAST Framework Documentation](index.md)
 
-This documentation is for the `feast/json` project found
+This documentation is for the PHP 7.4 Compatible version of the `feast/json` project found
 at [https://github.com/FeastFramework/json](https://github.com/FeastFramework/json). If you are looking for the version
 built into FEAST, click [here](json.md).
 
@@ -25,9 +25,10 @@ method takes an object. The unmarshal method takes two parameters.
 Any object being serialized to must either allow an empty constructor call, or must be passed in to the unmarshal call
 as an object. This includes any nested objects.
 
-### The Attribute
+### The Annotation
 
-`\Feast\Json\Attributes\JsonItem` is a PHP8 attribute that is used to decorate properties in your class to specify
+`\Feast\Json\Attributes\JsonItem` is loaded from an annotation in Docblock format
+that is used to decorate properties in your class to specify
 transformations on JSON data. It has four optional properties.
 
 1. `name` - specifies an alternate name to be used when serializing to JSON as well as the name of the key for this
@@ -48,15 +49,30 @@ Below is a sample class that can be used with the JSON marshaller.
 ```php
 class TestJsonItem
 {
-    #[JsonItem(name: 'first_name')]
+    /**
+     * @JsonItem:name first_name
+     */
     public string $firstName;
-    #[JsonItem(name: 'last_name')]
+
+    /**
+     * @JsonItem:name last_name
+     */
+
     public string $lastName;
-    #[JsonItem(arrayOrCollectionType: TestJsonItem::class)]
+
+    /**
+     * @JsonItem:arrayOrCollectionType \Mocks\TestJsonItem
+     */
     public array $items;
-    #[JsonItem(dateFormat: 'Ymd')]
+    
+    /**
+     * @JsonItem:dateFormat Ymd
+     */
     public DateTime $timestamp;
-    #[JsonItem(included: false)]
+
+    /**
+     * @JsonItem:included false
+     */
     public string $notIncluded;
 ```
 
