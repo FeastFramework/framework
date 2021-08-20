@@ -67,6 +67,7 @@ class TestJsonItem
     
     /**
      * @JsonItem:dateFormat Ymd
+     * @JsonItem:name real_timestamp
      */
     public DateTime $timestamp;
 
@@ -94,7 +95,7 @@ Sample string below:
       "last_name": "Presutti"
     }
   ],
-  "timestamp": "20210405",
+  "real_timestamp": "20210405",
   "notIncluded": "Feast"
 }
 ```
