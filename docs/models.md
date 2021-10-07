@@ -27,6 +27,8 @@ return [
         'url' => 'mysql:host=%s;port=%s;dbname=%s' // OPTIONAL: A manually specified connection string. If blank, the framework
                                                    // will build from the other parameters
         'connectionType' => \Feast\Enums\DatabaseType::MYSQL,
+        'queryClass' => \Feast\Database\MySQLQuery::class,
+        // 'queryClass' => \Feast\Database\SQLiteQuery::class,
         // 'connectionType' => \Feast\Enums\DatabaseType::SQLITE,     
         'options' => [ // NOTE: the below options are not required. The ones below are applied by default.
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
