@@ -21,7 +21,9 @@ declare(strict_types=1);
 namespace Database;
 
 use Feast\Database\Database;
+use Feast\Database\MySQLQuery;
 use Feast\Database\Query;
+use Feast\Database\SQLiteQuery;
 use Feast\Database\TableDetails;
 use Feast\Enums\DatabaseType;
 use Feast\Exception\DatabaseException;
@@ -33,7 +35,8 @@ class DatabaseTest extends TestCase
 {
 
     protected function getValidConnection(
-        string $connectionType = DatabaseType::MYSQL,
+        ?string $connectionType = DatabaseType::MYSQL,
+        ?string $queryClass = MySQLQuery::class,
         bool $options = false
     ): Database {
         $details = new \stdClass();
@@ -41,6 +44,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
+        $details->queryClass = $queryClass;
         $details->connectionType = $connectionType;
         if ($options) {
             $details->config = [
@@ -66,7 +70,7 @@ class DatabaseTest extends TestCase
 
     public function testInstantiationSqlite(): void
     {
-        $database = $this->getValidConnection(DatabaseType::SQLITE);
+        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $this->assertTrue($database instanceof Database);
     }
 
@@ -79,7 +83,7 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = 'This Database Doesn\'t Exist';
         $this->expectException(DatabaseException::class);
-        new Database($details, PDOMock::class);
+                new Database($details, PDOMock::class);
     }
 
     public function testInstantiationWithUrl(): void
@@ -107,6 +111,30 @@ class DatabaseTest extends TestCase
         new Database($details, \stdClass::class);
     }
 
+    public function testInstantiationWithDeprecatedMethodMySQL(): void
+    {
+        $details = new \stdClass();
+        $details->host = 'localhost';
+        $details->user = 'root';
+        $details->pass = 'test';
+        $details->name = 'Test';
+        $details->connectionType = DatabaseType::MYSQL;
+        $database = new Database($details, PDOMock::class);
+        $this->assertTrue($database instanceof Database);
+    }
+
+    public function testInstantiationWithDeprecatedMethodSqLite(): void
+    {
+        $details = new \stdClass();
+        $details->host = 'localhost';
+        $details->user = 'root';
+        $details->pass = 'test';
+        $details->name = 'Test';
+        $details->connectionType = DatabaseType::SQLITE;
+        $database = new Database($details, PDOMock::class);
+        $this->assertTrue($database instanceof Database);
+    }
+
     public function testInsert(): void
     {
         $database = $this->getValidConnection();
@@ -123,21 +151,21 @@ class DatabaseTest extends TestCase
 
     public function testSelectSqlite(): void
     {
-        $database = $this->getValidConnection(DatabaseType::SQLITE);
+        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $query = $database->select('test');
-        $this->assertTrue($query instanceof Query);
+        $this->assertTrue($query instanceof SQLiteQuery);
     }
 
     public function testTableExists(): void
     {
-        $database = $this->getValidConnection(DatabaseType::SQLITE);
+        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $result = $database->tableExists('test');
         $this->assertTrue(true);
     }
 
     public function testTableExistsFalse(): void
     {
-        $database = $this->getValidConnection(DatabaseType::SQLITE);
+        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $result = $database->tableExists('testing');
         $this->assertFalse($result);
     }
@@ -146,7 +174,7 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->update('test');
-        $this->assertTrue($query instanceof Query);
+        $this->assertTrue($query instanceof MySQLQuery);
     }
 
     public function testColumnExists(): void
@@ -167,19 +195,31 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->replace('test', ['test' => 'test2']);
-        $this->assertTrue($query instanceof Query);
+        $this->assertTrue($query instanceof MySQLQuery);
     }
 
-    public function testGetDatabaseType(): void
+    public function testGetDatabaseTypeMySQL(): void
     {
         $database = $this->getValidConnection();
         $this->assertEquals(DatabaseType::MYSQL, $database->getDatabaseType());
     }
 
+    public function testGetQueryClassMySQL(): void
+    {
+        $database = $this->getValidConnection();
+        $this->assertEquals(MySQLQuery::class, $database->getQueryClass());
+    }
+
     public function testGetDatabaseTypeSqlite(): void
     {
-        $database = $this->getValidConnection(DatabaseType::SQLITE);
+        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $this->assertEquals(DatabaseType::SQLITE, $database->getDatabaseType());
+    }
+
+    public function testGetQueryClassSqlite(): void
+    {
+        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
+        $this->assertEquals(SQLiteQuery::class, $database->getQueryClass());
     }
 
     public function testDelete(): void

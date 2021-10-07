@@ -37,12 +37,21 @@ class Database implements DatabaseInterface
 {
     private PDO $connection;
     private string $databaseType;
+    private string $queryClass;
 
+    /**
+     * @param \stdClass $connectionDetails
+     * @param string $pdoClass
+     * @throws DatabaseException
+     * @throws InvalidOptionException
+     * @throws ServerFailureException
+     */
     public function __construct(\stdClass $connectionDetails, string $pdoClass)
     {
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
         $this->databaseType = (string)$connectionDetails->connectionType;
+        $this->queryClass = (string)($connectionDetails->queryClass ?? $this->getQueryClass());
         $options = $this->getConfigOptions($connectionDetails);
 
         // Get connection string
@@ -158,9 +167,20 @@ class Database implements DatabaseInterface
      */
     private function startQuery(): Query
     {
+        /** @var Query */
+        return new ($this->queryClass)($this->connection);
+    }
+    
+    public function getQueryClass(): string
+    {
+        try {
+        trigger_error('The method ' . self::class . '::getQueryClass is deprecated. Set the queryClass option in your database config.', E_USER_DEPRECATED);
+        } catch (Exception) {
+            // Prevents PHPUnit from exiting.
+        }
         return match ($this->databaseType) {
-            DatabaseType::MYSQL => new MySQLQuery($this->connection),
-            DatabaseType::SQLITE => new SQLiteQuery($this->connection),
+            DatabaseType::MYSQL => MySQLQuery::class,
+            DatabaseType::SQLITE => SQLiteQuery::class,
             default => throw new DatabaseException('Invalid Database Type')
         };
     }

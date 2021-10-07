@@ -72,15 +72,19 @@ class ErrorLogger implements ServiceContainerItemInterface, ErrorLoggerInterface
 
         switch ($errno) {
             case E_NOTICE:
+            case E_USER_NOTICE:
                 $this->logger->notice($errorMessage);
                 break;
             case E_ERROR:
+            case E_USER_ERROR:
                 $this->logger->error($errorMessage);
                 break;
             case E_DEPRECATED:
+            case E_USER_DEPRECATED:
                 $this->logger->info($errorMessage);
                 break;
             case E_WARNING:
+            case E_USER_WARNING:
                 $this->logger->warning($errorMessage);
                 break;
             default:
