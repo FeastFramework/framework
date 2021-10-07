@@ -173,11 +173,7 @@ class Database implements DatabaseInterface
     
     public function getQueryClass(): string
     {
-        try {
         trigger_error('The method ' . self::class . '::getQueryClass is deprecated. Set the queryClass option in your database config.', E_USER_DEPRECATED);
-        } catch (Exception) {
-            // Prevents PHPUnit from exiting.
-        }
         return match ($this->databaseType) {
             DatabaseType::MYSQL => MySQLQuery::class,
             DatabaseType::SQLITE => SQLiteQuery::class,

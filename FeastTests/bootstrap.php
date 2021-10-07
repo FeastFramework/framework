@@ -44,3 +44,6 @@ require_once('Mocks/ProfilerFunctions.mock');
 require_once('Mocks/RouterClassFileFunctions.mock');
 require_once('Mocks/SessionFunctions.mock');
 $container = di();
+set_error_handler(function($level,$message) {
+    return true;
+},E_USER_DEPRECATED);
