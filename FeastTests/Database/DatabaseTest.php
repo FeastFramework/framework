@@ -54,7 +54,6 @@ class DatabaseTest extends TestCase
         }
         return new Database($details, PDOMock::class);
     }
-    
 
     public function testInstantiation(): void
     {
@@ -83,7 +82,7 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = 'This Database Doesn\'t Exist';
         $this->expectException(DatabaseException::class);
-                new Database($details, PDOMock::class);
+        new Database($details, PDOMock::class);
     }
 
     public function testInstantiationWithUrl(): void

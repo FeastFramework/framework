@@ -51,11 +51,12 @@ class Database implements DatabaseInterface
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
         $this->databaseType = (string)$connectionDetails->connectionType;
+        /** @psalm-suppress DeprecatedMethod (will be removed in 2.0) */
         $this->queryClass = (string)($connectionDetails->queryClass ?? $this->getQueryClass());
         $options = $this->getConfigOptions($connectionDetails);
 
         // Get connection string
-        if ( !empty($connectionDetails->url) ) {
+        if (!empty($connectionDetails->url)) {
             $connectionString = (string)$connectionDetails->url;
         } else {
             $hostname = (string)$connectionDetails->host;
@@ -170,10 +171,20 @@ class Database implements DatabaseInterface
         /** @var Query */
         return new ($this->queryClass)($this->connection);
     }
-    
+
+    /**
+     * Get Query class from DatabaseType (Deprecated)
+     * 
+     * @return string
+     * @throws DatabaseException
+     * @deprecated 
+     */
     public function getQueryClass(): string
     {
-        trigger_error('The method ' . self::class . '::getQueryClass is deprecated. Set the queryClass option in your database config.', E_USER_DEPRECATED);
+        trigger_error(
+            'The method ' . self::class . '::getQueryClass is deprecated. Set the queryClass option in your database config.',
+            E_USER_DEPRECATED
+        );
         return match ($this->databaseType) {
             DatabaseType::MYSQL => MySQLQuery::class,
             DatabaseType::SQLITE => SQLiteQuery::class,
