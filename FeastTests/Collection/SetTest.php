@@ -255,6 +255,48 @@ class SetTest extends TestCase
         $this->assertEquals(0, $set->sum('item'));
     }
 
+    public function testProductInt(): void
+    {
+        $set = new Set('int', [3, 2, 7]);
+        $this->assertEquals(42, $set->product());
+    }
+
+    public function testProductInvalid(): void
+    {
+        $set = new Set('string', ['test']);
+        $this->expectException(InvalidOptionException::class);
+
+        $set->product();
+    }
+
+    public function testProductEmpty(): void
+    {
+        $set = new Set('int', []);
+        $this->assertEquals(1, $set->product());
+    }
+
+    public function testProductObject(): void
+    {
+        $first = new stdClass();
+        $first->item = 3;
+        $second = new stdClass();
+        $second->item = 2;
+        $third = new stdClass();
+        $third->item = 7;
+
+        $set = new Set(stdClass::class, [$first, $second, $third]);
+        $this->assertEquals(42, $set->product('item'));
+    }
+
+    /**
+     * @throws InvalidOptionException
+     */
+    public function testProductObjectEmpty(): void
+    {
+        $set = new Set(stdClass::class);
+        $this->assertEquals(1, $set->product('item'));
+    }
+
     public function testMathObjectOnNonObject(): void
     {
         $set = new Set('int');
@@ -270,10 +312,10 @@ class SetTest extends TestCase
     public function testImplodeNonObject(): void
     {
         $set = new Set('string');
-        $set->addAll(['test','feast','jeremy']);
+        $set->addAll(['test', 'feast', 'jeremy']);
         $result = $set->implode(',');
 
-        $this->assertEquals('test,feast,jeremy',$result);
+        $this->assertEquals('test,feast,jeremy', $result);
     }
 
     /**
@@ -290,10 +332,10 @@ class SetTest extends TestCase
         $item3 = new stdClass();
         $item3->name = 'jeremy';
 
-        $set->addAll([$item1,$item2,$item3]);
-        $result = $set->implode(',','name');
+        $set->addAll([$item1, $item2, $item3]);
+        $result = $set->implode(',', 'name');
 
-        $this->assertEquals('test,feast,jeremy',$result);
+        $this->assertEquals('test,feast,jeremy', $result);
     }
 
     /**
@@ -303,9 +345,9 @@ class SetTest extends TestCase
     public function testImplodeNonObjectAsObject(): void
     {
         $set = new Set('string');
-        $set->addAll(['test','feast','jeremy']);
+        $set->addAll(['test', 'feast', 'jeremy']);
         $this->expectException(InvalidOptionException::class);
-        $set->implode(',','name');
+        $set->implode(',', 'name');
     }
 
     /**
@@ -322,8 +364,112 @@ class SetTest extends TestCase
         $item3 = new stdClass();
         $item3->name = 'jeremy';
 
-        $set->addAll([$item1,$item2,$item3]);
+        $set->addAll([$item1, $item2, $item3]);
         $this->expectException(InvalidOptionException::class);
         $set->implode(',');
+    }
+
+    public function testMap(): void
+    {
+        $set = new Set(stdClass::class);
+        $item1 = new stdClass();
+        $item1->name = 'test';
+        $item2 = new stdClass();
+        $item2->name = 'feast';
+        $item3 = new stdClass();
+        $item3->name = 'jeremy';
+        $item4 = new stdClass();
+        $item4->name = 'fast';
+
+        $set->addAll([$item1, $item2, $item3, $item4]);
+        $mapped = $set->map(function (stdClass $item) {
+            return str_ends_with($item->name, 't');
+        });
+        $this->assertEquals([true, true, false, true], $mapped);
+    }
+
+    public function testMapWithExtraArrays(): void
+    {
+        $set = new Set(stdClass::class);
+        $item1 = new stdClass();
+        $item1->name = 'test';
+        $item2 = new stdClass();
+        $item2->name = 'feast';
+        $item3 = new stdClass();
+        $item3->name = 'jeremy';
+        $item4 = new stdClass();
+        $item4->name = 'fast';
+
+        $set->addAll([$item1, $item2, $item3, $item4]);
+        $mapped = $set->map(function (stdClass $item, $second) {
+            
+            return $second === 'test' && str_ends_with($item->name, 't');
+        },['test','false','test','test']);
+        $this->assertEquals([true, false, false, true], $mapped);
+    }
+
+    public function testWalk(): void
+    {
+        $set = new Set(stdClass::class);
+        $item1 = new stdClass();
+        $item1->name = 'test';
+        $item2 = new stdClass();
+        $item2->name = 'feast';
+        $item3 = new stdClass();
+        $item3->name = 'jeremy';
+
+        $set->addAll([$item1, $item2, $item3]);
+        $result = $set->walk(function ($item, $key, $prefix) {
+            $item->name = $prefix . $item->name;
+        }, 'a');
+        $this->assertEquals('atest', $set[0]->name);
+        $this->assertEquals('afeast', $set[1]->name);
+        $this->assertEquals('ajeremy', $set[2]->name);
+    }
+
+    public function testFilter(): void
+    {
+        $set = new Set(stdClass::class);
+        $item1 = new stdClass();
+        $item1->name = 'test';
+        $item2 = new stdClass();
+        $item2->name = 'feast';
+        $item3 = new stdClass();
+        $item3->name = 'jeremy';
+
+        $set->addAll([$item1, $item2, $item3]);
+        $result = $set->filter(function($item) {
+            return str_ends_with($item->name,'t');
+        });
+        $this->assertCount(3,$set->getValues());
+        $this->assertCount(2,$result);
+    }
+
+    public function testFilterWithUpdate(): void
+    {
+        $set = new Set(stdClass::class);
+        $item1 = new stdClass();
+        $item1->name = 'test';
+        $item2 = new stdClass();
+        $item2->name = 'feast';
+        $item3 = new stdClass();
+        $item3->name = 'jeremy';
+
+        $set->addAll([$item1, $item2, $item3]);
+        $result = $set->filter(function($item) {
+            return str_ends_with($item->name,'t');
+        },0,true);
+        $this->assertCount(2,$set->getValues());
+        $this->assertCount(2,$result);
+    }
+
+    public function testReduce(): void
+    {
+        $set = new Set('int',[1,3,5,6,7,8,10],true,true);
+        
+        $result = $set->reduce(function($initial,$item) {
+            return $item*$initial;
+        },1);
+        $this->assertEquals(50400,$result);
     }
 }

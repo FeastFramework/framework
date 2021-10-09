@@ -58,6 +58,17 @@ Methods:
 18. `first` - This method returns the first item from the collection.
 19. `getType` - This method returns what the valid value type is for the collection. Can be any scalar type, array,
     object, any class, or mixed.
+20. `map` - This method calls `array_map` with the underlying collection of items as the first parameter. It takes the
+    same parameters as [array_map](https://www.php.net/manual/en/function.array-map.php) other than the initial array.
+21. `reduce` - This method calls `array_reduce` with the underlying collection of items as the first parameter. It takes
+    the same parameters as [array_reduce](https://www.php.net/manual/en/function.array-reduce.php) other than the
+    initial array.
+22. `walk` - This method calls `array_walk` with the underlying collection of items as the first parameter. It takes the
+    same parameters as [array_walk](https://www.php.net/manual/en/function.array-walk.php) other than the initial array.
+23. `filter` - This method calls `array_filter` with the underlying collection of items as the first parameter. It takes
+    a callback and an additional int mode flag (
+    see [array_filter](https://www.php.net/manual/en/function.array-filter.php)). Additionally, it takes a boolean flag
+    to specify whether to update the underlying collection.
 
 In addition, all methods in the PHP built in ArrayAccess interface are available.
 
@@ -99,8 +110,10 @@ type, or an int/float set. All math functions on a named class type take a key a
 collection objects for that key and performs the operation on the corresponding values.
 
 1. `min` - This method returns the minimum value from the collection.
-2. `max`
-3. `average`
-4. `sum`
+2. `max` - This method returns the maximum value from the collection.
+3. `average` - This method returns the average value from the collection.
+4. `sum` - This method returns the sum of the collection.
+5. `product` - This method returns the product. _Note: as with `array_product` this method will return `1` on an empty
+   collection_.
 
 [Back to Top](#collections)

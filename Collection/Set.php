@@ -231,7 +231,31 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
             throw new InvalidOptionException('Cannot sum non int/float sets');
         }
 
-        return $this->getSum();
+        return array_sum($this->array);
+    }
+
+    /**
+     * Get product from set.
+     *
+     * If key is passed and the collection type is not a scalar, then the value used is for the specified
+     * key on the objects. If key is not passed, this will operate on float/int sets only. If key is passed
+     * and the collection is not an object type, or no key is passed and it is an object type, an
+     * InvalidOptionException is thrown.
+     *
+     * @param string|null $key
+     * @return float
+     * @throws InvalidOptionException
+     */
+    public function product(?string $key = null): float
+    {
+        if ($key !== null) {
+            return $this->objectProduct($key);
+        }
+        if ($this->type !== 'int' && $this->type !== 'float') {
+            throw new InvalidOptionException('Cannot sum non int/float sets');
+        }
+
+        return array_product($this->array);
     }
 
     /**
@@ -334,6 +358,32 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
             }
         }
         return $sum;
+    }
+
+    /**
+     * @param string $key
+     * @return float
+     * @throws InvalidOptionException
+     */
+    protected function objectProduct(string $key): float
+    {
+        $this->checkObjectManipulationAllowed();
+
+        return $this->getProduct($key);
+    }
+
+    protected function getProduct(string $key = null): float
+    {
+        $product = 1.0;
+        /** @var int|float $item */
+        foreach ($this->array as $item) {
+            /** @var string|int|float|null $element */
+            $element = !empty($key) ? $item->$key : $item;
+            if (is_int($element) || is_float($element)) {
+                $product *= (float)$element;
+            }
+        }
+        return $product;
     }
 
 }

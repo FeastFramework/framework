@@ -61,7 +61,7 @@ trait Collection
         if ($key !== null) {
             return $this->objectImplode($separator, $key);
         }
-        if ( $this->isObjectType() ) {
+        if ($this->isObjectType()) {
             throw new InvalidOptionException('Cannot operate on object set without key.');
         }
         /** @psalm-suppress MixedArgumentTypeCoercion - False positive */
@@ -188,10 +188,45 @@ trait Collection
         return $array;
     }
 
+    public function map(callable $callback, array ...$arrays): array
+    {
+        return array_map($callback, $this->array, ...$arrays);
+    }
+
+    /**
+     * @param callable(mixed, mixed=):scalar $callback
+     * @param int $mode
+     * @param bool $updateCollection
+     * @return array
+     */
+    public function filter(callable $callback, int $mode = 0, bool $updateCollection = false): array
+    {
+        $result = array_filter($this->array, $callback, $mode);
+        if ($updateCollection) {
+            $this->array = $result;
+        }
+        return $result;
+    }
+
+    /**
+     * @param callable(mixed,mixed):mixed $callback
+     * @param mixed|null $initial
+     * @return mixed
+     */
+    public function reduce(callable $callback, mixed $initial = null): mixed
+    {
+        return array_reduce($this->array, $callback, $initial);
+    }
+
+    public function walk(callable $callback, mixed $arg = null): bool
+    {
+        return array_walk($this->array, $callback, $arg);
+    }
+
     /**
      * Shuffle the collection.
      *
-     * @param $modifyOriginal
+     * @param bool $modifyOriginal
      * @return array
      */
     public function shuffle(
