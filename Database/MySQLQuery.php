@@ -302,7 +302,7 @@ class MySQLQuery extends Query
         $nullPrefix = (string)$field->Null === 'YES' ? 'null|' : '';
         return $nullPrefix . match (true) {
                 str_starts_with((string)$field->Type, 'json'),
-                str_ends_with((string)$field->Type, 'json') => \stdClass::class . '|array',
+                str_ends_with((string)$field->Type, 'json') => '\\' . \stdClass::class . '|array',
                 str_starts_with((string)$field->Type, 'int'),
                 str_starts_with((string)$field->Type, 'tinyint'),
                 str_starts_with((string)$field->Type, 'bigint'),
