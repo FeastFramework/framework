@@ -141,4 +141,13 @@ class ResponseTest extends TestCase
         $this->assertEquals('/redirecting', $response->getRedirectPath());
     }
 
+    public function testIsValidResponseCodeTrue(): void
+    {
+        $this->assertTrue(ResponseCode::isValidResponseCode(200));
+    }
+
+    public function testIsValidResponseCodeFalse(): void
+    {
+        $this->assertFalse(ResponseCode::isValidResponseCode(2000));
+    }
 }

@@ -204,7 +204,8 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
      */
     public function rawLog(int $level, string $message): void
     {
-        if ($level < $this->logLevel) {
+        /** @psalm-suppress UndefinedPropertyFetch */
+        if ($level < $this->logLevel->value) {
             return;
         }
         $fileName = self::LOG_DIR . 'feast.log';

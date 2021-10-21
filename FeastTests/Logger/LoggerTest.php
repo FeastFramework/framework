@@ -244,6 +244,6 @@ class LoggerTest extends TestCase
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->rawLog(LogLevelCode::ALERT->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringNotContainsString('NOTICE: you noticing me', $output);
+        $this->assertStringNotContainsString('you noticing me', $output);
     }
 }

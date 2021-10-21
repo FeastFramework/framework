@@ -105,8 +105,8 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::MYSQL;
-        $this->expectException(\TypeError::class);
+        $details->connectionType = DatabaseType::MYSQL->value;
+        $this->expectException(InvalidOptionException::class);
         new Database($details, \stdClass::class);
     }
 

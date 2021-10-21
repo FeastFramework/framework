@@ -149,13 +149,7 @@ trait Collection
                     'Collection must contain objects of a named class in order to use objectSort'
                 );
         }
-        switch ($sortType) {
-            case CollectionSort::VALUE:
-            case CollectionSort::VALUE_REVERSE:
-                break;
-            default:
-                throw new InvalidOptionException('Invalid sort option');
-        }
+       
         /** @var array<object> $array */
         $array = $this->array;
         usort(
