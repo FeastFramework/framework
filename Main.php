@@ -454,7 +454,7 @@ class Main implements MainInterface
         /** @var string|null $errorUrl */
         $errorUrl = $config->getSetting('error.http404.url', 'error/fourohfour');
         if (is_string($errorUrl)) {
-            header('Location:/' . $errorUrl, true, ResponseCode::HTTP_CODE_302);
+            header('Location:/' . $errorUrl, true, ResponseCode::HTTP_CODE_302->value);
             return;
         }
         throw $exception;

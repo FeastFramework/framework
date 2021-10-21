@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use Feast\Enums\ResponseCode;
 use Feast\Exception\InvalidOptionException;
 use Feast\Exception\NotFoundException;
 
@@ -34,12 +35,12 @@ abstract class BaseModel
 
     public function __set(string $name, mixed $value): void
     {
-        throw new InvalidOptionException('Invalid option for model', 500);
+        throw new InvalidOptionException('Invalid option for model', ResponseCode::HTTP_CODE_500);
     }
 
     public function __get(string $name): void
     {
-        throw new InvalidOptionException('Invalid option for model', 500);
+        throw new InvalidOptionException('Invalid option for model', ResponseCode::HTTP_CODE_500);
     }
 
     /**

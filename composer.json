@@ -16,10 +16,11 @@
     },
     "suggest": {
         "ext-mysql": "*",
-        "ext-pdo_mysql": "*"
+        "ext-pdo_mysql": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
-        "psalm/phar": "^4.7"
+        "psalm/phar": "^4.10"
     },
     "autoload": {
         "psr-4": {

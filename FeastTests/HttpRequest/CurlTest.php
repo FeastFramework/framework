@@ -19,6 +19,7 @@ declare(strict_types=1);
 
 namespace HttpRequest;
 
+use Feast\Enums\ResponseCode;
 use Feast\Exception\BadRequestException;
 use Feast\Exception\CurlException;
 use Feast\HttpRequest\Curl;
@@ -147,7 +148,7 @@ class CurlTest extends TestCase
         $request = new Curl();
         $request->get('https://www.google.com/html');
         $request->makeRequest();
-        $this->assertEquals(200, $request->getResponseCode());
+        $this->assertEquals(ResponseCode::HTTP_CODE_200, $request->getResponseCode());
         $this->assertEquals(
             '<!DOCTYPE html>
 <html>
@@ -169,7 +170,7 @@ Test
         $request = new Curl();
         $request->get('https://www.google.com/xml');
         $request->makeRequest();
-        $this->assertEquals(200, $request->getResponseCode());
+        $this->assertEquals(ResponseCode::HTTP_CODE_200, $request->getResponseCode());
         $this->assertEquals(
             '<?xml version="1.0"?>
 <html>
@@ -191,7 +192,7 @@ Test
         $request = new Curl();
         $request->get('https://www.google.com/json');
         $request->makeRequest();
-        $this->assertEquals(200, $request->getResponseCode());
+        $this->assertEquals(ResponseCode::HTTP_CODE_200, $request->getResponseCode());
         $this->assertNull(
             $request->getResponseAsXml()
         );
@@ -202,7 +203,7 @@ Test
         $request = new Curl();
         $request->get('https://www.google.com/json');
         $request->makeRequest();
-        $this->assertEquals(200, $request->getResponseCode());
+        $this->assertEquals(ResponseCode::HTTP_CODE_200, $request->getResponseCode());
         $response = $request->getResponseAsJson();
         $this->assertEquals('feast', $response->test);
     }
@@ -212,7 +213,7 @@ Test
         $request = new Curl();
         $request->get('https://www.google.com/html');
         $request->makeRequest();
-        $this->assertEquals(200, $request->getResponseCode());
+        $this->assertEquals(ResponseCode::HTTP_CODE_200, $request->getResponseCode());
         $response = $request->getResponseAsJson();
         $this->assertNull($response);
     }
@@ -222,7 +223,7 @@ Test
         $request = new Curl();
         $request->get('https://www.google.com/fail');
         $request->makeRequest();
-        $this->assertEquals(500, $request->getResponseCode());
+        $this->assertEquals(ResponseCode::HTTP_CODE_500, $request->getResponseCode());
         $response = $request->getResponseAsString();
         $this->assertEquals('', $response);
     }

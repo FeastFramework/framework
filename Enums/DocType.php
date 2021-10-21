@@ -23,7 +23,6 @@ namespace Feast\Enums;
 enum DocType: string
 {
     case HTML_4_01_FRAMESET = 'html401frame';
-
     case HTML_4_01_STRICT = 'html401strict';
     case HTML_4_01_TRANSITIONAL = 'html401transitional';
     case HTML_5 = 'html5';

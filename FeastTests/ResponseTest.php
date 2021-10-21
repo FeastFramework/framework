@@ -18,7 +18,6 @@
 declare(strict_types=1);
 
 use Feast\Enums\ResponseCode;
-use Feast\Exception\ResponseException;
 use Feast\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -48,7 +47,7 @@ class ResponseTest extends TestCase
     public function testInvalidResponse(): void
     {
         $response = new Response();
-        $this->expectException(ResponseException::class);
+        $this->expectException(TypeError::class);
         $response->setResponseCode(99999);
     }
 

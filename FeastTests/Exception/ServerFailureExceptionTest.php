@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Exception;
 
+use Feast\Enums\ResponseCode;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\RequestInterface;
@@ -35,7 +36,7 @@ class ServerFailureExceptionTest extends TestCase
     {
         $this->buildContainer('json', true);
 
-        $exception = new ServerFailureException('Test', 302, 5, null, Main::RUN_AS_CLI);
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 5, null, Main::RUN_AS_CLI);
 
         $this->expectOutputString('{"error":{"message":"Test","code":5}}');
         $exception->printError();
@@ -44,7 +45,7 @@ class ServerFailureExceptionTest extends TestCase
     public function testPrintError(): void
     {
         $this->buildContainer(setting: true);
-        $exception = new ServerFailureException('Test', 302, 0, null, Main::RUN_AS_WEBAPP);
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 0, null, Main::RUN_AS_WEBAPP);
 
         $this->expectOutputRegex('/Test<br \/>.*/');
         $exception->printError();
@@ -53,7 +54,7 @@ class ServerFailureExceptionTest extends TestCase
     public function testPrintParentExceptionCliNoParent(): void
     {
         $this->buildContainer('json', true);
-        $exception = new ServerFailureException('Test', 302, 5, null, Main::RUN_AS_CLI);
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 5, null, Main::RUN_AS_CLI);
         $this->expectOutputString('');
         $exception->printParentException();
     }
@@ -61,7 +62,7 @@ class ServerFailureExceptionTest extends TestCase
     public function testPrintParentExceptionCliWithParent(): void
     {
         $this->buildContainer('json', true);
-        $exception = new ServerFailureException('Test', 302, 5, new \Exception('Test'), Main::RUN_AS_CLI);
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 5, new \Exception('Test'), Main::RUN_AS_CLI);
         $exception->printParentException();
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString(
@@ -74,7 +75,7 @@ Thrown on line',
     public function testPrintExceptionCli(): void
     {
         $this->buildContainer(setting: true);
-        $exception = new ServerFailureException('Test', 302, 5, null, Main::RUN_AS_CLI);
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 5, null, Main::RUN_AS_CLI);
         $exception->printError();
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString(
@@ -87,7 +88,7 @@ Thrown on line',
     public function testPrintParentExceptionWebNoParent(): void
     {
         $this->buildContainer('json', true);
-        $exception = new ServerFailureException('Test', 302, 5, null, Main::RUN_AS_WEBAPP);
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 5, null, Main::RUN_AS_WEBAPP);
         $this->expectOutputString('');
         $exception->printParentException();
     }
@@ -95,7 +96,7 @@ Thrown on line',
     public function testPrintParentExceptionWebWithParent(): void
     {
         $this->buildContainer('json', true);
-        $exception = new ServerFailureException('Test', 302, 5, new \Exception('Test'), Main::RUN_AS_WEBAPP);
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 5, new \Exception('Test'), Main::RUN_AS_WEBAPP);
         $this->expectOutputRegex('/Test<br \/>Thrown on.*<table.*/');
         $exception->printParentException();
     }
@@ -103,8 +104,8 @@ Thrown on line',
     public function testGetResponseCode(): void
     {
         $this->buildContainer('json', true);
-        $exception = new ServerFailureException('Test', 302, 5, null, Main::RUN_AS_CLI);
-        $this->assertEquals(302, $exception->getResponseCode());
+        $exception = new ServerFailureException('Test', ResponseCode::HTTP_CODE_302, 5, null, Main::RUN_AS_CLI);
+        $this->assertEquals(ResponseCode::HTTP_CODE_302, $exception->getResponseCode());
     }
 
     protected function buildContainer(?string $format = null, ?bool $setting = null): void

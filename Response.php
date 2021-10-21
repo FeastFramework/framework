@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace Feast;
 
 use Feast\Enums\ResponseCode;
-use Feast\Exception\ResponseException;
 use Feast\Interfaces\ResponseInterface;
 use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
@@ -36,7 +35,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
 {
     use DependencyInjected;
 
-    private int $responseCode = ResponseCode::HTTP_CODE_200;
+    private ResponseCode $responseCode = ResponseCode::HTTP_CODE_200;
     private bool $isJson = false;
     private object|null $jsonResponse = null;
     private ?string $redirectPath = null;
@@ -52,16 +51,12 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     /**
      * Set the response code.
      *
-     * @param int $responseCode
-     * @throws ResponseException
+     * @param ResponseCode $responseCode
      */
-    public function setResponseCode(int $responseCode): void
+    public function setResponseCode(ResponseCode $responseCode): void
     {
-        if (ResponseCode::isValidResponseCode($responseCode)) {
-            $this->responseCode = $responseCode;
-        } else {
-            throw new ResponseException('Invalid response code!');
-        }
+        $this->responseCode = $responseCode;
+ 
     }
 
     /**
@@ -69,7 +64,8 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      */
     public function sendResponseCode(): void
     {
-        http_response_code($this->responseCode);
+        /** @psalm-suppress UndefinedPropertyFetch */
+        http_response_code((int)$this->responseCode->value);
     }
 
     /**
@@ -140,10 +136,9 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      * Set redirect path.
      *
      * @param string $path
-     * @param int $code
-     * @throws ResponseException
+     * @param ResponseCode $code
      */
-    public function redirect(string $path, int $code = 302): void
+    public function redirect(string $path, ResponseCode $code = ResponseCode::HTTP_CODE_302): void
     {
         $this->redirectPath = $path;
         $this->setResponseCode($code);

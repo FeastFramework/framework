@@ -118,7 +118,7 @@ abstract class HttpController implements ControllerInterface
      * @param array<string> $queryString
      * @param string|null $module
      * @param string $route
-     * @param int $code (30x)
+     * @param ResponseCode $code (30x)
      * @throws NotFoundException
      */
     public function redirect(
@@ -128,7 +128,7 @@ abstract class HttpController implements ControllerInterface
         array $queryString = [],
         ?string $module = null,
         string $route = '',
-        int $code = ResponseCode::HTTP_CODE_302
+        ResponseCode $code = ResponseCode::HTTP_CODE_302
     ): void {
         $router = $this->di->get(RouterInterface::class);
         $response = $this->di->get(ResponseInterface::class);
@@ -143,10 +143,10 @@ abstract class HttpController implements ControllerInterface
      * Redirect to an external link after all post dispatch plugins finish.
      *
      * @param string $url The URL to redirect to
-     * @param int $code Redirect code to use (default 302)
+     * @param ResponseCode $code Redirect code to use (default 302)
      * @throws NotFoundException
      */
-    public function externalRedirect(string $url, int $code = ResponseCode::HTTP_CODE_302): void
+    public function externalRedirect(string $url, ResponseCode $code = ResponseCode::HTTP_CODE_302): void
     {
         $response = $this->di->get(ResponseInterface::class);
         $response->redirect($url, $code);

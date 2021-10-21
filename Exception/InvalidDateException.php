@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Exception;
 
+use Feast\Enums\ResponseCode;
 use Throwable;
 
 class InvalidDateException extends ServerFailureException
@@ -27,7 +28,7 @@ class InvalidDateException extends ServerFailureException
 
     public function __construct(
         string $message,
-        ?int $responseCode = null,
+        ?ResponseCode $responseCode = null,
         int $errorCode = 0,
         Throwable $previousException = null
     ) {

@@ -48,7 +48,7 @@ abstract class HttpRequest implements HttpRequestInterface
     protected ?string $username = null;
     protected ?string $password = null;
     protected ?Response $response = null;
-    protected ?int $responseCode = null;
+    protected ?ResponseCode $responseCode = null;
     protected string $userAgent;
     protected ?string $referer = null;
     protected ?string $contentType = null;
@@ -425,7 +425,13 @@ abstract class HttpRequest implements HttpRequestInterface
             return;
         }
         $status = explode(' ', $responseHeaders[0]);
-        $this->responseCode = !empty($status[1]) ? (int)$status[1] : ResponseCode::HTTP_CODE_500;
+        $responseCode = !empty($status[1]) ? (int)$status[1] : ResponseCode::HTTP_CODE_500->value;
+        /**
+         * @var ResponseCode
+         * @psalm-suppress UndefinedMethod
+         */
+        $this->responseCode = ResponseCode::tryFrom($responseCode) ?? ResponseCode::HTTP_CODE_500;
+
         foreach ($responseHeaders as $header) {
             $headerData = explode(': ', $header);
             if (strtolower($headerData[0]) === 'set-cookie') {
@@ -541,9 +547,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Get the http response code for the request.
      *
-     * @return int|null
+     * @return ResponseCode|null
      */
-    public function getResponseCode(): ?int
+    public function getResponseCode(): ?ResponseCode
     {
         return $this->responseCode;
     }
