@@ -109,7 +109,7 @@ class ErrorLogger implements ServiceContainerItemInterface, ErrorLoggerInterface
             ) . ' on line ' . (string)$exception->getLine();
 
         $this->logger->error($errorMessage);
-        $this->logger->rawLog(LogLevelCode::ERROR, $exception->getTraceAsString());
+        $this->logger->rawLog(LogLevelCode::ERROR->value, $exception->getTraceAsString());
         $newException = new ServerFailureException(
             $exception->getMessage(),
             null,

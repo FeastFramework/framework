@@ -20,7 +20,8 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class ResponseCode {
+class ResponseCode
+{
     public const HTTP_CODE_100 = 100;
     public const HTTP_CODE_101 = 101;
     public const HTTP_CODE_102 = 102;
@@ -96,11 +97,12 @@ class ResponseCode {
 
     /**
      * Returns if response code is valid.
-     * 
+     *
      * @param int $responseCode
      * @return bool
      */
-    public static function isValidResponseCode(int $responseCode): bool {
+    public static function isValidResponseCode(int $responseCode): bool
+    {
         return defined('self::HTTP_CODE_' . (string)$responseCode);
     }
 }

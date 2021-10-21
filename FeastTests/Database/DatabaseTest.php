@@ -35,7 +35,7 @@ class DatabaseTest extends TestCase
 {
 
     protected function getValidConnection(
-        ?string $connectionType = DatabaseType::MYSQL,
+        ?DatabaseType $connectionType = DatabaseType::MYSQL,
         ?string $queryClass = MySQLQuery::class,
         bool $options = false
     ): Database {
@@ -45,7 +45,7 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->queryClass = $queryClass;
-        $details->connectionType = $connectionType;
+        $details->connectionType = $connectionType->value;
         if ($options) {
             $details->config = [
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
@@ -81,7 +81,7 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = 'This Database Doesn\'t Exist';
-        $this->expectException(DatabaseException::class);
+        $this->expectException(\ValueError::class);
         new Database($details, PDOMock::class);
     }
 
@@ -93,7 +93,7 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->url = 'mysql:host=localhost;port=3306;';
-        $details->connectionType = DatabaseType::MYSQL;
+        $details->connectionType = DatabaseType::MYSQL->value;
         $database = new Database($details, PDOMock::class);
         $this->assertTrue($database instanceof Database);
     }
@@ -106,7 +106,7 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
-        $this->expectException(InvalidOptionException::class);
+        $this->expectException(\TypeError::class);
         new Database($details, \stdClass::class);
     }
 
@@ -117,7 +117,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::MYSQL;
+        $details->connectionType = DatabaseType::MYSQL->value;
         $database = new Database($details, PDOMock::class);
         $this->assertTrue($database instanceof Database);
     }
@@ -129,7 +129,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::SQLITE;
+        $details->connectionType = DatabaseType::SQLITE->value;
         $database = new Database($details, PDOMock::class);
         $this->assertTrue($database instanceof Database);
     }

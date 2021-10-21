@@ -37,7 +37,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
     use DependencyInjected;
 
     private const LOG_DIR = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
-    private ?int $logLevel;
+    private LogLevelCode $logLevel;
 
     public function __construct(private ConfigInterface $config, private string $runAs)
     {
@@ -160,11 +160,13 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
             $message = strtoupper($level) . ': ' . $message;
             $level = $this->getLevelFromString($level);
         }
-        if ($level < $this->logLevel) {
+        /** @psalm-suppress UndefinedPropertyFetch - False error */
+        if ($level instanceof LogLevelCode === false || $level->value < $this->logLevel->value) {
             return;
         }
         $message = $this->interpolateContext($message, $context);
-        $this->rawLog((int)$level, (date('[Y-m-d H:i:s] ')) . trim($message));
+        /** @psalm-suppress UndefinedPropertyFetch - False error */
+        $this->rawLog((int)$level->value, (date('[Y-m-d H:i:s] ')) . trim($message));
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
             $exception = $context['exception'];
 
@@ -228,7 +230,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         }
     }
 
-    private function getLevelFromString(string $level): int
+    private function getLevelFromString(string $level): LogLevelCode
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         return match (strtolower($level)) {

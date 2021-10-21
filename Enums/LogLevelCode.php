@@ -20,14 +20,14 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class LogLevelCode
+enum LogLevelCode: int
 {
-    public const DEBUG = 100;
-    public const INFO = 200;
-    public const NOTICE = 300;
-    public const WARNING = 400;
-    public const ERROR = 500;
-    public const CRITICAL = 600;
-    public const ALERT = 700;
-    public const EMERGENCY = 800;
+    case DEBUG = 100;
+    case INFO = 200;
+    case NOTICE = 300;
+    case WARNING = 400;
+    case ERROR = 500;
+    case CRITICAL = 600;
+    case ALERT = 700;
+    case EMERGENCY = 800;
 }

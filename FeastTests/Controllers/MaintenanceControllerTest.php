@@ -22,7 +22,7 @@ namespace Controllers;
 use Feast\CliArguments;
 use Feast\Config\Config;
 use Feast\Controllers\MaintenanceController;
-use Feast\Enums\DocTypes;
+use Feast\Enums\DocType;
 use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\ServiceContainer;
 use Feast\View;

@@ -31,7 +31,7 @@ class Param
         public string $type = '',
         public string $name = '',
         public string $description = '',
-        public string $paramType = ParamType::PARAM
+        public ParamType $paramType = ParamType::PARAM
     ) {
     }
 

@@ -22,7 +22,7 @@ namespace Feast;
 
 use Exception;
 use Feast\Collection\Collection;
-use Feast\Enums\DocTypes;
+use Feast\Enums\DocType;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
@@ -42,7 +42,7 @@ class View extends stdClass implements ServiceContainerItemInterface
     private array $css = [];
     private bool $outputDisabled = false;
     private string $content = '';
-    private string $docType = DocTypes::HTML_5;
+    private DocType $docType = DocType::HTML_5;
     private string $dtd = '<!DOCTYPE html>' . "\n" . '<html>';
     private string $encoding = 'UTF-8';
     private array $postScripts = [];
@@ -62,7 +62,8 @@ class View extends stdClass implements ServiceContainerItemInterface
     {
         $this->checkInjected();
         $this->baseUrl = (string)$config->getSetting('siteurl');
-        $docType = (string)$config->getSetting('html.doctype', DocTypes::HTML_5);
+        /** @var DocType $docType */
+        $docType = $config->getSetting('html.doctype', DocType::HTML_5);
         $this->setDoctype($docType);
     }
 
@@ -305,7 +306,7 @@ class View extends stdClass implements ServiceContainerItemInterface
 
     /**
      * Adds a css file to the page,
-     * 
+     *
      * Feast uses the /css/ folder for the base directory for all stylesheets.
      *
      * @param string $fileName
@@ -358,41 +359,39 @@ class View extends stdClass implements ServiceContainerItemInterface
 
     /**
      * Sets the doc type of the page.
-     * 
+     *
      * Also sets the doctype declaration
      *
-     * @param string $doctype
+     * @param DocType $doctype
      * @throws Exception
      */
-    public function setDoctype(string $doctype = DocTypes::HTML_5): void
+    public function setDoctype(DocType $doctype = DocType::HTML_5): void
     {
-        if ($doctype == DocTypes::HTML_4_01_TRANSITIONAL) {
+        if ($doctype == DocType::HTML_4_01_TRANSITIONAL) {
             $this->dtd = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-        } elseif ($doctype == DocTypes::HTML_4_01_STRICT) {
+        } elseif ($doctype == DocType::HTML_4_01_STRICT) {
             $this->dtd = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">';
-        } elseif ($doctype == DocTypes::HTML_4_01_FRAMESET) {
+        } elseif ($doctype == DocType::HTML_4_01_FRAMESET) {
             $this->dtd = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">';
-        } elseif ($doctype == DocTypes::HTML_5) {
+        } elseif ($doctype == DocType::HTML_5) {
             $this->dtd = '<!DOCTYPE html>' . "\n" . '<html>';
-        } elseif ($doctype == DocTypes::XHTML_1_0_TRANSITIONAL) {
+        } elseif ($doctype == DocType::XHTML_1_0_TRANSITIONAL) {
             $this->dtd = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">';
-        } elseif ($doctype == DocTypes::XHTML_1_0_STRICT) {
+        } elseif ($doctype == DocType::XHTML_1_0_STRICT) {
             $this->dtd = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">';
-        } elseif ($doctype == DocTypes::XHTML_1_0_FRAMESET) {
+        } elseif ($doctype == DocType::XHTML_1_0_FRAMESET) {
             $this->dtd = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">';
-        } elseif ($doctype == DocTypes::XHTML_1_1) {
+        } else {  // DocType::XHTML_1_1
             $this->dtd = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
-        } else {
-            throw new Exception('Invalid doctype');
         }
         $this->docType = $doctype;
     }
 
     /**
      * Get the Doctype Declaration.
-     * 
+     *
      * @return string
      */
     public function getDtd(): string
@@ -402,17 +401,17 @@ class View extends stdClass implements ServiceContainerItemInterface
 
     /**
      * Get the Doctype.
-     * 
-     * @return string
+     *
+     * @return DocType
      */
-    public function getDocType(): string
+    public function getDocType(): DocType
     {
         return $this->docType;
     }
 
     /**
      * Set the encoding for the page.
-     * 
+     *
      * Default is UTF-8.
      *
      * @param string $encoding
@@ -431,15 +430,15 @@ class View extends stdClass implements ServiceContainerItemInterface
     public function getEncodingHtml(): string
     {
         return match ($this->docType) {
-            DocTypes::XHTML_1_0_STRICT, DocTypes::XHTML_1_0_TRANSITIONAL, DocTypes::XHTML_1_0_FRAMESET => '<meta http-equiv="Content-type" content="text/html;charset=' . $this->encoding . '" />' . PHP_EOL,
-            DocTypes::HTML_4_01_TRANSITIONAL, DocTypes::HTML_4_01_FRAMESET, DocTypes::HTML_4_01_STRICT => '<meta http-equiv="Content-type" content="text/html;charset=' . $this->encoding . '">' . PHP_EOL,
-            DocTypes::HTML_5 => '<meta charset="' . $this->encoding . '">' . PHP_EOL
+            DocType::XHTML_1_0_STRICT, DocType::XHTML_1_0_TRANSITIONAL, DocType::XHTML_1_0_FRAMESET, DocType::XHTML_1_1 => '<meta http-equiv="Content-type" content="text/html;charset=' . $this->encoding . '" />' . PHP_EOL,
+            DocType::HTML_4_01_TRANSITIONAL, DocType::HTML_4_01_FRAMESET, DocType::HTML_4_01_STRICT => '<meta http-equiv="Content-type" content="text/html;charset=' . $this->encoding . '">' . PHP_EOL,
+            DocType::HTML_5 => '<meta charset="' . $this->encoding . '">' . PHP_EOL
         };
     }
 
     /**
      * Get the raw encoding.
-     * 
+     *
      * @return string
      */
     public function getEncoding(): string
@@ -449,8 +448,8 @@ class View extends stdClass implements ServiceContainerItemInterface
 
     /**
      * Render a partial view.
-     * 
-     * Any duplicate arguments will override ones in the view during the partial. 
+     *
+     * Any duplicate arguments will override ones in the view during the partial.
      * The view itself does not change.
      *
      * @param string $file - filename to use for the view (in Views folder).
@@ -463,7 +462,7 @@ class View extends stdClass implements ServiceContainerItemInterface
     }
 
     /**
-     * Render partial views by looping through the arguments loop. 
+     * Render partial views by looping through the arguments loop.
      *
      * Any duplicate arguments will override ones in the view during the partial.
      * The view itself does not change.
@@ -536,7 +535,7 @@ class View extends stdClass implements ServiceContainerItemInterface
 
     /**
      * Get layout filename.
-     * 
+     *
      * @return string
      */
     public function getLayoutFile(): string
@@ -545,7 +544,8 @@ class View extends stdClass implements ServiceContainerItemInterface
     }
 
     /**
-     * Set layout filename. 
+     * Set layout filename.
+     *
      * @param string $file
      */
     public function setLayoutFile(string $file = 'layout'): void
@@ -555,7 +555,7 @@ class View extends stdClass implements ServiceContainerItemInterface
 
     /**
      * Set a dynamic value on the view.
-     * 
+     *
      * @param string $key
      * @param string|int|bool|float|object|array|null $value
      */
@@ -566,7 +566,7 @@ class View extends stdClass implements ServiceContainerItemInterface
 
     /**
      * Get a dynamic value from the view.
-     * 
+     *
      * @param string $value
      * @return mixed
      */

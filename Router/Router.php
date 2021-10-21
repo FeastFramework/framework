@@ -344,7 +344,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             $instance = $parameter->newInstance();
             if ($instance->paramType === ParamType::PARAM) {
                 $parameterList[] = $instance->name;
-            } elseif ($instance->paramType === ParamType::FLAG) {
+            } else {
                 $flagList[$instance->name] = $instance->name;
             }
         }

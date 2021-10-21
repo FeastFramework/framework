@@ -98,7 +98,7 @@ trait Collection
      * @see CollectionSort
      *
      */
-    public function sort(int $sortType, bool $modifyOriginal = false, int $sortOptions = SORT_REGULAR): array
+    public function sort(CollectionSort $sortType, bool $modifyOriginal = false, int $sortOptions = SORT_REGULAR): array
     {
         $array = $this->array;
         switch ($sortType) {
@@ -114,8 +114,6 @@ trait Collection
             case CollectionSort::VALUE_REVERSE:
                 arsort($array, $sortOptions);
                 break;
-            default:
-                throw new InvalidOptionException('Invalid sort type');
         }
         if ($modifyOriginal) {
             $this->array = $array;
@@ -128,7 +126,7 @@ trait Collection
      * Sort named-class based collection by the value of a key or multiple keys.
      *
      * @param string|array<string> $key
-     * @param int $sortType
+     * @param CollectionSort $sortType
      * @param bool $modifyOriginal
      * @return array
      * @throws InvalidOptionException
@@ -136,7 +134,7 @@ trait Collection
      */
     public function objectSort(
         string|array $key,
-        int $sortType = CollectionSort::VALUE,
+        CollectionSort $sortType = CollectionSort::VALUE,
         bool $modifyOriginal = false
     ): array {
         switch ($this->type) {

@@ -20,15 +20,15 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class DocTypes
+enum DocType: string
 {
-    public const HTML_4_01_FRAMESET = 'html401frame';
+    case HTML_4_01_FRAMESET = 'html401frame';
 
-    public const HTML_4_01_STRICT = 'html401strict';
-    public const HTML_4_01_TRANSITIONAL = 'html401transitional';
-    public const HTML_5 = 'html5';
-    public const XHTML_1_0_FRAMESET = 'xhtml1frame';
-    public const XHTML_1_0_STRICT = 'xhtml1strict';
-    public const XHTML_1_0_TRANSITIONAL = 'xhtml1transitional';
-    public const XHTML_1_1 = 'xhtml11';
+    case HTML_4_01_STRICT = 'html401strict';
+    case HTML_4_01_TRANSITIONAL = 'html401transitional';
+    case HTML_5 = 'html5';
+    case XHTML_1_0_FRAMESET = 'xhtml1frame';
+    case XHTML_1_0_STRICT = 'xhtml1strict';
+    case XHTML_1_0_TRANSITIONAL = 'xhtml1transitional';
+    case XHTML_1_1 = 'xhtml11';
 }

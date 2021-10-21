@@ -36,7 +36,7 @@ use PDO;
 class Database implements DatabaseInterface
 {
     private PDO $connection;
-    private string $databaseType;
+    private DatabaseType $databaseType;
     private string $queryClass;
 
     /**
@@ -50,7 +50,11 @@ class Database implements DatabaseInterface
     {
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
-        $this->databaseType = (string)$connectionDetails->connectionType;
+        /**
+         * @var DatabaseType
+         * @psalm-suppress UndefinedMethod
+         */
+        $this->databaseType = DatabaseType::from($connectionDetails->connectionType);
         /** @psalm-suppress DeprecatedMethod (will be removed in 2.0) */
         $this->queryClass = (string)($connectionDetails->queryClass ?? $this->getQueryClass());
         $options = $this->getConfigOptions($connectionDetails);
@@ -376,9 +380,9 @@ class Database implements DatabaseInterface
     /**
      * Get Database type.
      *
-     * @return string
+     * @return DatabaseType
      */
-    public function getDatabaseType(): string
+    public function getDatabaseType(): DatabaseType
     {
         return $this->databaseType;
     }

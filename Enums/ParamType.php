@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class ParamType
+enum ParamType
 {
-    public const FLAG = 'flag';
-    public const PARAM = 'param';
+    case FLAG;
+    case PARAM;
 }

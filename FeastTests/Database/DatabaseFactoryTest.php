@@ -39,7 +39,7 @@ class DatabaseFactoryTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::MYSQL;
+        $details->connectionType = DatabaseType::MYSQL->value;
         $config = $this->createStub(Config::class);
         $config->method('getSetting')->willReturnMap(
             [

@@ -51,11 +51,11 @@ class TableFactoryTest extends TestCase
     {
         $dbfInterface = $this->createStub(DatabaseFactory::class);
         $dbInterface = $this->createStub(DatabaseInterface::class);
-        $dbInterface->method('getDatabaseType')->willReturn('TableTypeDoesn\'tExist');
+        $dbInterface->method('getDatabaseType')->willThrowException(new \TypeError());
         $dbfInterface->method('getConnection')->willReturn($dbInterface);
         $serviceContainer = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $serviceContainer->add(DatabaseFactoryInterface::class, $dbfInterface);
-        $this->expectException(DatabaseException::class);
+        $this->expectException(\TypeError::class);
         TableFactory::getTable('test');
     }
 }

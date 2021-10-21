@@ -18,7 +18,7 @@
 
 declare(strict_types=1);
 
-use Feast\Enums\DocTypes;
+use Feast\Enums\DocType;
 use Feast\Interfaces\ConfigInterface;
 use Feast\View;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ class ViewTest extends TestCase
             $this->returnValueMap(
                 [
                     ['siteurl', null, 'test'],
-                    ['html.doctype', DocTypes::HTML_5, DocTypes::HTML_4_01_STRICT]
+                    ['html.doctype', DocType::HTML_5, DocType::HTML_4_01_STRICT]
                 ]
             )
         );
@@ -67,86 +67,86 @@ class ViewTest extends TestCase
             '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::HTML_4_01_STRICT, $this->view->getDocType());
+        $this->assertEquals(DocType::HTML_4_01_STRICT, $this->view->getDocType());
     }
 
     public function testGetDoctypeHtml5(): void
     {
-        $this->view->setDoctype(DocTypes::HTML_5);
+        $this->view->setDoctype(DocType::HTML_5);
 
         $this->assertEquals(
             '<!DOCTYPE html>
 <html>',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::HTML_5, $this->view->getDocType());
+        $this->assertEquals(DocType::HTML_5, $this->view->getDocType());
     }
 
     public function testGetDoctypeXhtml10Strict(): void
     {
-        $this->view->setDoctype(DocTypes::XHTML_1_0_STRICT);
+        $this->view->setDoctype(DocType::XHTML_1_0_STRICT);
         $this->assertEquals(
             '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::XHTML_1_0_STRICT, $this->view->getDocType());
+        $this->assertEquals(DocType::XHTML_1_0_STRICT, $this->view->getDocType());
     }
 
     public function testGetDoctypeXhtml11(): void
     {
-        $this->view->setDoctype(DocTypes::XHTML_1_1);
+        $this->view->setDoctype(DocType::XHTML_1_1);
         $this->assertEquals(
             '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::XHTML_1_1, $this->view->getDocType());
+        $this->assertEquals(DocType::XHTML_1_1, $this->view->getDocType());
     }
 
     public function testGetDoctypeXhtml10Transitional(): void
     {
-        $this->view->setDoctype(DocTypes::XHTML_1_0_TRANSITIONAL);
+        $this->view->setDoctype(DocType::XHTML_1_0_TRANSITIONAL);
         $this->assertEquals(
             '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::XHTML_1_0_TRANSITIONAL, $this->view->getDocType());
+        $this->assertEquals(DocType::XHTML_1_0_TRANSITIONAL, $this->view->getDocType());
     }
 
     public function testGetDoctypeHtml401Frameset(): void
     {
-        $this->view->setDoctype(DocTypes::HTML_4_01_FRAMESET);
+        $this->view->setDoctype(DocType::HTML_4_01_FRAMESET);
         $this->assertEquals(
             '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::HTML_4_01_FRAMESET, $this->view->getDocType());
+        $this->assertEquals(DocType::HTML_4_01_FRAMESET, $this->view->getDocType());
     }
 
     public function testGetDoctypeXhtml10Frameset(): void
     {
-        $this->view->setDoctype(DocTypes::XHTML_1_0_FRAMESET);
+        $this->view->setDoctype(DocType::XHTML_1_0_FRAMESET);
         $this->assertEquals(
             '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::XHTML_1_0_FRAMESET, $this->view->getDocType());
+        $this->assertEquals(DocType::XHTML_1_0_FRAMESET, $this->view->getDocType());
     }
 
     public function testGetDoctypeHtml401Transitional(): void
     {
-        $this->view->setDoctype(DocTypes::HTML_4_01_TRANSITIONAL);
+        $this->view->setDoctype(DocType::HTML_4_01_TRANSITIONAL);
         $this->assertEquals(
             '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
             trim($this->view->getDtd())
         );
-        $this->assertEquals(DocTypes::HTML_4_01_TRANSITIONAL, $this->view->getDocType());
+        $this->assertEquals(DocType::HTML_4_01_TRANSITIONAL, $this->view->getDocType());
     }
 
     public function testSetInvalidDoctype(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\TypeError::class);
         $this->view->setDoctype('This is bad data.');
     }
 
@@ -220,7 +220,7 @@ class ViewTest extends TestCase
 
     public function testGetEncodingXhtmlHtml(): void
     {
-        $this->view->setDoctype(DocTypes::XHTML_1_0_STRICT);
+        $this->view->setDoctype(DocType::XHTML_1_0_STRICT);
         $this->view->setEncoding('EN');
         $this->assertEquals(
             '<meta http-equiv="Content-type" content="text/html;charset=EN" />',
@@ -231,7 +231,7 @@ class ViewTest extends TestCase
 
     public function testGetEncodingHtml5Html(): void
     {
-        $this->view->setDoctype(DocTypes::HTML_5);
+        $this->view->setDoctype(DocType::HTML_5);
         $this->view->setEncoding('EN');
         $this->assertEquals(
             '<meta charset="EN">',
@@ -242,7 +242,7 @@ class ViewTest extends TestCase
 
     public function testSetDocTypeGibberish(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(TypeError::class);
         $this->view->setDoctype('FeastHtml');
     }
 
