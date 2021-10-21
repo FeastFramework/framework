@@ -49,7 +49,7 @@ class Path
     }
 
     /**
-     * @return array<string>
+     * @return array<RequestMethod>
      */
     public function getMethods(): array
     {

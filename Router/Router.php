@@ -862,13 +862,14 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         /** @var Path $pathAttribute */
         $pathAttribute = $attribute->newInstance();
         foreach ($pathAttribute->getMethods() as $methodType) {
+            /** @psalm-suppress UndefinedPropertyFetch */
             $this->addRoute(
                 $pathAttribute->path,
                 $className,
                 $methodName,
                 $pathAttribute->name,
                 $pathAttribute->defaults,
-                $methodType,
+                (string)$methodType->value,
                 $module
             );
         }
@@ -897,7 +898,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      */
     protected function getCurrentRequestMethod(): string
     {
-        return !empty($_SERVER['REQUEST_METHOD']) ? (string)$_SERVER['REQUEST_METHOD'] : RequestMethod::GET;
+        return !empty($_SERVER['REQUEST_METHOD']) ? (string)$_SERVER['REQUEST_METHOD'] : RequestMethod::GET->value;
     }
 
 }

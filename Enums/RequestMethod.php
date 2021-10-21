@@ -20,11 +20,11 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class RequestMethod
+enum RequestMethod: string
 {
-    public const GET = 'GET';
-    public const POST = 'POST';
-    public const PUT = 'PUT';
-    public const PATCH = 'PATCH';
-    public const DELETE = 'DELETE';
+    case GET = 'GET';
+    case POST = 'POST';
+    case PUT = 'PUT';
+    case PATCH = 'PATCH';
+    case DELETE = 'DELETE';
 }

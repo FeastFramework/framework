@@ -39,7 +39,7 @@ abstract class HttpRequest implements HttpRequestInterface
     public const CONTENT_TYPE_JSON = 'application/json';
     public const DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) FeastFramework/1.0';
 
-    protected string $method;
+    protected RequestMethod $method;
     /** @var array<string,string> $cookies */
     protected array $cookies;
     protected array $arguments;
@@ -144,9 +144,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Set request method.
      *
-     * @param string $method
+     * @param RequestMethod $method
      */
-    private function setMethod(string $method): void
+    private function setMethod(RequestMethod $method): void
     {
         $this->contentType = null;
         $this->arguments = [];
@@ -294,9 +294,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Get request method.
      *
-     * @return string
+     * @return RequestMethod
      */
-    public function getMethod(): string
+    public function getMethod(): RequestMethod
     {
         return $this->method;
     }
