@@ -107,9 +107,7 @@ class Help
                         /** @var Action $actionItem */
                         $actionItem = $actionAttribute->newInstance();
 
-                        $longestMethod = $longestMethod < strlen($callable) ? strlen(
-                            $callable
-                        ) : $longestMethod;
+                        $longestMethod = max($longestMethod, strlen($callable));
                         $descriptions[$callable] = $actionItem->description;
                         $count++;
                     }

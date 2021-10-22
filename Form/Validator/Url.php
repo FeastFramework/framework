@@ -47,16 +47,12 @@ class Url implements Validator
         array &$errors,
         bool $valid
     ): bool {
-        $value = substr(
-            $value,
-            0,
-            4
-        ) != 'http' ? 'http://' . $value : $value;
+        $value = !str_starts_with($value, 'http') ? 'http://' . $value : $value;
         if (!filter_var($value, FILTER_VALIDATE_URL)) {
             $errors[] = [$key, 'URL'];
             $valid = false;
         }
-        
+
         return $valid;
     }
 

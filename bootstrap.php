@@ -23,7 +23,6 @@ declare(strict_types=1);
 #             DO NOT MODIFY THIS FILE AT ALL             #
 ##########################################################
 #
-use Feast\ServiceContainer\ServiceContainer;
 
 if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
     /** @psalm-suppress MissingFile */

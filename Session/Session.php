@@ -22,7 +22,6 @@ namespace Feast\Session;
 
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\ResponseInterface;
-use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;

@@ -163,7 +163,7 @@ abstract class CronJob implements JobInterface
      */
     public function everyMinute(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', ['*', $hour, $dayOfMonth, $month, $dayOfWeek]);
         return $this;
     }
@@ -175,7 +175,7 @@ abstract class CronJob implements JobInterface
      */
     public function everyOddMinute(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', ['1-59/2', $hour, $dayOfMonth, $month, $dayOfWeek]);
         return $this;
     }
@@ -268,7 +268,7 @@ abstract class CronJob implements JobInterface
      */
     protected function everyXDivisibleMinutes(int $x): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', ['*/' . (string)$x, $hour, $dayOfMonth, $month, $dayOfWeek]);
         return $this;
     }
@@ -280,7 +280,7 @@ abstract class CronJob implements JobInterface
      */
     public function hourly(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, , $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $this->cronString = implode(' ', [$minute, '*', $dayOfMonth, $month, $dayOfWeek]);
         return $this;
@@ -294,7 +294,7 @@ abstract class CronJob implements JobInterface
      */
     public function hourlyAt(int $minuteNew): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [, , $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minuteNew, '*', $dayOfMonth, $month, $dayOfWeek]);
         return $this;
     }
@@ -306,7 +306,7 @@ abstract class CronJob implements JobInterface
      */
     public function hourlyOnOddHours(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, , $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $this->cronString = implode(' ', [$minute, '1-23/2', $dayOfMonth, $month, $dayOfWeek]);
         return $this;
@@ -380,7 +380,7 @@ abstract class CronJob implements JobInterface
      */
     protected function everyXDivisibleHours(int $x): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, , $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $this->cronString = implode(' ', [$minute, '*/' . $x, $dayOfMonth, $month, $dayOfWeek]);
         return $this;
@@ -408,7 +408,7 @@ abstract class CronJob implements JobInterface
      */
     public function dailyAt(string $time): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [, , $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
 
         [$hour, $minute] = explode(':', $time);
         $this->cronString = implode(' ', [(string)(int)$minute, (string)(int)$hour, $dayOfMonth, $month, $dayOfWeek]);
@@ -424,7 +424,7 @@ abstract class CronJob implements JobInterface
      */
     public function twiceDaily(int $hour1, int $hour2): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, , $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = implode(',', [$hour1, $hour2]);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, $dayOfWeek]);
@@ -438,7 +438,7 @@ abstract class CronJob implements JobInterface
      */
     public function weekly(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '0']);
@@ -454,7 +454,7 @@ abstract class CronJob implements JobInterface
      */
     public function weeklyOn(int $dayOfWeekNew, ?string $time = null): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, $dayOfWeekNew]);
@@ -471,7 +471,7 @@ abstract class CronJob implements JobInterface
      */
     public function monthly(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, , $month, $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $this->cronString = implode(' ', [$minute, $hour, '1', $month, $dayOfWeek]);
@@ -487,7 +487,7 @@ abstract class CronJob implements JobInterface
      */
     public function monthlyOn(int $dayOfMonthNew, ?string $time = null): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, , $month, $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonthNew, $month, $dayOfWeek]);
@@ -507,7 +507,7 @@ abstract class CronJob implements JobInterface
      */
     public function twiceMonthly(int $dayOfMonthOne, int $dayOfMonthTwo, ?string $time = null): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, , $month, $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonthOne . ',' . $dayOfMonthTwo, $month, $dayOfWeek]);
@@ -526,7 +526,7 @@ abstract class CronJob implements JobInterface
      */
     public function quarterly(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, , $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $dayOfMonth = $dayOfMonth === '*' ? '1' : $dayOfMonth;
@@ -541,7 +541,7 @@ abstract class CronJob implements JobInterface
      */
     public function yearly(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, , $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $dayOfMonth = $dayOfMonth === '*' ? '1' : $dayOfMonth;
@@ -559,7 +559,7 @@ abstract class CronJob implements JobInterface
      */
     public function yearlyOn(int $dayOfMonthNew, int $monthNew, ?string $time = null): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, , , $dayOfWeek] = explode(' ', $this->cronString);
         $minute = $minute === '*' ? '0' : $minute;
         $hour = $hour === '*' ? '0' : $hour;
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonthNew, $monthNew, $dayOfWeek]);
@@ -576,7 +576,7 @@ abstract class CronJob implements JobInterface
      */
     public function weekdays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '1,2,3,4,5']);
         return $this;
     }
@@ -588,7 +588,7 @@ abstract class CronJob implements JobInterface
      */
     public function weekends(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '0,6']);
         return $this;
     }
@@ -600,7 +600,7 @@ abstract class CronJob implements JobInterface
      */
     public function sundays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '0']);
         return $this;
     }
@@ -612,7 +612,7 @@ abstract class CronJob implements JobInterface
      */
     public function mondays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '1']);
         return $this;
     }
@@ -624,7 +624,7 @@ abstract class CronJob implements JobInterface
      */
     public function tuesdays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '2']);
         return $this;
     }
@@ -636,7 +636,7 @@ abstract class CronJob implements JobInterface
      */
     public function wednesdays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '3']);
         return $this;
     }
@@ -648,7 +648,7 @@ abstract class CronJob implements JobInterface
      */
     public function thursdays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '4']);
         return $this;
     }
@@ -660,7 +660,7 @@ abstract class CronJob implements JobInterface
      */
     public function fridays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '5']);
         return $this;
     }
@@ -672,7 +672,7 @@ abstract class CronJob implements JobInterface
      */
     public function saturdays(): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, '6']);
         return $this;
     }
@@ -687,7 +687,7 @@ abstract class CronJob implements JobInterface
      */
     public function days(array $days): static
     {
-        [$minute, $hour, $dayOfMonth, $month, $dayOfWeek] = explode(' ', $this->cronString);
+        [$minute, $hour, $dayOfMonth, $month,] = explode(' ', $this->cronString);
         $this->cronString = implode(' ', [$minute, $hour, $dayOfMonth, $month, implode(',', $days)]);
         return $this;
     }
@@ -897,7 +897,6 @@ abstract class CronJob implements JobInterface
         $divisor = null;
         $rulesPassed = true;
         $start = null;
-        $end = null;
         if (str_contains($field, '/')) {
             [$field, $divisor] = explode('/', $field, 2);
         }

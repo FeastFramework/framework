@@ -239,7 +239,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         if (str_ends_with($path, 'index')) {
             $path = substr($path, 0, -5);
         }
-        if (str_ends_with($path, '/',)) {
+        if (str_ends_with($path, '/')) {
             $path = substr($path, 0, -1);
         }
         return $path;
@@ -320,8 +320,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $routeGroup = $this->routes->$requestMethod;
         /** @var RouteData $routeData */
         foreach ((array)$routeGroup as $routeData) {
-            $arguments = [];
-            if (preg_match_all($routeData->pattern, $checkString, $arguments)) {
+            if (preg_match_all($routeData->pattern, $checkString)) {
                 return $routeData;
             }
         }

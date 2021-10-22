@@ -149,7 +149,7 @@ class JobController extends CliController
         $jobProcess->stopRun($now);
     }
 
-    protected function runJob(\Model\Job $job, LoggerInterface $logger, JobMapper $jobMapper,): bool
+    protected function runJob(\Model\Job $job, LoggerInterface $logger, JobMapper $jobMapper): bool
     {
         $canRun = $jobMapper->markJobPendingIfAble($job);
         if ($canRun === false) {

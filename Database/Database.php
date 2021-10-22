@@ -362,9 +362,7 @@ class Database implements DatabaseInterface
             DatabaseType::MYSQL =>
             sprintf('mysql:host=%s;port=%s;dbname=%s', $hostname, $port, $database),
             DatabaseType::SQLITE =>
-            sprintf('sqlite:%s', $database),
-            default =>
-            throw new DatabaseException('Invalid Database type')
+            sprintf('sqlite:%s', $database)
         };
     }
 

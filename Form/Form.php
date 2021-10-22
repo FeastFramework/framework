@@ -121,7 +121,6 @@ abstract class Form
             if ($this->isRequiredAndMissing($validatePartial, $formField, $field)) {
                 $errors[] = [$key, self::ERROR_NOT_SET];
                 $formValid = false;
-                continue;
             } elseif ($this->notRequiredAndIsEmpty($field, $formField)) {
                 continue;
             } elseif (is_string($field)) {

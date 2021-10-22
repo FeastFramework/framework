@@ -40,13 +40,12 @@ abstract class QueueableJob implements JobInterface
     /**
      * Store job in the database for the queue to pick up.
      *
-     * @param ?JobMapper $jobMapper
+     * @param JobMapper $jobMapper
      * @return Job
      * @throws InvalidDateException
      */
-    public function store(JobMapper $jobMapper = null): Job
+    public function store(JobMapper $jobMapper = new JobMapper()): Job
     {
-        $jobMapper ??= new JobMapper();
         $model = new Job();
         $model->job_id = $this->generateUuid();
         $model->job_name = $this->jobName;

@@ -25,8 +25,6 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class Action
 {
-    protected array $params = [];
-
     public function __construct(public string $usage = '', public string $description = '')
     {
     }

@@ -276,7 +276,6 @@ class Main implements MainInterface
 
             if (is_subclass_of($argumentType, BaseModel::class)) {
                 $this->buildBaseModelArgument($argumentType, $request, $argument, $return);
-                return;
             } elseif (is_subclass_of($argumentType, BaseMapper::class)) {
                 $mapper = new $argumentType();
                 $return[] = $mapper;

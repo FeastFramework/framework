@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace Feast\Interfaces;
 
-use Feast\Enums\LogLevelCode;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 
 interface LoggerInterface extends ServiceContainerItemInterface

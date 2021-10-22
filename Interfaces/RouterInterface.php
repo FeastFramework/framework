@@ -22,7 +22,6 @@ namespace Feast\Interfaces;
 
 use Exception;
 use Feast\Attributes\Path;
-use Feast\Enums\RequestMethod;
 use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 

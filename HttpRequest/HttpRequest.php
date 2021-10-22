@@ -258,10 +258,9 @@ abstract class HttpRequest implements HttpRequestInterface
      * Set the url for the request.
      *
      * @param string $url
-     * @return HttpRequest
-     * @throws ServerFailureException
+     * @throws BadRequestException
      */
-    private function setUrl(string $url): HttpRequestInterface
+    private function setUrl(string $url): void
     {
         $this->url = $url;
         if (!str_contains($url, 'http://') && !str_contains($url, 'https://')) {
@@ -277,8 +276,6 @@ abstract class HttpRequest implements HttpRequestInterface
         } else {
             $this->baseUrl = $url;
         }
-
-        return $this;
     }
 
     /**
@@ -504,6 +501,7 @@ abstract class HttpRequest implements HttpRequestInterface
 
     /**
      * Get the \Feast\Response object for a finished request.
+     *
      * @return Response|null
      */
     public function getResponse(): ?Response

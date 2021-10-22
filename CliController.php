@@ -35,7 +35,7 @@ abstract class CliController implements ControllerInterface
     ) {
         $config ??= $di->get(ConfigInterface::INTERFACE_NAME);
         /** @var bool|null $setting */
-        $setting = $config->getSetting('ttycolor', null);
+        $setting = $config->getSetting('ttycolor');
         $this->terminal = new Terminal($setting);
     }
 

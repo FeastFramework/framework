@@ -90,13 +90,11 @@ trait Collection
     /**
      * Sort the collection by different sort options.
      *
-     * @param $sortType
+     * @param CollectionSort $sortType
      * @param bool $modifyOriginal
      * @param int $sortOptions
      * @return array
-     * @throws InvalidOptionException
      * @see CollectionSort
-     *
      */
     public function sort(CollectionSort $sortType, bool $modifyOriginal = false, int $sortOptions = SORT_REGULAR): array
     {
@@ -265,7 +263,7 @@ trait Collection
     /**
      * Check if item exists in collection.
      *
-     * @param $value
+     * @param mixed $value
      * @param bool $strictMatch
      * @return bool
      */
@@ -273,7 +271,7 @@ trait Collection
         mixed $value,
         bool $strictMatch = true
     ): bool {
-        return array_search($value, $this->array, $strictMatch) !== false;
+        return in_array($value, $this->array, $strictMatch);
     }
 
     /**
@@ -300,7 +298,7 @@ trait Collection
     /**
      * Find the first index of an item in the collection.
      *
-     * @param $value
+     * @param mixed $value
      * @param bool $strictMatch
      * @return null|int|string
      */
@@ -319,7 +317,7 @@ trait Collection
     /**
      * Find the last index of an item in the collection.
      *
-     * @param $value
+     * @param mixed $value
      * @param bool $strictMatch
      * @return array-key|null
      */
@@ -348,7 +346,7 @@ trait Collection
     /**
      * Remove an item from the collection.
      *
-     * @param $valueMatch
+     * @param mixed $valueMatch
      * @param bool $strictMatch
      */
     public function remove(

@@ -210,9 +210,8 @@ class Binary
      * Process description attribute and return whether any methods were found.
      *
      * @param \ReflectionMethod $method
-     * @return bool
      */
-    private function processCliMethods(\ReflectionMethod $method): bool
+    private function processCliMethods(\ReflectionMethod $method): void
     {
         $name = NameHelper::getMethodNameAsCallableAction($method->getName());
         $class = NameHelper::getControllerClassName($method->getDeclaringClass());
@@ -231,7 +230,6 @@ class Binary
 
             $this->terminal->message($actionItem->description);
         }
-        return true;
     }
 
     /**
