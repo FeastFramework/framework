@@ -22,7 +22,7 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
 
 interface DatabaseDetailsInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     public function cache(): void;
 

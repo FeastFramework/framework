@@ -44,8 +44,8 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
 class Main implements MainInterface
 {
 
-    public const RUN_AS_WEBAPP = 'webapp';
-    public const RUN_AS_CLI = 'cli';
+    final public const RUN_AS_WEBAPP = 'webapp';
+    final public const RUN_AS_CLI = 'cli';
 
     private array $plugins = [];
     private ErrorLoggerInterface $logger;

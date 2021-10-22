@@ -35,8 +35,8 @@ use stdClass;
 abstract class Field
 {
 
-    public const LABEL_POSITION_FIRST = 'first';
-    public const LABEL_POSITION_LAST = 'last';
+    final public const LABEL_POSITION_FIRST = 'first';
+    final public const LABEL_POSITION_LAST = 'last';
 
     public string $class = '';
     public ?string $default = null;

@@ -25,7 +25,7 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
 
 interface LoggerInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     /**
      * System is unusable.

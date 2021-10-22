@@ -28,10 +28,10 @@ use Model\Job;
 
 abstract class QueueableJob implements JobInterface
 {
-    public const JOB_STATUS_PENDING = 'pending';
-    public const JOB_STATUS_RUNNING = 'running';
-    public const JOB_STATUS_COMPLETE = 'complete';
-    public const JOB_STATUS_FAILED = 'failed';
+    final public const JOB_STATUS_PENDING = 'pending';
+    final public const JOB_STATUS_RUNNING = 'running';
+    final public const JOB_STATUS_COMPLETE = 'complete';
+    final public const JOB_STATUS_FAILED = 'failed';
 
     protected int $maxTries = 3;
     protected string $queueName = 'default';

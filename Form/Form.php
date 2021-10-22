@@ -35,10 +35,6 @@ abstract class Form
 
     public const ERROR_NOT_SET = 'Required';
 
-    public const FIELD_SELECT = 'select';
-    public const FIELD_RADIO = 'radio';
-    public const FIELD_CHECKBOX = 'checkbox';
-    public const FIELD_TEXTAREA = 'textarea';
 
     /**
      * @param string $name

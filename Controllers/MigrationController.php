@@ -31,7 +31,7 @@ use Model\Migration;
 class MigrationController extends CliController
 {
 
-    protected const MIGRATION_TABLE_MIGRATION = '1_migrations';
+    final protected const MIGRATION_TABLE_MIGRATION = '1_migrations';
     /** @var array<string,bool> $migrationsByName */
     protected array $migrationsByName = [];
     /** @var array<int,bool> $migrationsByNumber */

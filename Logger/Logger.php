@@ -36,8 +36,8 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
 
     use DependencyInjected;
 
-    private const LOG_DIR = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
-    private LogLevelCode $logLevel;
+    protected const LOG_DIR = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
+    protected LogLevelCode $logLevel;
 
     public function __construct(private ConfigInterface $config, private string $runAs)
     {

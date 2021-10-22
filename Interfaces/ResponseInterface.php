@@ -30,7 +30,7 @@ use Feast\View;
  */
 interface ResponseInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     /**
      * Set the response code.
