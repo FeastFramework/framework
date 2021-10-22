@@ -55,8 +55,19 @@ class Database implements DatabaseInterface
          * @psalm-suppress UndefinedMethod
          */
         $this->databaseType = DatabaseType::from($connectionDetails->connectionType);
-        /** @psalm-suppress DeprecatedMethod (will be removed in 2.0) */
-        $this->queryClass = (string)($connectionDetails->queryClass ?? $this->getQueryClass());
+        $queryClass = (string)($connectionDetails->queryClass ?? '');
+        if ($queryClass === '') {
+            throw new InvalidOptionException(
+                'queryClass not passed in. Expected a class that inherits \Feast\Database\Query '
+            );
+        }
+        if (!class_exists($queryClass)) {
+            throw new InvalidOptionException('queryClass ' . $queryClass . ' not found.');
+        }
+        if (!is_subclass_of($queryClass, Query::class)) {
+            throw new InvalidOptionException('queryClass ' . $queryClass . ' does not extend \Feast\Database\Query.');
+        }
+        $this->queryClass = $queryClass;
         $options = $this->getConfigOptions($connectionDetails);
 
         // Get connection string
@@ -174,26 +185,6 @@ class Database implements DatabaseInterface
     {
         /** @var Query */
         return new ($this->queryClass)($this->connection);
-    }
-
-    /**
-     * Get Query class from DatabaseType (Deprecated)
-     * 
-     * @return string
-     * @throws DatabaseException
-     * @deprecated 
-     */
-    public function getQueryClass(): string
-    {
-        trigger_error(
-            'The method ' . self::class . '::getQueryClass is deprecated. Set the queryClass option in your database config.',
-            E_USER_DEPRECATED
-        );
-        return match ($this->databaseType) {
-            DatabaseType::MYSQL => MySQLQuery::class,
-            DatabaseType::SQLITE => SQLiteQuery::class,
-            default => throw new DatabaseException('Invalid Database Type')
-        };
     }
 
     /**

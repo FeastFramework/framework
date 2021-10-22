@@ -94,6 +94,7 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->url = 'mysql:host=localhost;port=3306;';
         $details->connectionType = DatabaseType::MYSQL->value;
+        $details->queryClass = MySQLQuery::class;
         $database = new Database($details, PDOMock::class);
         $this->assertTrue($database instanceof Database);
     }
@@ -106,11 +107,12 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL->value;
+        $details->queryClass = MySQLQuery::class;
         $this->expectException(InvalidOptionException::class);
         new Database($details, \stdClass::class);
     }
 
-    public function testInstantiationWithDeprecatedMethodMySQL(): void
+    public function testInstantiationInvalidDbClass(): void
     {
         $details = new \stdClass();
         $details->host = 'localhost';
@@ -118,11 +120,37 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL->value;
-        $database = new Database($details, PDOMock::class);
-        $this->assertTrue($database instanceof Database);
+        $details->queryClass = 'completegibberishdefinitelynotaclass';
+        $this->expectException(InvalidOptionException::class);
+        new Database($details, \stdClass::class);
     }
 
-    public function testInstantiationWithDeprecatedMethodSqLite(): void
+    public function testInstantiationNonExtendedDbClass(): void
+    {
+        $details = new \stdClass();
+        $details->host = 'localhost';
+        $details->user = 'root';
+        $details->pass = 'test';
+        $details->name = 'Test';
+        $details->connectionType = DatabaseType::MYSQL->value;
+        $details->queryClass = \stdClass::class;
+        $this->expectException(InvalidOptionException::class);
+        new Database($details, \stdClass::class);
+    }
+
+    public function testInstantiationWithRemovedFormerlyDeprecatedMethodMySQL(): void
+    {
+        $details = new \stdClass();
+        $details->host = 'localhost';
+        $details->user = 'root';
+        $details->pass = 'test';
+        $details->name = 'Test';
+        $details->connectionType = DatabaseType::MYSQL->value;
+        $this->expectException(InvalidOptionException::class);
+        $database = new Database($details, PDOMock::class);
+    }
+
+    public function testInstantiationWithRemovedFormerlyDeprecatedMethodSqLite(): void
     {
         $details = new \stdClass();
         $details->host = 'localhost';
@@ -130,8 +158,8 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::SQLITE->value;
+        $this->expectException(InvalidOptionException::class);
         $database = new Database($details, PDOMock::class);
-        $this->assertTrue($database instanceof Database);
     }
 
     public function testInsert(): void
@@ -203,22 +231,10 @@ class DatabaseTest extends TestCase
         $this->assertEquals(DatabaseType::MYSQL, $database->getDatabaseType());
     }
 
-    public function testGetQueryClassMySQL(): void
-    {
-        $database = $this->getValidConnection();
-        $this->assertEquals(MySQLQuery::class, $database->getQueryClass());
-    }
-
     public function testGetDatabaseTypeSqlite(): void
     {
         $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $this->assertEquals(DatabaseType::SQLITE, $database->getDatabaseType());
-    }
-
-    public function testGetQueryClassSqlite(): void
-    {
-        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
-        $this->assertEquals(SQLiteQuery::class, $database->getQueryClass());
     }
 
     public function testDelete(): void
