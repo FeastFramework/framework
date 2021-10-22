@@ -33,6 +33,7 @@ jobs:
         run: psalm --show-info=true --no-diff --report=results.sarif
 
       - name: Upload Security Analysis results to GitHub
+        continue-on-error: true
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: results.sarif
