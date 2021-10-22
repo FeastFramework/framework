@@ -137,7 +137,7 @@ $container->add(MainInterface::class, new Main($container, $runAs));
 if (RUN_AS === Main::RUN_AS_WEBAPP) {
     $session = new Session($config);
     $container->add(Session::class, $session);
-    $container->add(Identity::class, new Identity($session));
+    $container->add(Identity::class, new Identity($config,$session));
 } else {
     $container->add(CliArguments::class, new CliArguments($argv));
 }
