@@ -32,11 +32,9 @@ class DatabaseDetails implements ServiceContainerItemInterface, DatabaseDetailsI
 
     /** @var array<array<string,string>> */
     protected array $databaseDataTypes = [];
-    protected ?DatabaseFactoryInterface $dbFactory;
 
-    public function __construct(DatabaseFactoryInterface $dbFactory)
+    public function __construct(protected DatabaseFactoryInterface $dbFactory)
     {
-        $this->dbFactory = $dbFactory;
         $this->checkInjected();
     }
 
@@ -79,7 +77,7 @@ class DatabaseDetails implements ServiceContainerItemInterface, DatabaseDetailsI
 
     protected function buildDetailsForTable(string $table, string $connection): void
     {
-        $dbFactory = $this->dbFactory ?? di(DatabaseFactoryInterface::class);
+        $dbFactory = $this->dbFactory;
         $connection = $dbFactory->getConnection($connection);
         $details = $connection->getDescribedTable($table);
         $tableType = [];

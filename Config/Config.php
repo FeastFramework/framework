@@ -24,6 +24,7 @@ use Feast\Exception\ConfigException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 use stdClass;
@@ -44,7 +45,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
      *
      * @param bool $pullFromContainer - True to check if already in service container
      * @param string|null $overriddenEnvironment - if set, the environment will be the one passed in
-     * @throws ServerFailureException|ContainerException
+     * @throws ServerFailureException|ContainerException|NotFoundException
      */
     public function __construct(bool $pullFromContainer = true, string $overriddenEnvironment = null)
     {

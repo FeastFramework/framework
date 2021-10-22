@@ -237,19 +237,19 @@ class Binary
     /**
      * Process custom actions built into Feast. Defaults to all classes.
      *
-     * @param array|null $classes
+     * @param array<class-string> $classes
      * @throws ReflectionException
      */
-    private function analyzeFeast(array $classes = null): void
-    {
-        $classes ??= [
+    private function analyzeFeast(
+        array $classes = [
             CreateController::class,
             MigrationController::class,
             CacheController::class,
             JobController::class,
             MaintenanceController::class,
             ServeController::class
-        ];
+        ]
+    ): void {
         /** @var class-string $class */
         foreach ($classes as $class) {
             $this->processCliClass(new \ReflectionClass($class));

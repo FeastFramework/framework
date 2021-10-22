@@ -40,7 +40,7 @@ class IdentityTest extends TestCase
         $config = $this->createStub(ConfigInterface::class);
         $config->method('getSetting')->willReturn('test');
 
-        $identity = new Identity($config, $session);
+        $identity = new Identity($session);
         $user = $identity->getUser();
         $this->assertEquals('testUser', $user->user);
     }
@@ -58,7 +58,7 @@ class IdentityTest extends TestCase
         $testUser = new MockUser();
         $testUser->user = 'testUser';
         $namespace->identity = $testUser;
-        $identity = new Identity($config, $session);
+        $identity = new Identity($session);
         $user = $identity->getUser();
         $this->assertEquals(null, $user);
 
@@ -80,7 +80,7 @@ class IdentityTest extends TestCase
         $testUser = new MockUser();
         $testUser->user = 'testUser';
 
-        $identity = new Identity($config, $session);
+        $identity = new Identity($session);
         $identity->saveUser($testUser);
 
         $user = $identity->getUser();
