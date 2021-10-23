@@ -22,13 +22,12 @@ namespace Feast\Controllers;
 
 use Feast\Attributes\Action;
 use Feast\Attributes\Param;
-use Feast\CliController;
 use Feast\Enums\ParamType;
 use Feast\Interfaces\DatabaseDetailsInterface;
 use Mapper\MigrationMapper;
 use Model\Migration;
 
-class MigrationController extends CliController
+class MigrationController extends WriteTemplateController
 {
 
     protected const MIGRATION_TABLE_MIGRATION = '1_migrations';
@@ -217,9 +216,8 @@ class MigrationController extends CliController
 
     protected function writeMigrationFile(string $fullName, string $name): void
     {
-        $contents = file_get_contents(
-            APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Migration.php.txt'
-        );
+        $file = $this->getTemplateFilePath('Migration');
+        $contents = file_get_contents($file);
         $contents = str_replace(
             ['{number}', '{name}'],
             [$fullName, $name],

@@ -27,6 +27,7 @@ use Feast\Controllers\JobController;
 use Feast\Controllers\MaintenanceController;
 use Feast\Controllers\MigrationController;
 use Feast\Controllers\ServeController;
+use Feast\Controllers\TemplateController;
 use Feast\Exception\NotFoundException;
 use Feast\Interfaces\MainInterface;
 use ReflectionException;
@@ -119,6 +120,12 @@ class Binary
         if ($rawArguments[1] === 'feast:serve') {
             $this->printUsage($rawArguments[1]);
             $this->analyzeFeast([ServeController::class]);
+            return;
+        }
+
+        if ($rawArguments[1] === 'feast:template') {
+            $this->printUsage($rawArguments[1]);
+            $this->analyzeFeast([TemplateController::class]);
             return;
         }
 
@@ -237,19 +244,19 @@ class Binary
     /**
      * Process custom actions built into Feast. Defaults to all classes.
      *
-     * @param array|null $classes
+     * @param array $classes
      * @throws ReflectionException
      */
-    private function analyzeFeast(array $classes = null): void
+    private function analyzeFeast(array $classes = [
+        CreateController::class,
+        MigrationController::class,
+        CacheController::class,
+        JobController::class,
+        MaintenanceController::class,
+        ServeController::class,
+        TemplateController::class
+    ]): void
     {
-        $classes ??= [
-            CreateController::class,
-            MigrationController::class,
-            CacheController::class,
-            JobController::class,
-            MaintenanceController::class,
-            ServeController::class
-        ];
         /** @var class-string $class */
         foreach ($classes as $class) {
             $this->processCliClass(new \ReflectionClass($class));

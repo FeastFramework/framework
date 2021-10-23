@@ -21,7 +21,6 @@ use Feast\BaseModel;
 use Feast\Exception\InvalidOptionException;
 use Feast\Exception\NotFoundException;
 use Feast\Interfaces\DatabaseFactoryInterface;
-use Feast\ServiceContainer\ServiceContainer;
 use PHPUnit\Framework\TestCase;
 
 class BaseModelTest extends TestCase

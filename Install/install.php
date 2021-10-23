@@ -62,7 +62,6 @@ foreach ($paths as $path) {
 }
 
 $directories = [
-    'bin' . DIRECTORY_SEPARATOR . 'templates',
     'bin',
     'configs',
     'Controllers',
