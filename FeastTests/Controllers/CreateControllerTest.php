@@ -30,6 +30,7 @@ use Feast\Date;
 use Feast\Enums\ServiceContainer;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\DatabaseInterface;
+use Feast\Main;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -433,6 +434,21 @@ class CreateControllerTest extends TestCase
         $this->assertStringContainsString('Plugin file NewService.php created.', trim($output));
     }
 
+    public function testPluginGetCreatedFromTemplateDir(): void
+    {
+        $this->writeTempFile(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Plugin.php.txt', file_get_contents(Main::FRAMEWORK_ROOT . DIRECTORY_SEPARATOR . 'Install' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Plugin.php.txt'));
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:plugin'])
+        );
+        $controller->pluginGet('NewService');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('Plugin file NewService.php created.', trim($output));
+    }
+
     public function testActionGetNoName(): void
     {
         $config = $this->createStub(Config::class);
@@ -667,7 +683,7 @@ class CreateControllerTest extends TestCase
         bool $mangled = false
     ): void {
         $contents = file_get_contents(
-            APPLICATION_ROOT . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Controller.php.txt'
+            Main::FRAMEWORK_ROOT . DIRECTORY_SEPARATOR . 'Install' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Controller.php.txt'
         );
         $actionUse = $namespace === '\\Modules\\CLI' ? 'use Feast\Attributes\Action;' . "\n" : '';
         $cliUse = $namespace === '\\Modules\\CLI' ? 'Cli' : '';

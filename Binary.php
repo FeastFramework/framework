@@ -27,6 +27,7 @@ use Feast\Controllers\JobController;
 use Feast\Controllers\MaintenanceController;
 use Feast\Controllers\MigrationController;
 use Feast\Controllers\ServeController;
+use Feast\Controllers\TemplateController;
 use Feast\Exception\NotFoundException;
 use Feast\Interfaces\MainInterface;
 use ReflectionException;
@@ -119,6 +120,12 @@ class Binary
         if ($rawArguments[1] === 'feast:serve') {
             $this->printUsage($rawArguments[1]);
             $this->analyzeFeast([ServeController::class]);
+            return;
+        }
+
+        if ($rawArguments[1] === 'feast:template') {
+            $this->printUsage($rawArguments[1]);
+            $this->analyzeFeast([TemplateController::class]);
             return;
         }
 
@@ -245,7 +252,8 @@ class Binary
             CacheController::class,
             JobController::class,
             MaintenanceController::class,
-            ServeController::class
+            ServeController::class,
+            TemplateController::class
         ]
     ): void {
         /** @var class-string $class */

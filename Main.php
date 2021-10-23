@@ -46,6 +46,7 @@ class Main implements MainInterface
 
     final public const RUN_AS_WEBAPP = 'webapp';
     final public const RUN_AS_CLI = 'cli';
+    final public const FRAMEWORK_ROOT = __DIR__;
 
     private array $plugins = [];
     private ErrorLoggerInterface $logger;

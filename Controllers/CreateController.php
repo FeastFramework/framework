@@ -29,7 +29,7 @@ use Feast\Enums\ParamType;
 use Feast\Interfaces\DatabaseFactoryInterface;
 use Feast\NameHelper;
 
-class CreateController extends CliController
+class CreateController extends WriteTemplateController
 {
 
     #[Action(usage: '--type={(get-post-put-delete-patch)} --module={module} --noview={true|false} {controller} {action}', description: 'Create a new controller action from the template file.')]
@@ -213,7 +213,9 @@ class CreateController extends CliController
         $file = APPLICATION_ROOT . 'Plugins' . DIRECTORY_SEPARATOR . ucfirst($name) . '.php';
 
         $this->writeSimpleTemplate($name, 'Plugin', $file);
-        $this->terminal->message('To enable add the line below to your configs/config.php in the appropriate environment' . "\n");
+        $this->terminal->message(
+            'To enable add the line below to your configs/config.php in the appropriate environment' . "\n"
+        );
         $this->terminal->command('\'plugin.' . strtolower($name) . '\' => \\Plugins\\' . ucfirst($name) . '::class,');
     }
 
@@ -268,9 +270,8 @@ class CreateController extends CliController
             $this->terminal->error('File ' . $file . ' already exists.');
             return;
         }
-        $contents = file_get_contents(
-            APPLICATION_ROOT . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $type . '.php.txt'
-        );
+        $templateFile = $this->getTemplateFilePath($type);
+        $contents = file_get_contents($templateFile);
         $contents = str_replace(
             [
                 '{name}'
@@ -299,9 +300,9 @@ class CreateController extends CliController
             $fields .= $field->getModelField();
         }
 
-        $this->writeTemplateFile('Model.php.txt', 'Model', false, $class, '', $fields);
+        $this->writeTemplateFile('Model', 'Model', false, $class, '', $fields);
         $this->writeTemplateFile(
-            'ModelGenerated.php.txt',
+            'ModelGenerated',
             'Model' . DIRECTORY_SEPARATOR . 'Generated',
             true,
             $class,
@@ -334,14 +335,14 @@ class CreateController extends CliController
             $this->terminal->message('Cannot generate mapper - Compound primary key');
         } elseif (!empty($primaryKey) && !empty($primaryKeyType)) {
             $this->writeTemplateFile(
-                'Mapper.php.txt',
-                'Mapper',
-                $overwrite,
-                $class,
-                'Mapper',
-                table: $table,
-                connection: $connection,
-                primaryKey: $primaryKey,
+                             'Mapper',
+                             'Mapper',
+                             $overwrite,
+                             $class,
+                             'Mapper',
+                table:       $table,
+                connection:  $connection,
+                primaryKey:  $primaryKey,
                 primaryType: $primaryKeyType
             );
             $this->terminal->message('Mapper class created');
@@ -362,17 +363,26 @@ class CreateController extends CliController
         string $primaryKey = '',
         string $primaryType = ''
     ): void {
-        $template = file_get_contents(
-            APPLICATION_ROOT . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $templateFile
-        );
-        if ( !file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR) ) {
+        $file = $this->getTemplateFilePath($templateFile);
+        $template = file_get_contents($file);
+        if (!file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR)) {
             mkdir(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR);
         }
         if ($overwrite || !file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR . $class . '.php')) {
             file_put_contents(
                 APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR . $class . $classExtra . '.php',
                 str_replace(
-                    ['onSave({name}','onDelete({name}','{name}', '{classExtra}', '{map}', '{connection}', '{primaryKey}', '{table}', '{primaryType}'],
+                    [
+                        'onSave({name}',
+                        'onDelete({name}',
+                        '{name}',
+                        '{classExtra}',
+                        '{map}',
+                        '{connection}',
+                        '{primaryKey}',
+                        '{table}',
+                        '{primaryType}'
+                    ],
                     [
                         'onSave(\\' . BaseModel::class . '|' . $class,
                         'onDelete(\\' . BaseModel::class . '|' . $class,
@@ -406,9 +416,8 @@ class CreateController extends CliController
         ?string $module
     ): void {
         if (file_exists($path) === false) {
-            $contents = file_get_contents(
-                APPLICATION_ROOT . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Controller.php.txt'
-            );
+            $file = $this->getTemplateFilePath('Controller');
+            $contents = file_get_contents($file);
             $actionUse = $module === 'CLI' ? 'use Feast\Attributes\Action;' . "\n" : '';
             $cliUse = $module === 'CLI' ? 'Cli' : 'Http';
 
@@ -436,10 +445,9 @@ class CreateController extends CliController
         string $types
     ): void {
         $types = explode('-', $types);
-        $templateFile = $module === 'CLI' ? 'CliAction.php.txt' : 'Action.php.txt';
-        $template = file_get_contents(
-            APPLICATION_ROOT . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $templateFile
-        );
+        $templateFile = $module === 'CLI' ? 'CliAction' : 'Action';
+        $file = $this->getTemplateFilePath($templateFile);
+        $template = file_get_contents($file);
         $actionName = lcfirst(NameHelper::getName($action));
 
         foreach ($types as $type) {

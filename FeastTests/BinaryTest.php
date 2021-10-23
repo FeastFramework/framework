@@ -71,6 +71,16 @@ class BinaryTest extends TestCase
         );
     }
 
+    public function testMainHelpFeastTemplate(): void
+    {
+        $this->binary->run(['famine', 'help', 'feast:template'], ['famine', 'help', 'feast:template']);
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringStartsWith(
+            'Usage: php famine command options' . "\n" . 'Available feast:template commands',
+            trim($output)
+        );
+    }
+
     public function testMainHelpFeastJobs(): void
     {
         $this->binary->run(['famine', 'help', 'feast:job'], ['famine', 'help', 'feast:job']);
@@ -191,6 +201,14 @@ class BinaryTest extends TestCase
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith('Usage: php famine command options', trim($output));
         $this->assertStringContainsString('Available feast:migration commands:', $output);
+    }
+
+    public function testMainTemplate(): void
+    {
+        $this->binary->run(['famine', 'feast:template'], ['famine', 'feast:template']);
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringStartsWith('Usage: php famine command options', trim($output));
+        $this->assertStringContainsString('Available feast:template commands:', $output);
     }
 
     public function testMainCache(): void
