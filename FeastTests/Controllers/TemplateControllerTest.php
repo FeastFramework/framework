@@ -38,8 +38,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installActionGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Action.php.txt',$output);
-        $this->assertStringContainsString('{action}{type}',$output);
+        $this->assertStringContainsString('Action.php.txt', $output);
+        $this->assertStringContainsString('{action}{type}', $output);
     }
 
     public function testCliActionInstallAction(): void
@@ -54,8 +54,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installCliActionGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('CliAction.php.txt',$output);
-        $this->assertStringContainsString('{action}{type}',$output);
+        $this->assertStringContainsString('CliAction.php.txt', $output);
+        $this->assertStringContainsString('{action}{type}', $output);
     }
 
     public function testControllerInstallAction(): void
@@ -70,8 +70,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installControllerGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Controller.php.txt',$output);
-        $this->assertStringContainsString('class {name}Controller extends {cli}Controller',$output);
+        $this->assertStringContainsString('Controller.php.txt', $output);
+        $this->assertStringContainsString('class {name}Controller extends {cli}Controller', $output);
     }
 
     public function testCronJobAction(): void
@@ -86,8 +86,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installCronJobGet();;
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('CronJob.php.txt',$output);
-        $this->assertStringContainsString('public function run(): bool',$output);
+        $this->assertStringContainsString('CronJob.php.txt', $output);
+        $this->assertStringContainsString('public function run(): bool', $output);
     }
 
     public function testFilterInstallAction(): void
@@ -102,8 +102,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installFilterGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Filter.php.txt',$output);
-        $this->assertStringContainsString('public static function filter',$output);
+        $this->assertStringContainsString('Filter.php.txt', $output);
+        $this->assertStringContainsString('public static function filter', $output);
     }
 
     public function testFormInstallAction(): void
@@ -118,8 +118,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installFormGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Form.php.txt',$output);
-        $this->assertStringContainsString('parent::__construct(\'name\', \'url\', \'post\');',$output);
+        $this->assertStringContainsString('Form.php.txt', $output);
+        $this->assertStringContainsString('parent::__construct(\'name\', \'url\', \'post\');', $output);
     }
 
     public function testMapperInstallAction(): void
@@ -134,8 +134,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installMapperGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Mapper.php.txt',$output);
-        $this->assertStringContainsString('protected const OBJECT_NAME',$output);
+        $this->assertStringContainsString('Mapper.php.txt', $output);
+        $this->assertStringContainsString('protected const OBJECT_NAME', $output);
     }
 
     public function testMigrationInstallAction(): void
@@ -150,8 +150,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installMigrationGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Migration.php.txt',$output);
-        $this->assertStringContainsString('protected const NAME',$output);
+        $this->assertStringContainsString('Migration.php.txt', $output);
+        $this->assertStringContainsString('protected const NAME', $output);
     }
 
     public function testModelInstallAction(): void
@@ -166,8 +166,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installModelGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Model.php.txt',$output);
-        $this->assertStringContainsString('// PLACE CUSTOM MODEL CODE HERE',$output);
+        $this->assertStringContainsString('Model.php.txt', $output);
+        $this->assertStringContainsString('// PLACE CUSTOM MODEL CODE HERE', $output);
     }
 
     public function testModelGeneratedInstallAction(): void
@@ -182,8 +182,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installModelGeneratedGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('ModelGenerated.php.txt',$output);
-        $this->assertStringContainsString('extends BaseModel',$output);
+        $this->assertStringContainsString('ModelGenerated.php.txt', $output);
+        $this->assertStringContainsString('extends BaseModel', $output);
     }
 
     public function testPluginInstallAction(): void
@@ -198,8 +198,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installPluginGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Plugin.php.txt',$output);
-        $this->assertStringContainsString('public function preDispatch()',$output);
+        $this->assertStringContainsString('Plugin.php.txt', $output);
+        $this->assertStringContainsString('public function preDispatch()', $output);
     }
 
     public function testQueueableJobInstallAction(): void
@@ -214,8 +214,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installQueueableJobGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('QueueableJob.php.txt',$output);
-        $this->assertStringContainsString('public function run(): bool',$output);
+        $this->assertStringContainsString('QueueableJob.php.txt', $output);
+        $this->assertStringContainsString('public function run(): bool', $output);
     }
 
     public function testServiceInstallAction(): void
@@ -230,8 +230,8 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installServiceGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Service.php.txt',$output);
-        $this->assertStringContainsString('extends Service',$output);
+        $this->assertStringContainsString('Service.php.txt', $output);
+        $this->assertStringContainsString('extends Service', $output);
     }
 
     public function testValidatorInstallAction(): void
@@ -246,7 +246,35 @@ class TemplateControllerTest extends TestCase
         );
         $controller->installValidatorGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Validator.php.txt',$output);
-        $this->assertStringContainsString('public static function validate',$output);
+        $this->assertStringContainsString('Validator.php.txt', $output);
+        $this->assertStringContainsString('public static function validate', $output);
+    }
+
+    public function testInstallAllAction(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturn(false);
+
+        $controller = new TemplateController(
+            di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:template:install-validator'])
+        );
+        $controller->installAllGet();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('Action.php.txt', $output);
+        $this->assertStringContainsString('CliAction.php.txt', $output);
+        $this->assertStringContainsString('Controller.php.txt', $output);
+        $this->assertStringContainsString('CronJob.php.txt', $output);
+        $this->assertStringContainsString('Filter.php.txt', $output);
+        $this->assertStringContainsString('Form.php.txt', $output);
+        $this->assertStringContainsString('Mapper.php.txt', $output);
+        $this->assertStringContainsString('Migration.php.txt', $output);
+        $this->assertStringContainsString('Model.php.txt', $output);
+        $this->assertStringContainsString('ModelGenerated.php.txt', $output);
+        $this->assertStringContainsString('Plugin.php.txt', $output);
+        $this->assertStringContainsString('QueueableJob.php.txt', $output);
+        $this->assertStringContainsString('Service.php.txt', $output);
+        $this->assertStringContainsString('Validator.php.txt', $output);
     }
 }
