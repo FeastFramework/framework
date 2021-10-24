@@ -42,7 +42,7 @@ class ViewTest extends TestCase
             $this->returnValueMap(
                 [
                     ['siteurl', null, 'test'],
-                    ['html.doctype', DocType::HTML_5, DocType::HTML_4_01_STRICT]
+                    ['html.doctype', DocType::HTML_5->value, DocType::HTML_4_01_STRICT->value]
                 ]
             )
         );
