@@ -406,9 +406,8 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             $controllerNamespace = '\Feast\Controllers\\';
         }
 
-        /** @var class-string $classString */
-        $classString = $controllerNamespace . $this->getControllerClass();
-        return $classString;
+        /** @var class-string */
+        return $controllerNamespace . $this->getControllerClass();
     }
 
     /**
@@ -419,7 +418,6 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      */
     public function getActionMethodName(): string
     {
-        /** @var class-string $controllerName */
         $controllerName = $this->getControllerFullyQualifiedName();
         $actionName = substr($this->getAction(), 0, -6);
         $request = di(RequestInterface::class);
