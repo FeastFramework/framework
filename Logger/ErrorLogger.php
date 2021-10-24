@@ -25,6 +25,7 @@ use Feast\Enums\LogLevelCode;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ErrorLoggerInterface;
 use Feast\Interfaces\LoggerInterface;
+use Feast\ServiceContainer\ContainerException;
 use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
@@ -34,6 +35,9 @@ class ErrorLogger implements ServiceContainerItemInterface, ErrorLoggerInterface
 {
     use DependencyInjected;
 
+    /**
+     * @throws ContainerException|NotFoundException
+     */
     public function __construct(private LoggerInterface $logger)
     {
         $this->checkInjected();
@@ -97,7 +101,7 @@ class ErrorLogger implements ServiceContainerItemInterface, ErrorLoggerInterface
     /**
      * Exception handler.
      *
-     * @param \Throwable $exception
+     * @param Throwable $exception
      * @param bool $caught
      * @return bool
      * @throws NotFoundException

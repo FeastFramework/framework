@@ -57,6 +57,7 @@ class View extends stdClass implements ServiceContainerItemInterface
      * @param ConfigInterface $config
      * @param RouterInterface $router
      * @throws ServiceContainer\NotFoundException|ServiceContainer\ContainerException
+     * @throws Exception
      */
     public function __construct(protected ConfigInterface $config, protected RouterInterface $router)
     {

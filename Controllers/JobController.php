@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Controllers;
 
+use Exception;
 use Feast\Attributes\Action;
 use Feast\Attributes\Param;
 use Feast\CliController;
@@ -68,6 +69,10 @@ class JobController extends CliController
         } while ($keepalive && !$exitLoop);
     }
 
+    /**
+     * @throws \Feast\ServiceContainer\NotFoundException
+     * @throws \Feast\Exception\ServerFailureException
+     */
     #[Action(usage: '{job}', description: 'Run the specified job. Job will run even if max count exceeded.')]
     #[Param(type: 'string', name: 'job', description: 'Job ID of job to run (uuid)')]
     public function runOneGet(
@@ -101,6 +106,9 @@ class JobController extends CliController
         }
     }
 
+    /**
+     * @throws \Feast\Exception\InvalidDateException
+     */
     #[Action(description: 'Run all cron jobs.')]
     public function runCronGet(
         ?Date $now,
@@ -109,7 +117,6 @@ class JobController extends CliController
         $now ??= Date::createFromNow();
         $filePath = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'scheduled_jobs.php';
         $privateProcess = $this->shouldRunAsPrivateProcess($config);
-        /** @noinspection PhpIncludeInspection */
         /** @var array<CronJob> $scheduledJobs */
         $scheduledJobs = file_exists($filePath) ? require($filePath) : [];
         foreach ($scheduledJobs as $job) {
@@ -119,6 +126,9 @@ class JobController extends CliController
         }
     }
 
+    /**
+     * @throws \Feast\Exception\InvalidDateException
+     */
     #[Action(usage: '{job}', description: 'Run the specified job.')]
     #[Param(type: 'string', name: 'job', description: 'Job class to run')]
     public function runCronItemGet(
@@ -143,13 +153,16 @@ class JobController extends CliController
         $jobProcess->startRun($now);
         try {
             $jobProcess->run();
-        } catch (\Exception) {
+        } catch (Exception) {
             // Empty catch
         }
         $jobProcess->stopRun($now);
     }
 
-    protected function runJob(\Model\Job $job, LoggerInterface $logger, JobMapper $jobMapper): bool
+    /**
+     * @throws Exception
+     */
+    protected function runJob(Job $job, LoggerInterface $logger, JobMapper $jobMapper): bool
     {
         $canRun = $jobMapper->markJobPendingIfAble($job);
         if ($canRun === false) {
@@ -163,7 +176,7 @@ class JobController extends CliController
         if ($jobData instanceof QueueableJob) {
             try {
                 $success = $jobData->run();
-            } catch (\Exception) {
+            } catch (Exception) {
                 // Empty catch
             }
             $job->status = $success ? QueueableJob::JOB_STATUS_COMPLETE : QueueableJob::JOB_STATUS_PENDING;

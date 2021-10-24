@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Csv;
 
+use Generator;
 use SplFileObject;
 
 class CsvReader extends Csv
@@ -52,9 +53,9 @@ class CsvReader extends Csv
     /**
      * Get yielded values for reader.
      *
-     * @return \Generator
+     * @return Generator
      */
-    public function getIterator(): \Generator
+    public function getIterator(): Generator
     {
         $this->rewind();
         while ($row = $this->getNextLine()) {

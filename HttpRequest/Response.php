@@ -23,6 +23,7 @@ namespace Feast\HttpRequest;
 use Exception;
 use Feast\Enums\ResponseCode;
 use SimpleXMLElement;
+use stdClass;
 
 class Response
 {
@@ -36,12 +37,11 @@ class Response
         return $this->rawResponse;
     }
 
-    public function getResultAsJson(): ?\stdClass
+    public function getResultAsJson(): ?stdClass
     {
         try {
-            /** @var \stdClass $result */
-            $result = json_decode(utf8_encode($this->rawResponse), flags: JSON_THROW_ON_ERROR);
-            return $result;
+            /** @var stdClass */
+            return json_decode(utf8_encode($this->rawResponse), flags: JSON_THROW_ON_ERROR);
         } catch (Exception) {
             return null;
         }

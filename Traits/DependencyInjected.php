@@ -21,16 +21,17 @@ declare(strict_types=1);
 namespace Feast\Traits;
 
 use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainer;
 
 trait DependencyInjected
 {
     /**
      * Check if the instantiated item is already in the Service Container. Throws if item found.
-     * 
+     *
      * @param mixed ...$arguments
      * @throws ContainerException
-     * @throws \Feast\ServiceContainer\NotFoundException
+     * @throws NotFoundException
      */
     public function checkInjected(mixed ...$arguments): void
     {

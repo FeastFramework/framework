@@ -30,7 +30,9 @@ use Feast\Controllers\ServeController;
 use Feast\Controllers\TemplateController;
 use Feast\Exception\NotFoundException;
 use Feast\Interfaces\MainInterface;
+use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 
 class Binary
 {
@@ -216,9 +218,9 @@ class Binary
     /**
      * Process description attribute and return whether any methods were found.
      *
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
      */
-    private function processCliMethods(\ReflectionMethod $method): void
+    private function processCliMethods(ReflectionMethod $method): void
     {
         $name = NameHelper::getMethodNameAsCallableAction($method->getName());
         $class = NameHelper::getControllerClassName($method->getDeclaringClass());
@@ -258,12 +260,14 @@ class Binary
     ): void {
         /** @var class-string $class */
         foreach ($classes as $class) {
-            $this->processCliClass(new \ReflectionClass($class));
+            $this->processCliClass(new ReflectionClass($class));
         }
     }
 
     /**
      * Process all custom actions in the CLI module.
+     *
+     * @throws ReflectionException
      */
     private function analyzeCli(): void
     {
@@ -277,7 +281,7 @@ class Binary
                 // Load class info
                 /** @var class-string $className */
                 $className = '\\Modules\\CLI\\Controllers\\' . substr($classFile, 0, -4);
-                $class = new \ReflectionClass($className);
+                $class = new ReflectionClass($className);
 
                 // Parse class and methods
                 $this->processCliClass($class);
@@ -288,9 +292,9 @@ class Binary
     /**
      * Parse all descriptions for a class and return if any methods had a description.
      *
-     * @param \ReflectionClass $class
+     * @param ReflectionClass $class
      */
-    private function processCliClass(\ReflectionClass $class): void
+    private function processCliClass(ReflectionClass $class): void
     {
         $className = NameHelper::getControllerClassName($class);
         $this->terminal->command($className);

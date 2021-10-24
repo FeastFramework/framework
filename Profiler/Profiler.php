@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace Feast\Profiler;
 
 use Feast\Interfaces\ProfilerInterface;
+use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 
@@ -33,6 +35,9 @@ class Profiler implements ServiceContainerItemInterface, ProfilerInterface
 {
     use DependencyInjected;
 
+    /**
+     * @throws ContainerException|NotFoundException
+     */
     public function __construct(private float $startTime, bool $checkInjected = true)
     {
         if ($checkInjected) {
@@ -50,7 +55,7 @@ class Profiler implements ServiceContainerItemInterface, ProfilerInterface
         if (function_exists('bcsub')) {
             return bcsub((string)microtime(true), (string)$this->startTime, 4);
         }
-        return $this->getTotalTimeNoBcMath((string)microtime(true), (string)$this->startTime, 4);
+        return $this->getTotalTimeNoBcMath((string)microtime(true), (string)$this->startTime);
     }
 
     /**

@@ -27,6 +27,7 @@ use Feast\Exception\InvalidOptionException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseInterface;
 use PDO;
+use stdClass;
 
 /**
  * Manages database connections.
@@ -40,13 +41,13 @@ class Database implements DatabaseInterface
     private string $queryClass;
 
     /**
-     * @param \stdClass $connectionDetails
+     * @param stdClass $connectionDetails
      * @param string $pdoClass
      * @throws DatabaseException
      * @throws InvalidOptionException
      * @throws ServerFailureException
      */
-    public function __construct(\stdClass $connectionDetails, string $pdoClass)
+    public function __construct(stdClass $connectionDetails, string $pdoClass)
     {
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
@@ -298,7 +299,7 @@ class Database implements DatabaseInterface
             $query->execute();
 
             return true;
-        } catch (\Exception) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -315,7 +316,7 @@ class Database implements DatabaseInterface
     {
         $query = $this->describe($table);
         $statement = $query->execute();
-        while ($row = $statement->fetch(\PDO::FETCH_OBJ)) {
+        while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
             if (strtolower($column) === strtolower((string)$row->Field)) {
                 return true;
             }
@@ -334,15 +335,15 @@ class Database implements DatabaseInterface
      */
     public function rawQuery(string $query, array $bindings = [], bool $forceEmulatePrepares = false): bool
     {
-        $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $oldEmulatePrepares = (int)$this->connection->getAttribute(\PDO::ATTR_EMULATE_PREPARES);
+        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $oldEmulatePrepares = (int)$this->connection->getAttribute(PDO::ATTR_EMULATE_PREPARES);
         if ($forceEmulatePrepares) {
-            $this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, true);
+            $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
         }
         $sql = $this->connection->prepare($query);
         $return = $sql->execute($bindings);
         if ($forceEmulatePrepares) {
-            $this->connection->setAttribute(\PDO::ATTR_EMULATE_PREPARES, $oldEmulatePrepares);
+            $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, $oldEmulatePrepares);
         }
         return $return;
     }
@@ -376,7 +377,7 @@ class Database implements DatabaseInterface
         return $this->databaseType;
     }
 
-    protected function getConfigOptions(\stdClass $connectionDetails): array
+    protected function getConfigOptions(stdClass $connectionDetails): array
     {
         $defaults = [
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,

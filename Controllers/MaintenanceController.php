@@ -22,12 +22,16 @@ namespace Feast\Controllers;
 
 use Feast\Attributes\Action;
 use Feast\CliController;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\View;
 
 class MaintenanceController extends CliController
 {
     protected const MAINTENANCE_VIEW = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . 'maintenance-screen.phtml';
 
+    /**
+     * @throws NotFoundException
+     */
     #[Action(description: 'Start maintenance mode.')]
     public function startGet(): void
     {

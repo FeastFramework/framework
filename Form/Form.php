@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Form;
 
+use Exception;
 use Feast\Exception\InvalidArgumentException;
 use Feast\Exception\ServerFailureException;
 use Feast\Form\Filter\Filter;
@@ -34,7 +35,6 @@ abstract class Form
     protected array $errors = [];
 
     public const ERROR_NOT_SET = 'Required';
-
 
     /**
      * @param string $name
@@ -53,7 +53,7 @@ abstract class Form
 
     /**
      * Set form action.
-     * 
+     *
      * @param string $action
      * @return static
      */
@@ -66,7 +66,7 @@ abstract class Form
 
     /**
      * Get field by name.
-     * 
+     *
      * @param string $name
      * @return Field
      * @throws InvalidArgumentException
@@ -84,7 +84,7 @@ abstract class Form
 
     /**
      * Add field to form.
-     * 
+     *
      * @param Field $field
      * @return Field
      */
@@ -137,14 +137,14 @@ abstract class Form
 
     /**
      * Validate form partial.
-     * 
+     *
      * Alias for isValid(true);
      *
      * @return bool
      */
     public function isValidPartial(): bool
     {
-        return $this->isValid( true);
+        return $this->isValid(true);
     }
 
     /**
@@ -181,7 +181,7 @@ abstract class Form
      * @param bool $showLabel
      * @param string $value
      * @return string
-     * @throws ServerFailureException
+     * @throws ServerFailureException|Exception
      */
     public function displayField(string $fieldName, bool $showLabel = true, string $value = ''): string
     {

@@ -18,6 +18,7 @@
 
 declare(strict_types=1);
 
+use Feast\Autoloader;
 use Feast\Config\Config;
 use Feast\Database\DatabaseFactory;
 use Feast\Logger\ErrorLogger;
@@ -30,6 +31,7 @@ use Feast\Interfaces\RequestInterface;
 use Feast\Interfaces\ResponseInterface;
 use Feast\Interfaces\RouterInterface;
 use Feast\Logger\Logger;
+use Feast\Main;
 use Feast\Response;
 use Feast\Profiler\Profiler;
 use Feast\Request;
@@ -42,7 +44,7 @@ const PLUGINS_FOLDER = 'Plugins';
 
 // Initialize autoloader
 require_once(APPLICATION_ROOT . 'Autoloader.php');
-$autoLoader = new \Feast\Autoloader();
+$autoLoader = new Autoloader();
 $autoLoader->register(['.php', '.php.txt']);
 $autoLoader->addPathMapping('Feast', ['.']);
 $autoLoader->addPathMapping('Psr', ['./Psr']);
@@ -55,7 +57,7 @@ if (file_exists('vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
 require_once(APPLICATION_ROOT . 'DependencyInjector.php');
 $container = di();
 $config = new Config(overriddenEnvironment: 'development');
-$logger = new Logger($config, \Feast\Main::RUN_AS_CLI);
+$logger = new Logger($config, Main::RUN_AS_CLI);
 
 $container->add(ConfigInterface::class, $config);
 $container->add(DatabaseFactoryInterface::class, new DatabaseFactory($config));
@@ -69,5 +71,5 @@ $container->add(LoggerInterface::class, $logger);
 $container->add(ErrorLoggerInterface::class, new ErrorLogger($logger));
 $container->add(ResponseInterface::class, new Response());
 
-const RUN_AS = \Feast\Main::RUN_AS_CLI;
+const RUN_AS = Main::RUN_AS_CLI;
 

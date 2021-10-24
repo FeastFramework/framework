@@ -30,7 +30,10 @@ use Feast\ServiceContainer\ContainerException;
 use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
+use PDO;
 use stdClass;
+
+use function di;
 
 /**
  * Manages database connections.
@@ -54,15 +57,13 @@ class DatabaseFactory implements ServiceContainerItemInterface, DatabaseFactoryI
     public function getConnection(string $connection = self::DEFAULT_CONNECTION): DatabaseInterface
     {
         if (isset($this->connections->$connection)) {
-            /** @var DatabaseInterface $connectionObject */
-            $connectionObject = $this->connections->$connection;
-
-            return $connectionObject;
+            /** @var DatabaseInterface */
+            return $this->connections->$connection;
         }
         /** @var stdClass|null $connectionConfig */
         $connectionConfig = $this->config->getSetting('database.' . $connection);
         /** @var class-string $connectionClass */
-        $connectionClass = $this->config->getSetting('pdoClass', \PDO::class);
+        $connectionClass = $this->config->getSetting('pdoClass', PDO::class);
         if ($connectionConfig !== null) {
             $connectionObject = new Database($connectionConfig, $connectionClass);
             $this->connections->$connection = $connectionObject;
@@ -83,7 +84,7 @@ class DatabaseFactory implements ServiceContainerItemInterface, DatabaseFactoryI
     public function __construct(ConfigInterface $config = null, stdClass $connections = null)
     {
         $this->checkInjected();
-        $this->config = $config ?? \di(ConfigInterface::class);
+        $this->config = $config ?? di(ConfigInterface::class);
         $this->connections = $connections ?? new stdClass();
     }
 

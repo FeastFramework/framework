@@ -62,7 +62,7 @@ $container = di();
 ############################################
 $configCache = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'config.cache';
 if (file_exists($configCache)) {
-    /** @var \Feast\Interfaces\ConfigInterface|false $config */
+    /** @var ConfigInterface|false $config */
     $config = unserialize(file_get_contents($configCache));
     if (!$config instanceof ConfigInterface) {
         $config = new Config();
@@ -137,7 +137,7 @@ $container->add(MainInterface::class, new Main($container, $runAs));
 if (RUN_AS === Main::RUN_AS_WEBAPP) {
     $session = new Session($config);
     $container->add(Session::class, $session);
-    $container->add(Identity::class, new Identity($config,$session));
+    $container->add(Identity::class, new Identity($config, $session));
 } else {
     $container->add(CliArguments::class, new CliArguments($argv));
 }

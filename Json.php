@@ -20,14 +20,18 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use ArgumentCountError;
 use DateTime;
 use Feast\Attributes\JsonItem;
 use Feast\Collection\Collection;
 use Feast\Collection\CollectionList;
 use Feast\Collection\Set;
 use Feast\Exception\ServerFailureException;
+use JsonException;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
+use stdClass;
 
 class Json
 {
@@ -44,7 +48,7 @@ class Json
      */
     public static function marshal(object $object): string
     {
-        $return = new \stdClass();
+        $return = new stdClass();
         $paramInfo = self::getClassParamInfo($object::class);
         /**
          * @var string $oldName
@@ -60,7 +64,7 @@ class Json
             if ($reflected->isInitialized($object)) {
                 /** @var scalar|object|array $oldItem */
                 $oldItem = $object->{$oldName};
-                if (is_array($oldItem) || $oldItem instanceof \stdClass) {
+                if (is_array($oldItem) || $oldItem instanceof stdClass) {
                     $return->{$newName} = self::marshalArray((array)$oldItem);
                 } elseif (is_object(
                         $oldItem
@@ -89,8 +93,7 @@ class Json
      * @param string $data
      * @param class-string|object $objectOrClass
      * @return object
-     * @throws Exception\ServerFailureException
-     * @throws ReflectionException
+     * @throws Exception\ServerFailureException|ReflectionException|JsonException
      * @see \Feast\Attributes\JsonItem
      */
     public static function unmarshal(string $data, string|object $objectOrClass): object
@@ -99,7 +102,7 @@ class Json
             try {
                 /** @psalm-suppress MixedMethodCall */
                 $object = new $objectOrClass();
-            } catch (\ArgumentCountError) {
+            } catch (ArgumentCountError) {
                 throw new ServerFailureException(
                     'Attempted to unmarshal into a class without a no-argument capable constructor'
                 );
@@ -112,7 +115,7 @@ class Json
         $jsonData = json_decode($data, true, flags: JSON_THROW_ON_ERROR);
         $paramInfo = self::getClassParamInfo($className);
 
-        $classInfo = new \ReflectionClass($className);
+        $classInfo = new ReflectionClass($className);
         foreach ($classInfo->getProperties() as $property) {
             $newPropertyName = $property->getName();
             /** @var string $propertyName */
@@ -148,7 +151,7 @@ class Json
          * @var scalar|object|array $item
          */
         foreach ($items as $key => $item) {
-            if (is_array($item) || $item instanceof \stdClass) {
+            if (is_array($item) || $item instanceof stdClass) {
                 $return[$key] = self::marshalArray((array)$item);
             } elseif (is_object($item)) {
                 $return[$key] = (array)json_decode(self::marshal($item));
@@ -169,7 +172,7 @@ class Json
         string $class
     ): array {
         $return = [];
-        $classInfo = new \ReflectionClass($class);
+        $classInfo = new ReflectionClass($class);
         foreach ($classInfo->getProperties() as $property) {
             $name = $property->getName();
             $type = null;
@@ -210,7 +213,7 @@ class Json
     ): void {
         $newProperty = $property->getName();
         $item = [];
-        
+
         if (class_exists($propertySubtype, true)) {
             /**
              * @var string $key
@@ -245,8 +248,8 @@ class Json
             $jsonData = self::unmarshalTempArray($jsonData, $propertySubtype);
         }
         $object->{$property->getName()} = new Set(
-            $propertySubtype,
-            $jsonData,
+                          $propertySubtype,
+                          $jsonData,
             preValidated: true
         );
     }
@@ -268,8 +271,8 @@ class Json
             $jsonData = self::unmarshalTempArray($jsonData, $propertySubtype);
         }
         $object->{$property->getName()} = new CollectionList(
-            $propertySubtype,
-            $jsonData,
+                          $propertySubtype,
+                          $jsonData,
             preValidated: true
         );
     }
@@ -343,7 +346,7 @@ class Json
                 $propertySubtype,
                 $propertyValue,
             );
-        } elseif ($propertyType === \stdClass::class && is_array($propertyValue)) {
+        } elseif ($propertyType === stdClass::class && is_array($propertyValue)) {
             self::unmarshalStdClass($property, $object, $propertyValue);
         } elseif (is_a($propertyType, Set::class, true) && is_array($propertyValue)) {
             /** @psalm-suppress MixedArgumentTypeCoercion */

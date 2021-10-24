@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use DateTime;
+use DateTimeZone;
+use Exception;
 use Feast\Exception\InvalidDateException;
 
 /**
@@ -85,6 +88,7 @@ class Date
     /**
      * Create Date object from now.
      *
+     * @param string|null $timezone
      * @return self
      * @throws InvalidDateException
      */
@@ -99,6 +103,7 @@ class Date
      * Example: 2020-01-01; 2021-03-26 14:34:45
      *
      * @param string $date
+     * @param string|null $timezone
      * @return self
      * @throws InvalidDateException
      */
@@ -132,11 +137,14 @@ class Date
      */
     public static function createFromFormat(string $format, string $dateString, ?string $timezone = null): self
     {
-        $timezoneData = isset($timezone) ? new \DateTimeZone($timezone) : null;
-        $date = \DateTime::createFromFormat($format, $dateString, $timezoneData);
+        $timezoneData = isset($timezone) ? new DateTimeZone($timezone) : null;
+        $date = DateTime::createFromFormat($format, $dateString, $timezoneData);
         return self::createFromTimestamp($date->getTimestamp(), $timezone);
     }
 
+    /**
+     * @throws InvalidDateException
+     */
     public function __construct(
         string|int $year,
         string|int $month,
@@ -443,13 +451,13 @@ class Date
     /**
      * Get as PHP DateTime object.
      *
-     * @return \DateTime
-     * @throws \Exception
+     * @return DateTime
+     * @throws Exception
      */
-    public function getAsDateTime(): \DateTime
+    public function getAsDateTime(): DateTime
     {
-        $timezone = $this->timezone ? new \DateTimeZone($this->timezone) : null;
-        return new \DateTime($this->getFormattedDate(self::ISO8601), $timezone);
+        $timezone = $this->timezone ? new DateTimeZone($this->timezone) : null;
+        return new DateTime($this->getFormattedDate(self::ISO8601), $timezone);
     }
 
     /**
@@ -496,6 +504,9 @@ class Date
         return $this->timestamp < $date->timestamp;
     }
 
+    /**
+     * @throws InvalidDateException
+     */
     protected function throwIfInvalidDate(int $hour, int $minute, int $second, int $month, int $day, int $year): void
     {
         if (checkdate($month, $day, $year) === false) {

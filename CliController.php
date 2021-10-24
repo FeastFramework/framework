@@ -22,12 +22,16 @@ namespace Feast;
 
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\ControllerInterface;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainer;
 
 abstract class CliController implements ControllerInterface
 {
     protected Terminal $terminal;
 
+    /**
+     * @throws NotFoundException
+     */
     public function __construct(
         ServiceContainer $di,
         ?ConfigInterface $config = null,

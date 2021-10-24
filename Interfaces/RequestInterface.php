@@ -22,6 +22,7 @@ namespace Feast\Interfaces;
 
 use Feast\Date;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
+use stdClass;
 
 interface RequestInterface extends ServiceContainerItemInterface
 {
@@ -97,7 +98,7 @@ interface RequestInterface extends ServiceContainerItemInterface
     /**
      * Get all arguments.
      */
-    public function getAllArguments(): \stdClass;
+    public function getAllArguments(): stdClass;
 
     /**
      * Check whether request is a POST request.

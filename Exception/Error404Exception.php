@@ -21,11 +21,12 @@ declare(strict_types=1);
 namespace Feast\Exception;
 
 use Feast\Enums\ResponseCode;
+use Throwable;
 
 class Error404Exception extends ServerFailureException
 {
 
-    public function __construct(string $message, int $errorCode = 0, \Throwable $previousException = null)
+    public function __construct(string $message, int $errorCode = 0, Throwable $previousException = null)
     {
         parent::__construct($message, ResponseCode::HTTP_CODE_404, $errorCode, $previousException);
     }

@@ -17,6 +17,7 @@
  */
 declare(strict_types=1);
 
+use Feast\Autoloader;
 use Feast\Interfaces\RouterInterface;
 
 $router = di(RouterInterface::class);
@@ -25,11 +26,10 @@ if ($router->isFromCache() === false) {
     # CUSTOM ROUTES GO HERE IF NOT USING ATTRIBUTES #
     #################################################
 
-
     #####################
     # END CUSTOM ROUTES #
     #####################
 }
-$autoLoader = di(\Feast\Autoloader::class);
+$autoLoader = di(Autoloader::class);
 $autoLoader->addPathMapping('Psr', ['/vendor/Psr', '/Feast/Psr']);
 

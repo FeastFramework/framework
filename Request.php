@@ -25,8 +25,11 @@ use Feast\Exception\InvalidArgumentException;
 use Feast\Exception\InvalidDateException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\RequestInterface;
+use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
+use stdClass;
 
 /**
  * Manages the request argument including all arguments.
@@ -36,13 +39,16 @@ class Request implements ServiceContainerItemInterface, RequestInterface
 
     use DependencyInjected;
 
-    private \stdClass $arguments;
+    private stdClass $arguments;
     private bool $isJson = false;
 
+    /**
+     * @throws ContainerException|NotFoundException
+     */
     public function __construct()
     {
         $this->checkInjected();
-        $this->arguments = new \stdClass();
+        $this->arguments = new stdClass();
     }
 
     /**
@@ -50,7 +56,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      */
     public function clearArguments(): void
     {
-        $this->arguments = new \stdClass();
+        $this->arguments = new stdClass();
     }
 
     /**
@@ -88,6 +94,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      * Get argument value as Date.
      *
      * @param string $name
+     * @param bool $throwOnFailure
      * @return Date|null
      * @throws InvalidDateException
      */
@@ -194,7 +201,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
     /**
      * Get all arguments.
      */
-    public function getAllArguments(): \stdClass
+    public function getAllArguments(): stdClass
     {
         return $this->arguments;
     }
@@ -279,6 +286,9 @@ class Request implements ServiceContainerItemInterface, RequestInterface
         return $return;
     }
 
+    /**
+     * @throws InvalidDateException
+     */
     protected function convertArgumentToDate(string $argument, bool $throwOnFailure = false): ?Date
     {
         try {
@@ -295,6 +305,9 @@ class Request implements ServiceContainerItemInterface, RequestInterface
         }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function convertArgumentToFloat(string $argument): float
     {
         if (!is_numeric($argument)) {
@@ -345,6 +358,9 @@ class Request implements ServiceContainerItemInterface, RequestInterface
         return $return;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function convertArgumentToInt(string $argument): int
     {
         if (!is_numeric($argument) || str_contains($argument, '.')) {

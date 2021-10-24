@@ -28,6 +28,7 @@ use Feast\Interfaces\DatabaseDetailsInterface;
 use Feast\Interfaces\DatabaseFactoryInterface;
 use Feast\Interfaces\DatabaseInterface;
 use PDO;
+use stdClass;
 
 /**
  * @psalm-consistent-constructor
@@ -42,6 +43,10 @@ abstract class BaseMapper
     final public const NOT_NULL = 'not_null';
     protected DatabaseInterface $connection;
 
+    /**
+     * @throws ServiceContainer\NotFoundException
+     * @throws ServerFailureException
+     */
     public function __construct()
     {
         $this->connection = di(DatabaseFactoryInterface::class)->getConnection((string)static::CONNECTION);
@@ -72,7 +77,7 @@ abstract class BaseMapper
                 }
                 $return->$key = match ($dataTypes[$key]) {
                     Date::class => Date::createFromString((string)$val),
-                    \stdClass::class => (object)json_decode(
+                    stdClass::class => (object)json_decode(
                         (string)$val
                     ),
                     'int' => (int)$val,
@@ -221,10 +226,8 @@ abstract class BaseMapper
         $select = $select ?? $this->getQueryBase();
 
         $select->limit(1);
-        /** @var BaseModel|null $return */
-        $return = $this->fetchAll($select)->first();
-
-        return $return;
+        /** @var BaseModel|null */
+        return $this->fetchAll($select)->first();
     }
 
     /**
@@ -232,7 +235,7 @@ abstract class BaseMapper
      *
      * @param Query|null $select
      * @return Set
-     * @throws ServerFailureException|ServiceContainer\NotFoundException
+     * @throws ServerFailureException|ServiceContainer\NotFoundException|Exception
      */
     public function fetchAll(Query $select = null): Set
     {
@@ -313,7 +316,7 @@ abstract class BaseMapper
         $return = [];
         /**
          * @var string $field
-         * @var int|string|Date|null|\stdClass|array $val
+         * @var int|string|Date|null|stdClass|array $val
          */
         foreach ($fields as $field => $val) {
             if ($originalObject !== null && $originalObject->$field === $val) {
@@ -322,7 +325,7 @@ abstract class BaseMapper
             if ($val instanceof Date) {
                 $val = $val->getFormattedDate();
             }
-            if ($val instanceof \stdClass || is_array($val)) {
+            if ($val instanceof stdClass || is_array($val)) {
                 $val = json_encode($val);
             }
             $return[$field] = $val;
@@ -398,7 +401,7 @@ abstract class BaseMapper
                 $recordPrimaryKey
             );
             $statement = $update->execute();
-            
+
             $this->onDelete($record);
             return $statement->rowCount();
         }

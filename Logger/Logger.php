@@ -23,6 +23,8 @@ namespace Feast\Logger;
 use Feast\Enums\LogLevelCode;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Main;
+use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 use Psr\Log\InvalidArgumentException;
@@ -39,6 +41,9 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
     protected const LOG_DIR = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
     protected LogLevelCode $logLevel;
 
+    /**
+     * @throws ContainerException|NotFoundException
+     */
     public function __construct(private ConfigInterface $config, private string $runAs)
     {
         $this->checkInjected();

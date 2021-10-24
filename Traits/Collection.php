@@ -147,7 +147,7 @@ trait Collection
                     'Collection must contain objects of a named class in order to use objectSort'
                 );
         }
-       
+
         /** @var array<object> $array */
         $array = $this->array;
         usort(
@@ -452,6 +452,9 @@ trait Collection
         return key($this->array) !== null;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function validateTypeOrThrow(
         mixed $value
     ): void {

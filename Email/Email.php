@@ -31,7 +31,7 @@ class Email
     /** @var array<Recipient> $to */
     private array $to = [];
     private string $separator;
-    private ?string $sendmailPath = null;
+    private ?string $sendmailPath;
     private array $smtpDetails = [];
     private string $subject = '<No Subject>';
     /** @var array<Recipient> $cc */
@@ -112,7 +112,7 @@ class Email
 
     /**
      * Set email subject.
-     * 
+     *
      * @param string $subject
      * @return static
      */
@@ -125,7 +125,7 @@ class Email
 
     /**
      * Set text body for email.
-     * 
+     *
      * @param string $body
      * @return static
      */
@@ -138,7 +138,7 @@ class Email
 
     /**
      * Set HTML body for email.
-     * 
+     *
      * @param string $body
      * @return static
      */
@@ -151,7 +151,7 @@ class Email
 
     /**
      * Add attachment to email.
-     * 
+     *
      * @param Attachment $attachment
      * @return static
      */
@@ -164,7 +164,7 @@ class Email
 
     /**
      * Add inline attachment to email.
-     * 
+     *
      * @param Attachment $attachment
      * @return static
      */
@@ -177,7 +177,7 @@ class Email
 
     /**
      * Set ReplyTo address for email (with optional name).
-     * 
+     *
      * @param string $email
      * @param string|null $name
      * @return static
@@ -321,11 +321,11 @@ class Email
 
     /**
      * Send email - currently uses sendmail only.
-     * 
-     * @todo Add smtp functionality.
-     * 
+     *
      * @throws InvalidArgumentException
      * @throws ServerFailureException
+     * @todo Add smtp functionality.
+     *
      */
     public function sendEmail(): void
     {
