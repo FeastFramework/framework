@@ -67,7 +67,7 @@ Parameters
             '
 Usage: php famine feast:cache:config-generate
 
-Clear config cache file (if any) and regenerate
+Clear config cache file (if any) and regenerate.
 
 '
         );

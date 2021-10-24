@@ -27,7 +27,7 @@ use Feast\Main;
 class TemplateController extends CliController
 {
 
-    #[Action(description: 'Copy "Action" template to bin/templates folder')]
+    #[Action(description: 'Copy "Action" template to bin/templates folder.')]
     public function installActionGet(): void
     {
         $this->installFile('Action.php.txt');
@@ -36,7 +36,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "CliAction" template to bin/templates folder')]
+    #[Action(description: 'Copy "CliAction" template to bin/templates folder.')]
     public function installCliActionGet(): void
     {
         $this->installFile('CliAction.php.txt');
@@ -45,7 +45,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Controller" template to bin/templates folder')]
+    #[Action(description: 'Copy "Controller" template to bin/templates folder.')]
     public function installControllerGet(): void
     {
         $this->installFile('Controller.php.txt');
@@ -54,7 +54,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "CronJob" template to bin/templates folder')]
+    #[Action(description: 'Copy "CronJob" template to bin/templates folder.')]
     public function installCronJobGet(): void
     {
         $this->installFile('CronJob.php.txt');
@@ -63,7 +63,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Filter" template to bin/templates folder')]
+    #[Action(description: 'Copy "Filter" template to bin/templates folder.')]
     public function installFilterGet(): void
     {
         $this->installFile('Filter.php.txt');
@@ -72,7 +72,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Form" template to bin/templates folder')]
+    #[Action(description: 'Copy "Form" template to bin/templates folder.')]
     public function installFormGet(): void
     {
         $this->installFile('Form.php.txt');
@@ -81,7 +81,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Mapper" template to bin/templates folder')]
+    #[Action(description: 'Copy "Mapper" template to bin/templates folder.')]
     public function installMapperGet(): void
     {
         $this->installFile('Mapper.php.txt');
@@ -90,7 +90,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Migration" template to bin/templates folder')]
+    #[Action(description: 'Copy "Migration" template to bin/templates folder.')]
     public function installMigrationGet(): void
     {
         $this->installFile('Migration.php.txt');
@@ -99,7 +99,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Model" template to bin/templates folder')]
+    #[Action(description: 'Copy "Model" template to bin/templates folder.')]
     public function installModelGet(): void
     {
         $this->installFile('Model.php.txt');
@@ -108,7 +108,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "ModelGenerated" template to bin/templates folder')]
+    #[Action(description: 'Copy "ModelGenerated" template to bin/templates folder.')]
     public function installModelGeneratedGet(): void
     {
         $this->installFile('ModelGenerated.php.txt');
@@ -117,7 +117,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Plugin" template to bin/templates folder')]
+    #[Action(description: 'Copy "Plugin" template to bin/templates folder.')]
     public function installPluginGet(): void
     {
         $this->installFile('Plugin.php.txt');
@@ -126,7 +126,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "QueueableJob" template to bin/templates folder')]
+    #[Action(description: 'Copy "QueueableJob" template to bin/templates folder.')]
     public function installQueueableJobGet(): void
     {
         $this->installFile('QueueableJob.php.txt');
@@ -135,7 +135,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Service" template to bin/templates folder')]
+    #[Action(description: 'Copy "Service" template to bin/templates folder.')]
     public function installServiceGet(): void
     {
         $this->installFile('Service.php.txt');
@@ -144,7 +144,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy "Validator" template to bin/templates folder')]
+    #[Action(description: 'Copy "Validator" template to bin/templates folder.')]
     public function installValidatorGet(): void
     {
         $this->installFile('Validator.php.txt');
@@ -153,7 +153,7 @@ class TemplateController extends CliController
         );
     }
 
-    #[Action(description: 'Copy all template to bin/templates folder')]
+    #[Action(description: 'Copy all template to bin/templates folder.')]
     public function installAllGet(): void
     {
         $this->installActionGet();

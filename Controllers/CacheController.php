@@ -32,7 +32,7 @@ class CacheController extends CliController
     protected const ROUTER_FILE_NAME = 'router.cache';
     protected const DATABASE_FILE_NAME = 'database.cache';
 
-    #[Action(description: 'Clear config cache file')]
+    #[Action(description: 'Clear config cache file.')]
     public function configClearGet(): void
     {
         $cachePath = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
@@ -42,7 +42,7 @@ class CacheController extends CliController
         $this->terminal->command('Config cache cleared!');
     }
 
-    #[Action(description: 'Clear config cache file (if any) and regenerate')]
+    #[Action(description: 'Clear config cache file (if any) and regenerate.')]
     public function configGenerateGet(): void
     {
         $config = new Config(false);
@@ -50,7 +50,7 @@ class CacheController extends CliController
         $this->terminal->command('Config cached!');
     }
 
-    #[Action(description: 'Clear router cache file')]
+    #[Action(description: 'Clear router cache file.')]
     public function routerClearGet(): void
     {
         $cachePath = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
@@ -60,7 +60,7 @@ class CacheController extends CliController
         $this->terminal->command('Router cache cleared!');
     }
 
-    #[Action(description: 'Clear router cache file (if any) and regenerate')]
+    #[Action(description: 'Clear router cache file (if any) and regenerate.')]
     public function routerGenerateGet(
         RouterInterface $router
     ): void {
@@ -68,7 +68,7 @@ class CacheController extends CliController
         $this->terminal->command('Router cached!');
     }
 
-    #[Action(description: 'Clear database info cache file')]
+    #[Action(description: 'Clear database info cache file.')]
     public function dbinfoClearGet(): void
     {
         $cachePath = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
@@ -78,7 +78,7 @@ class CacheController extends CliController
         $this->terminal->command('Database info cache cleared!');
     }
 
-    #[Action(description: 'Clear database info cache file (if any) and regenerate')]
+    #[Action(description: 'Clear database info cache file (if any) and regenerate.')]
     public function dbinfoGenerateGet(
         DatabaseDetailsInterface $databaseDetails
     ): void {
