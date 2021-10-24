@@ -269,9 +269,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
              * @var string|int|bool|stdClass $val
              */
             foreach ($config->{$parentEnvironment} as $key => $val) {
-                $config->$environmentName->$key = $val instanceof stdClass ? $this->cloneObjectOrArrayAsObject(
-                    $val
-                ) : $val;
+                $config->$environmentName->$key = $val instanceof stdClass ? $this->cloneObjectOrArrayAsObject($val) : $val;
             }
         }
     }
