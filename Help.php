@@ -23,6 +23,10 @@ namespace Feast;
 use Feast\Attributes\Action;
 use Feast\Attributes\Param;
 use Feast\Enums\ParamType;
+use ReflectionAttribute;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 
 class Help
 {
@@ -89,7 +93,7 @@ class Help
     protected function analyzeClass(string $controllerClass, string $command): void
     {
         try {
-            $class = new \ReflectionClass($controllerClass);
+            $class = new ReflectionClass($controllerClass);
 
             $methods = $class->getMethods();
             $count = 0;
@@ -117,9 +121,9 @@ class Help
             }
             if ($count === 1 && isset($actionAttributes) && isset($parameters)) {
                 $this->terminal->command($command);
-                /** @var array<array-key,\ReflectionAttribute<Action>> $actionAttributes */
+                /** @var array<array-key,ReflectionAttribute<Action>> $actionAttributes */
                 $this->displayActionInfo($actionAttributes, $callable);
-                /** @var array<array-key,\ReflectionAttribute<Param>> $parameters */
+                /** @var array<array-key,ReflectionAttribute<Param>> $parameters */
                 $this->displayParameterInfo($parameters);
             } else {
                 ksort($descriptions);
@@ -130,7 +134,7 @@ class Help
                     $this->terminal->message('  ' . str_pad($name, $longestMethod + 3) . $description);
                 }
             }
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             $this->terminal->error('Class', false);
             $this->terminal->message(' ' . $command . ' ', false);
             $this->terminal->error('does not exist!');
@@ -146,13 +150,13 @@ class Help
     {
         $action = lcfirst(str_replace('-', '', ucwords($actionName, '-')) . 'Get');
         try {
-            $method = new \ReflectionMethod($controllerClass, $action);
+            $method = new ReflectionMethod($controllerClass, $action);
             $callable = NameHelper::getControllerClassName($method->getDeclaringClass()) . ':' . $actionName;
             $actionAttributes = $method->getAttributes(Action::class);
             $parameters = $method->getAttributes(Param::class);
             $this->displayActionInfo($actionAttributes, $callable);
             $this->displayParameterInfo($parameters);
-        } catch (\ReflectionException) {
+        } catch (ReflectionException) {
             $this->terminal->error('Method', false);
             $this->terminal->message(' ' . $command . ' ', false);
             $this->terminal->error('does not exist!');
@@ -160,7 +164,7 @@ class Help
     }
 
     /**
-     * @param array<\ReflectionAttribute<Param>> $parameters
+     * @param array<ReflectionAttribute<Param>> $parameters
      */
     protected function displayParameterInfo(array $parameters): void
     {
@@ -185,7 +189,7 @@ class Help
     }
 
     /**
-     * @param array<\ReflectionAttribute<Action>> $actionAttributes
+     * @param array<ReflectionAttribute<Action>> $actionAttributes
      * @param string $name
      */
     protected function displayActionInfo(array $actionAttributes, string $name): void

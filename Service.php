@@ -25,15 +25,22 @@ use Feast\Exception\NotFoundException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\HttpRequestInterface;
 
+use function di;
+
 abstract class Service
 {
 
     protected HttpRequestInterface $httpRequest;
 
+    /**
+     * @throws NotFoundException
+     * @throws ServiceContainer\NotFoundException
+     * @throws InvalidOptionException
+     */
     public function __construct()
     {
         /** @var ConfigInterface $config */
-        $config = \di(ConfigInterface::class);
+        $config = di(ConfigInterface::class);
         /** @var ?class-string $serviceClass */
         $serviceClass = $config->getSetting('service.class');
         if ($serviceClass === null) {
@@ -47,7 +54,7 @@ abstract class Service
 
     /**
      * Get the underlying HttpRequest object for the Service class.
-     * 
+     *
      * @return HttpRequestInterface|null
      */
     public function getHttpRequestObject(): ?HttpRequestInterface

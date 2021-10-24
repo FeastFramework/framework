@@ -30,6 +30,8 @@ use Throwable;
 
 use function di;
 
+use const RUN_AS;
+
 /**
  * Server failure exception. Allows instantly overriding http status code. Always caught,
  * returning the error code if present, or the error message if not, to the client if display errors is true.
@@ -37,7 +39,7 @@ use function di;
 class ServerFailureException extends Exception
 {
 
-    protected string $runAs = \RUN_AS;
+    protected string $runAs = RUN_AS;
 
     /**
      * Construct a new Exception, and include the response code.
@@ -74,6 +76,9 @@ class ServerFailureException extends Exception
 
     /**
      * Print the error either as a simple error or as a detailed error if errors enabled.
+     *
+     * @throws \Feast\ServiceContainer\NotFoundException
+     * @throws Exception
      */
     public function printError(): void
     {
@@ -99,7 +104,7 @@ class ServerFailureException extends Exception
 
     /**
      * Print parent exception, if any.
-     * 
+     *
      * @throws \Feast\ServiceContainer\NotFoundException
      */
     public function printParentException(): void

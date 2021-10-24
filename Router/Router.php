@@ -34,8 +34,10 @@ use Feast\Interfaces\RouterInterface;
 use Feast\Main;
 use Feast\NameHelper;
 use Feast\ServiceContainer;
+use Feast\ServiceContainer\ContainerException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use stdClass;
@@ -57,6 +59,9 @@ class Router implements ServiceContainerItemInterface, RouterInterface
     private array $routeNameMap = [];
     private bool $fromCache = false;
 
+    /**
+     * @throws ContainerException|ServiceContainer\NotFoundException
+     */
     public function __construct(private string $runAs = Main::RUN_AS_WEBAPP)
     {
         $this->checkInjected();
@@ -119,7 +124,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      * @param string $arguments
      * @return void
      * @throws ServiceContainer\NotFoundException
-     * @throws ReflectionException
+     * @throws NotFoundException
      */
     public function buildCliArguments(string $arguments): void
     {
@@ -132,7 +137,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         array_shift($queryString);
         array_shift($queryString);
         try {
-            $class = new \ReflectionClass($this->getControllerFullyQualifiedName());
+            $class = new ReflectionClass($this->getControllerFullyQualifiedName());
         } catch (ReflectionException) {
             throw new NotFoundException('Controller ' . $this->getControllerName() . ' does not exist');
         }
@@ -144,6 +149,11 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $this->setCliArgumentsOnRequest($method, $queryString);
     }
 
+    /**
+     * @throws Error404Exception
+     * @throws ReflectionException
+     * @throws ServiceContainer\NotFoundException
+     */
     protected function buildNamedRoute(
         string $arguments,
         RouteData $namedRoute
@@ -385,7 +395,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         if (!method_exists($controller, $actionMethod)) {
             throw new Error404Exception('Action ' . $actionMethod . ' does not exist!');
         }
-        $controllerClass = new \ReflectionClass($controller);
+        $controllerClass = new ReflectionClass($controller);
         $method = $controllerClass->getMethod($actionMethod);
 
         return $method->isVariadic();
@@ -656,6 +666,9 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         return $routeData->arguments;
     }
 
+    /**
+     * @throws Error404Exception
+     */
     protected function getRouteData(string $route, string $requestMethod): RouteData
     {
         /** @var stdClass $namedRoute */
@@ -663,10 +676,8 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         if (empty($namedRoute->$route)) {
             throw new Error404Exception('Route ' . $route . ' does not exist', 500);
         }
-        /** @var RouteData $routeData */
-        $routeData = $namedRoute->$route;
-
-        return $routeData;
+        /** @var RouteData */
+        return $namedRoute->$route;
     }
 
     /**
@@ -821,6 +832,9 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $this->fromCache = false;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function scanRoutes(string $directory, string $filePath = '', string $module = 'Default'): void
     {
         $directory = opendir($directory);
@@ -836,11 +850,11 @@ class Router implements ServiceContainerItemInterface, RouterInterface
     /**
      * @param class-string $classString
      * @param string $module
-     * @throws ReflectionException
+     * @throws ReflectionException|RouteException
      */
     private function analyzeControllerForRoute(string $classString, string $module): void
     {
-        $class = new \ReflectionClass($classString);
+        $class = new ReflectionClass($classString);
         $className = explode('\\', $class->name);
         $position = count($className) - 1;
         $className = lcfirst(substr($className[$position], 0, -10));
@@ -851,6 +865,9 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         }
     }
 
+    /**
+     * @throws RouteException
+     */
     private function analyzeMethodForRoute(ReflectionMethod $method, string $className, string $module): void
     {
         $attribute = $method->getAttributes(Path::class)[0] ?? null;

@@ -27,6 +27,9 @@ class ServiceContainer implements ContainerInterface, ServiceContainerItemInterf
     /** @var array<object> $dependencies */
     protected array $dependencies = [];
 
+    /**
+     * @throws ContainerException
+     */
     public function __construct()
     {
         $this->add(ServiceContainer::class, $this);

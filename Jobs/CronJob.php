@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast\Jobs;
 
 use Feast\Date;
+use Feast\Exception\InvalidDateException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\JobInterface;
 
@@ -791,6 +792,9 @@ abstract class CronJob implements JobInterface
         return $check < $start || $check > $end;
     }
 
+    /**
+     * @throws InvalidDateException
+     */
     protected function isRunningOverlapSafe(Date $now): bool
     {
         if ($this->allowOverlap) {

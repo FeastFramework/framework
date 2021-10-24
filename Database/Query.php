@@ -24,7 +24,9 @@ use Exception;
 use Feast\Date;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidArgumentException;
+use PDO;
 use PDOStatement;
+use Throwable;
 
 abstract class Query
 {
@@ -56,7 +58,7 @@ abstract class Query
     /** @var array<array{statement: string, bindings: Date|string|int|bool|float|array|null}> */
     protected array $where = [];
 
-    public function __construct(protected \PDO $database)
+    public function __construct(protected PDO $database)
     {
     }
 
@@ -207,6 +209,7 @@ abstract class Query
      * @param string|array $joinToColumn
      * @param string|array $joinFromColumn
      * @return static
+     * @throws InvalidArgumentException
      */
     public function leftJoin(string $table, string|array $joinToColumn, string|array $joinFromColumn): static
     {
@@ -250,6 +253,7 @@ abstract class Query
      * @param string|array $joinToColumn
      * @param string|array $joinFromColumn
      * @return static
+     * @throws InvalidArgumentException
      */
     public function innerJoin(string $table, string|array $joinToColumn, string|array $joinFromColumn): static
     {
@@ -264,6 +268,9 @@ abstract class Query
         return $this;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function verifyJoinOrThrow(string|array $joinToColumn, string|array $joinFromColumn): void
     {
         if (is_string($joinToColumn) && is_string($joinFromColumn)) {
@@ -403,7 +410,7 @@ abstract class Query
             if ($result === false) {
                 throw new DatabaseException((string)$sql->errorInfo()[2]);
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             throw new DatabaseException($exception->getMessage());
         }
 

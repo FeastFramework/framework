@@ -462,6 +462,9 @@ trait Collection
         return key($this->array) !== null;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function validateTypeOrThrow(
         mixed $value
     ): void {

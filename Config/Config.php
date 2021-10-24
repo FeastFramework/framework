@@ -79,10 +79,10 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     /**
      * Get config setting. Returns default if setting not found.
-     * 
+     *
      * The Config key can be a parent value or nested via "." separation
      * If a "." is in the key, the settings will be fetched recursively.
-     * The default will be returned if any key in the path is not found. 
+     * The default will be returned if any key in the path is not found.
      *
      * @param string $key
      * @param mixed $default
@@ -107,7 +107,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     /**
      * Builds out the config file in order, one section at a time
-     * 
+     *
      * @param array $config
      * @return stdClass
      */
@@ -128,7 +128,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     /**
      * Build config environment, running through inheritance rules.
-     * 
+     *
      * @param stdClass $configData
      * @param string $environmentName
      * @param array $section
@@ -147,7 +147,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     /**
      * Recursively merge config settings from one environment to another.
-     * 
+     *
      * @param stdClass $currentEnvironment
      * @param array<array-key,mixed> $parentEnvironment
      * @return array
@@ -156,7 +156,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
     {
         /** @var array<array-key,int|string|bool|float|array<array-key,mixed>> $baselineConfig */
         $baselineConfig = $this->objectToArray($currentEnvironment);
-       
+
         /**
          * @var string $keyBase
          * @var string|int|bool|float|array $val
@@ -165,7 +165,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
             /** @var array<int,string> $keyList */
             $key = explode('.', $keyBase);
             $lastKey = array_pop($key);
-            
+
             // Config item is assigned via reference for nesting buildout.
             $configItem = &$baselineConfig;
             foreach ($key as $currentKey) {
@@ -175,7 +175,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
                 /** @var array $configItem */
                 $configItem = &$configItem[$currentKey];
             }
-            
+
             // If an array, recursively merge the next level
             if (is_array($val)) {
                 if (!isset($configItem[$lastKey]) || !is_array($configItem[$lastKey])) {
@@ -217,7 +217,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     /**
      * Determine the correct env for the current running application.
-     * 
+     *
      * Environment is determined in the following order:
      *     1. Web server/process ENV setting
      *     2. .appenv file (contains just env name)
@@ -240,13 +240,13 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
                 return trim($environment);
             }
         }
-        
+
         return 'production';
     }
 
     /**
      * Build environment config by name.
-     * 
+     *
      * Names are colon separation based inheritance. Example:
      *     1. "production" - all settings are standalone
      *     2. "production : development" - production is cloned, then development settings are applied.
@@ -291,18 +291,14 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     private function cloneObjectOrArrayAsObject(stdClass|array $settings): stdClass
     {
-        /** @var stdClass $config */
-        $config = json_decode(json_encode($settings));
-
-        return $config;
+        /** @var stdClass */
+        return json_decode(json_encode($settings));
     }
 
     private function objectToArray(stdClass $object): array
     {
-        /** @var array $config */
-        $config = json_decode(json_encode($object), true);
-
-        return $config;
+        /** @var array */
+        return json_decode(json_encode($object), true);
     }
 
 }

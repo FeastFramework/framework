@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace Feast\Interfaces;
 
+use Throwable;
+
 interface ErrorLoggerInterface
 {
     /**
@@ -36,9 +38,9 @@ interface ErrorLoggerInterface
     /**
      * Exception handler.
      *
-     * @param \Throwable $exception
+     * @param Throwable $exception
      * @param bool $caught
      * @return bool
      */
-    public function exceptionHandler(\Throwable $exception, bool $caught = false): bool;
+    public function exceptionHandler(Throwable $exception, bool $caught = false): bool;
 }

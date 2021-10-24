@@ -63,7 +63,7 @@ interface HttpRequestInterface
     /**
      * Get the request result as a json object.
      *
-     * @return \stdClass|null
+     * @return stdClass|null
      */
     public function getResponseAsJson(): ?stdClass;
 
@@ -198,7 +198,7 @@ interface HttpRequestInterface
      * @return HttpRequestInterface
      */
     public function setArguments(array $arguments): HttpRequestInterface;
-    
+
     /**
      * Add multiple arguments to the request
      * Allows only for simple key => value mappings, not array values.
@@ -246,6 +246,7 @@ interface HttpRequestInterface
 
     /**
      * Get the \Feast\Response object for a finished request.
+     *
      * @return Response|null
      */
     public function getResponse(): ?Response;

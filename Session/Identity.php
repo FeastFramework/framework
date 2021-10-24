@@ -22,8 +22,11 @@ namespace Feast\Session;
 
 use Feast\BaseModel;
 use Feast\Interfaces\ConfigInterface;
+use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
+use stdClass;
 
 /**
  * Class to manage an identity. This class is a convenience shorthand to the Feast_Login namespace
@@ -32,9 +35,12 @@ class Identity implements ServiceContainerItemInterface
 {
     use DependencyInjected;
 
-    protected \stdClass $me;
+    protected stdClass $me;
 
-    public function __construct(ConfigInterface $config, protected Session $session)
+    /**
+     * @throws ContainerException|NotFoundException
+     */
+    public function __construct(protected ConfigInterface $config, protected Session $session)
     {
         $this->checkInjected();
         $this->me = $session->getNamespace('Feast_Login');

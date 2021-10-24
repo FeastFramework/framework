@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace Feast\Collection;
 
+use ArrayAccess;
+use Countable;
 use Feast\Exception\InvalidOptionException;
 use Feast\Exception\ServerFailureException;
 use Feast\Exception\InvalidArgumentException;
@@ -30,7 +32,7 @@ use Iterator;
  *
  * @package Feast\Set
  */
-class Set implements Iterator, Collection, \ArrayAccess, \Countable
+class Set implements Iterator, Collection, ArrayAccess, Countable
 {
     use \Feast\Traits\Collection;
 
@@ -55,7 +57,7 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
         }
         $this->addAll($values);
     }
-    
+
     /**
      * Add a value to the set
      *
@@ -85,10 +87,10 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
             $this->add($value);
         }
     }
-    
+
     /**
      * Set element by offset (disabled)
-     * 
+     *
      * @param string|int $offset
      * @param mixed $value
      * @throws ServerFailureException
@@ -111,9 +113,9 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
 
     /**
      * Merge two sets together
-     * 
+     *
      * For a merge to be allowed, the type for the two sets MUST be the same.
-     * 
+     *
      * @param Set $dataToMerge
      * @return static
      * @throws InvalidArgumentException
@@ -133,12 +135,12 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
 
     /**
      * Get minimum value from set.
-     * 
+     *
      * If key is passed and the collection type is not a scalar, then the value used is for the specified
      * key on the objects. If key is not passed, this will operate on float/int sets only. If key is passed
-     * and the collection is not an object type, or no key is passed and it is an object type, an 
+     * and the collection is not an object type, or no key is passed and it is an object type, an
      * InvalidOptionException is thrown.
-     * 
+     *
      * @param string|null $key
      * @return int|float|null
      * @throws InvalidOptionException
@@ -265,10 +267,8 @@ class Set implements Iterator, Collection, \ArrayAccess, \Countable
      */
     public function offsetGet($offset): string|int|bool|float|object|array|null
     {
-        /** @var string|int|bool|float|object|array|null $var */
-        $var = $this->array[$offset] ?? null;
-
-        return $var;
+        /** @var string|int|bool|float|object|array|null */
+        return $this->array[$offset] ?? null;
     }
 
     /**

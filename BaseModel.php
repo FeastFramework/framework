@@ -32,11 +32,17 @@ abstract class BaseModel
     protected const MAPPER_NAME = null;
     protected ?BaseModel $originalModel = null;
 
+    /**
+     * @throws InvalidOptionException
+     */
     public function __set(string $name, mixed $value): void
     {
         throw new InvalidOptionException('Invalid option for model', 500);
     }
 
+    /**
+     * @throws InvalidOptionException
+     */
     public function __get(string $name): void
     {
         throw new InvalidOptionException('Invalid option for model', 500);

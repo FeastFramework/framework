@@ -113,7 +113,9 @@ abstract class Field
         return $showLabel && $labelData && $labelData->position == $positionToCheck;
     }
 
-    /** @psalm-suppress InvalidToString */
+    /** @psalm-suppress InvalidToString
+     * @throws ServerFailureException
+     */
     public function __toString()
     {
         throw new ServerFailureException('__toString not enabled for ' . static::class . '. Use toString()');
@@ -338,7 +340,7 @@ abstract class Field
 
         return $output;
     }
-    
+
     public function getValuesForValidation(): string|array
     {
         return $this->value;

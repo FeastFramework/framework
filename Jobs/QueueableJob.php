@@ -43,6 +43,7 @@ abstract class QueueableJob implements JobInterface
      * @param ?JobMapper $jobMapper
      * @return Job
      * @throws InvalidDateException
+     * @throws \Exception
      */
     public function store(JobMapper $jobMapper = null): Job
     {
@@ -76,33 +77,33 @@ abstract class QueueableJob implements JobInterface
 
     /**
      * Set maximum number of tries.
-     * 
+     *
      * @param int $maxTries
      * @return $this
      */
     public function setMaxTries(int $maxTries): static
     {
         $this->maxTries = $maxTries;
-        
+
         return $this;
     }
 
     /**
      * Set the job name for this job.
-     * 
+     *
      * @param string $jobName
      * @return $this
      */
     public function setJobName(string $jobName): static
     {
         $this->jobName = $jobName;
-        
+
         return $this;
     }
 
     /**
      * Get the name of the job.
-     * 
+     *
      * @return string
      */
     public function getJobName(): string
@@ -112,7 +113,7 @@ abstract class QueueableJob implements JobInterface
 
     /**
      * Get the maximum number of retries.
-     * 
+     *
      * @return int
      */
     public function getMaxTries(): int
@@ -122,13 +123,17 @@ abstract class QueueableJob implements JobInterface
 
     /**
      * Get the name of the queue this job should run on.
-     * 
+     *
      * @return string
      */
-    public function getQueueName(): string {
+    public function getQueueName(): string
+    {
         return $this->queueName;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function generateUuid(): string
     {
         $data = random_bytes(16);

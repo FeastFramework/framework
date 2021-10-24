@@ -31,6 +31,9 @@ class Curl extends HttpRequest implements HttpRequestInterface
     /** @var CurlHandle $curl */
     protected mixed $curl;
 
+    /**
+     * @throws CurlException
+     */
     public function __construct(?string $url = null)
     {
         parent::__construct($url);
@@ -66,7 +69,8 @@ class Curl extends HttpRequest implements HttpRequestInterface
     /**
      * Make the HTTP request and store the result
      */
-    public function makeRequest(): HttpRequestInterface    {
+    public function makeRequest(): HttpRequestInterface
+    {
         $url = $this->url ?? '';
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $this->method);
@@ -133,7 +137,10 @@ class Curl extends HttpRequest implements HttpRequestInterface
         $headerSize = (int)curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
         $header = substr($response, 0, $headerSize);
         $this->parseResponseHeaders(explode("\n", $header));
-        $this->response = new Response(substr($response, $headerSize), ($this->responseCode ?? ResponseCode::HTTP_CODE_500));
+        $this->response = new Response(
+            substr($response, $headerSize),
+            ($this->responseCode ?? ResponseCode::HTTP_CODE_500)
+        );
         curl_close($this->curl);
 
         return $this;

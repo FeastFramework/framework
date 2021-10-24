@@ -62,7 +62,7 @@ $container = di();
 ############################################
 $configCache = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'config.cache';
 if (file_exists($configCache)) {
-    /** @var \Feast\Interfaces\ConfigInterface|false $config */
+    /** @var ConfigInterface|false $config */
     $config = unserialize(file_get_contents($configCache));
     if (!$config instanceof ConfigInterface) {
         $config = new Config();

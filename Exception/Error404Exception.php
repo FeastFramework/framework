@@ -20,10 +20,12 @@ declare(strict_types=1);
 
 namespace Feast\Exception;
 
+use Throwable;
+
 class Error404Exception extends ServerFailureException
 {
 
-    public function __construct(string $message, int $errorCode = 0, \Throwable $previousException = null)
+    public function __construct(string $message, int $errorCode = 0, Throwable $previousException = null)
     {
         parent::__construct($message, 404, $errorCode, $previousException);
     }

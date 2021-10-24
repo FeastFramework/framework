@@ -26,6 +26,7 @@ use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
+use stdClass;
 
 /**
  * Manage session variables. Also handles session security if "strictIp" setting
@@ -36,8 +37,8 @@ class Session implements ServiceContainerItemInterface
     use DependencyInjected;
 
     /**
-     * Initial creation of Feast_Session. 
-     * 
+     * Initial creation of Feast_Session.
+     *
      * If Strict IP setting is enabled, the session is destroyed if the IP doesn't match.
      *
      * @param ConfigInterface $config
@@ -68,12 +69,12 @@ class Session implements ServiceContainerItemInterface
      * Return session namespace by name. Creates if non-existent.
      *
      * @param string $namespace
-     * @return \stdClass
+     * @return stdClass
      */
-    public function getNamespace(string $namespace): \stdClass
+    public function getNamespace(string $namespace): stdClass
     {
-        if (!isset($_SESSION[$namespace]) || $_SESSION[$namespace] instanceof \stdClass === false) {
-            $_SESSION[$namespace] = new \stdClass();
+        if (!isset($_SESSION[$namespace]) || $_SESSION[$namespace] instanceof stdClass === false) {
+            $_SESSION[$namespace] = new stdClass();
         }
 
         return $_SESSION[$namespace];
@@ -81,7 +82,7 @@ class Session implements ServiceContainerItemInterface
 
     /**
      * Destroy a namespace in the session.
-     * 
+     *
      * @param string $namespace
      */
     public function destroyNamespace(string $namespace): void

@@ -20,6 +20,8 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use ReflectionClass;
+
 class NameHelper
 {
 
@@ -77,10 +79,10 @@ class NameHelper
     }
 
     /**
-     * Get Action name for command line. 
-     * 
+     * Get Action name for command line.
+     *
      * Example: runCronItemGet returns run-cron-item.
-     * 
+     *
      * @param string $name
      * @return string
      */
@@ -94,10 +96,10 @@ class NameHelper
     /**
      * Get name of class in : syntax for controller.
      *
-     * @param \ReflectionClass $class
+     * @param ReflectionClass $class
      * @return string
      */
-    public static function getControllerClassName(\ReflectionClass $class): string
+    public static function getControllerClassName(ReflectionClass $class): string
     {
         $className = explode('\\', $class->name);
         $prefix = '';

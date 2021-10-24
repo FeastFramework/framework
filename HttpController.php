@@ -26,6 +26,7 @@ use Feast\Interfaces\ResponseInterface;
 use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainer;
+use stdClass;
 
 /**
  * Class to manage controllers.
@@ -33,7 +34,7 @@ use Feast\ServiceContainer\ServiceContainer;
 abstract class HttpController implements ControllerInterface
 {
 
-    public \stdClass $jsonEnabledActions;
+    public stdClass $jsonEnabledActions;
     public ResponseInterface $response;
 
     /**
@@ -46,7 +47,7 @@ abstract class HttpController implements ControllerInterface
      */
     public function __construct(public ServiceContainer $di, public View $view, ?ResponseInterface $response = null)
     {
-        $this->jsonEnabledActions = new \stdClass();
+        $this->jsonEnabledActions = new stdClass();
         $this->response = $response ?? $di->get(ResponseInterface::class);
     }
 
@@ -72,6 +73,7 @@ abstract class HttpController implements ControllerInterface
      * @param string|null $module
      * @param string $route
      * @throws NotFoundException
+     * @throws \Exception
      */
     public function forward(
         string $action = null,
@@ -120,6 +122,7 @@ abstract class HttpController implements ControllerInterface
      * @param string $route
      * @param int $code (30x)
      * @throws NotFoundException
+     * @throws \Exception
      */
     public function redirect(
         ?string $action = null,

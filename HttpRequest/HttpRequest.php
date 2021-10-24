@@ -27,6 +27,7 @@ use Feast\Exception\BadRequestException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\HttpRequestInterface;
 use SimpleXMLElement;
+use stdClass;
 
 /**
  * Abstract Class to make HTTP/HTTPS requests
@@ -473,9 +474,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Get the request result as a json object.
      *
-     * @return \stdClass|null
+     * @return stdClass|null
      */
-    public function getResponseAsJson(): ?\stdClass
+    public function getResponseAsJson(): ?stdClass
     {
         if ($this->response === null) {
             return null;

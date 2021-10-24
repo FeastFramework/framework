@@ -24,6 +24,8 @@ use Feast\Enums\ResponseCode;
 use Feast\Exception\ResponseException;
 use Feast\Interfaces\ResponseInterface;
 use Feast\Interfaces\RouterInterface;
+use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 use JsonException;
@@ -42,7 +44,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     private ?string $redirectPath = null;
 
     /**
-     * Initialize class
+     * @throws ContainerException|NotFoundException
      */
     public function __construct()
     {

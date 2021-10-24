@@ -23,9 +23,12 @@ namespace Feast\Controllers;
 use Feast\Attributes\Action;
 use Feast\Attributes\Param;
 use Feast\Enums\ParamType;
+use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseDetailsInterface;
+use Feast\ServiceContainer\NotFoundException;
 use Mapper\MigrationMapper;
 use Model\Migration;
+use PDOException;
 
 class MigrationController extends WriteTemplateController
 {
@@ -124,6 +127,9 @@ class MigrationController extends WriteTemplateController
         return true;
     }
 
+    /**
+     * @throws NotFoundException|ServerFailureException
+     */
     protected function getMigrationModelOrEchoError(string $name): ?Migration
     {
         $migrationMapper = new MigrationMapper();
@@ -135,15 +141,15 @@ class MigrationController extends WriteTemplateController
             );
             return null;
         }
-        /** @var Migration $migrationModel */
-        $migrationModel = $migrationMapper->findOneByField('migration_id', $name) ?? new Migration();
-        return $migrationModel;
+        /** @var Migration */
+        return $migrationMapper->findOneByField('migration_id', $name) ?? new Migration();
     }
 
     /**
      * @param string|null $name
      * @param string $type
      * @return bool
+     * @throws NotFoundException|ServerFailureException
      */
     protected function migrationRun(?string $name, string $type = 'up'): bool
     {
@@ -175,6 +181,9 @@ class MigrationController extends WriteTemplateController
         return true;
     }
 
+    /**
+     * @throws NotFoundException|ServerFailureException
+     */
     protected function buildMigrationList(): void
     {
         $this->buildMigrationListFromDisk();
@@ -199,6 +208,9 @@ class MigrationController extends WriteTemplateController
         }
     }
 
+    /**
+     * @throws NotFoundException|ServerFailureException
+     */
     protected function buildMigrationListFromDatabase(): void
     {
         $migrationMapper = new MigrationMapper();
@@ -243,7 +255,7 @@ class MigrationController extends WriteTemplateController
                 $migration->down();
                 $migrationModel->recordDown();
             }
-        } catch (\PDOException $exception) {
+        } catch (PDOException $exception) {
             $this->terminal->error(
                 'Migration ' . $migrationModel->name . ' failed:' . "\n" . 'Reason: ' . $exception->getMessage()
             );

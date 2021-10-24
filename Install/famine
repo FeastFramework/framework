@@ -18,8 +18,11 @@
 
 declare(strict_types=1);
 
+use Feast\Autoloader;
+use Feast\Main;
+
 chdir(__DIR__);
-if ( file_exists('vendor/autoload.php')) {
+if (file_exists('vendor/autoload.php')) {
     require_once('vendor/autoload.php');
 };
 // Set up framework
@@ -34,10 +37,10 @@ if (file_exists(APPLICATION_ROOT . 'Feast/Autoloader.php')) {
 $autoLoader = new Feast\Autoloader();
 $autoLoader->register();
 $autoLoader->addPathMapping('Psr', ['/Feast/Psr']);
-define('RUN_AS', \Feast\Main::RUN_AS_CLI);
+const RUN_AS = Main::RUN_AS_CLI;
 require_once(APPLICATION_ROOT . 'container.php');
 /** @var \Feast\ServiceContainer\ServiceContainer $container */
-$container->add(\Feast\Autoloader::class, $autoLoader);
+$container->add(Autoloader::class, $autoLoader);
 
 // Turn on all error reporting and turn ON display errors
 error_reporting(-1);

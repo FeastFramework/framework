@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Collection;
 
+use ArrayAccess;
 use Feast\Exception\ServerFailureException;
 
 /**
@@ -27,7 +28,7 @@ use Feast\Exception\ServerFailureException;
  *
  * @package Feast\Collection
  */
-class CollectionList implements \ArrayAccess,Collection
+class CollectionList implements ArrayAccess, Collection
 {
     use \Feast\Traits\Collection;
 
@@ -47,7 +48,6 @@ class CollectionList implements \ArrayAccess,Collection
         }
         $this->addAll($values);
     }
-
 
     /**
      * Add or replace an element to/in the collection
@@ -117,12 +117,9 @@ class CollectionList implements \ArrayAccess,Collection
      */
     public function offsetGet($offset): string|int|bool|float|object|array|null
     {
-        /** @var string|int|bool|float|object|array|null $var */
-        $var = $this->array[$offset] ?? null;
-
-        return $var;
+        /** @var string|int|bool|float|object|array|null */
+        return $this->array[$offset] ?? null;
     }
-
 
     /**
      * Set element by offset
@@ -138,13 +135,12 @@ class CollectionList implements \ArrayAccess,Collection
 
     /**
      * Unset element (if it exists) by offset
-     * 
+     *
      * @param string|int $offset
      */
     public function offsetUnset($offset): void
     {
         unset($this->array[$offset]);
     }
-
 
 }

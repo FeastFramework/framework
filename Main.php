@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use Exception;
 use Feast\Enums\ResponseCode;
 use Feast\Exception\Error404Exception;
 use Feast\Exception\ServerFailureException;
@@ -34,6 +35,10 @@ use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainer;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionNamedType;
+use ReflectionParameter;
 
 /**
  * @since 1.0
@@ -69,6 +74,9 @@ class Main implements MainInterface
         $this->logger = $this->serviceContainer->get(ErrorLoggerInterface::class);
     }
 
+    /**
+     * @throws NotFoundException
+     */
     protected function buildCliArguments(RouterInterface $router): void
     {
         /** @var array{argv:array<string>} $_SERVER */
@@ -79,6 +87,9 @@ class Main implements MainInterface
         $router->buildCliArguments($path);
     }
 
+    /**
+     * @throws NotFoundException
+     */
     protected function buildWebArguments(RouterInterface $router): void
     {
         /** @var ?string $path */
@@ -108,7 +119,7 @@ class Main implements MainInterface
      *
      * @throws NotFoundException
      * @throws Error404Exception
-     * @throws ServerFailureException|\ReflectionException
+     * @throws ServerFailureException|ReflectionException
      */
     public function main(): void
     {
@@ -148,11 +159,17 @@ class Main implements MainInterface
             } else {
                 throw $exception;
             }
-        } catch (\Exception | ServerFailureException $exception) {
+        } catch (Exception | ServerFailureException $exception) {
             $this->handleExceptions($exception, $response, $config);
         }
     }
 
+    /**
+     * @throws Error404Exception
+     * @throws ReflectionException
+     * @throws NotFoundException
+     * @throws ServerFailureException
+     */
     protected function runControllerLoop(
         RouterInterface $router,
         RequestInterface $request,
@@ -197,7 +214,7 @@ class Main implements MainInterface
      * @param ControllerInterface $controller
      * @param string $actionName
      * @param RequestInterface $request
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function runAction(ControllerInterface $controller, string $actionName, RequestInterface $request): void
     {
@@ -213,7 +230,7 @@ class Main implements MainInterface
      * @param RequestInterface $request
      * @param bool $buildUnknown
      * @return array
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function buildDynamicParameters(
         ControllerInterface|Plugin|string $controller,
@@ -222,7 +239,7 @@ class Main implements MainInterface
         bool $buildUnknown = true
     ): array {
         // Argument gathering
-        $reflection = new \ReflectionClass($controller);
+        $reflection = new ReflectionClass($controller);
         $method = $reflection->getMethod($function);
         $argumentCount = $method->getNumberOfParameters();
 
@@ -245,7 +262,7 @@ class Main implements MainInterface
     {
         /** @var array<mixed> $return */
         $return = [];
-        /** @var \ReflectionParameter $argument */
+        /** @var ReflectionParameter $argument */
         foreach ($arguments as $argument) {
             $this->buildArgument($request, $argument, $buildUnknown, $return);
         }
@@ -261,13 +278,16 @@ class Main implements MainInterface
         return $return;
     }
 
+    /**
+     * @throws ReflectionException|NotFoundException
+     */
     protected function buildArgument(
         RequestInterface $request,
-        \ReflectionParameter $argument,
+        ReflectionParameter $argument,
         bool $buildUnknown,
         array &$return
     ): void {
-        /** @var ?\ReflectionNamedType $type */
+        /** @var ?ReflectionNamedType $type */
         $type = $argument->getType();
         if ($type !== null) {
             $argumentType = $type->getName();
@@ -294,7 +314,7 @@ class Main implements MainInterface
      *
      * @param ConfigInterface $config
      * @param RequestInterface $request
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function loadPlugins(ConfigInterface $config, RequestInterface $request): void
     {
@@ -318,7 +338,7 @@ class Main implements MainInterface
      * @param string $methodName
      * @param RouterInterface $router
      * @param RequestInterface $request
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     protected function runPlugins(string $methodName, RouterInterface $router, RequestInterface $request): void
     {
@@ -339,17 +359,17 @@ class Main implements MainInterface
     /**
      * @param class-string $argumentType
      * @param RequestInterface $request
-     * @param \ReflectionParameter $argument
+     * @param ReflectionParameter $argument
      * @param array $return
-     * @throws \ReflectionException
+     * @throws NotFoundException|ReflectionException|ServerFailureException
      */
     protected function buildBaseModelArgument(
         string $argumentType,
         RequestInterface $request,
-        \ReflectionParameter $argument,
+        ReflectionParameter $argument,
         array &$return
     ): void {
-        $reflected = new \ReflectionClass($argumentType);
+        $reflected = new ReflectionClass($argumentType);
         /** @var class-string<BaseMapper> $mapperName */
         $mapperName = $reflected->getConstant('MAPPER_NAME');
         /** @var BaseMapper $mapper */
@@ -365,7 +385,7 @@ class Main implements MainInterface
     }
 
     protected function buildUnknownArgument(
-        \ReflectionParameter $argument,
+        ReflectionParameter $argument,
         string $argumentType,
         float|object|bool|int|string|null $default,
         RequestInterface $request,
@@ -448,6 +468,9 @@ class Main implements MainInterface
         $return[] = $request->getArgumentString($argumentName, $default);
     }
 
+    /**
+     * @throws Error404Exception
+     */
     protected function handle404Exception(
         ConfigInterface $config,
         Error404Exception $exception
@@ -462,7 +485,7 @@ class Main implements MainInterface
     }
 
     protected function handleExceptions(
-        \Exception|ServerFailureException $exception,
+        Exception|ServerFailureException $exception,
         ResponseInterface $response,
         ConfigInterface $config
     ): void {
@@ -479,6 +502,9 @@ class Main implements MainInterface
         $this->logger->exceptionHandler($exception, true);
     }
 
+    /**
+     * @throws Error404Exception|ReflectionException|NotFoundException|ServerFailureException
+     */
     protected function runRequest(
         RouterInterface $router,
         RequestInterface $request,
@@ -494,6 +520,9 @@ class Main implements MainInterface
         }
     }
 
+    /**
+     * @throws Error404Exception
+     */
     protected function checkForControllerAndAction(
         string $controllerClass,
         string $controllerName,

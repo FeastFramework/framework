@@ -23,9 +23,9 @@ namespace Feast\Controllers;
 use Feast\Attributes\Action;
 use Feast\Attributes\Param;
 use Feast\BaseModel;
-use Feast\CliController;
 use Feast\Database\TableDetails;
 use Feast\Enums\ParamType;
+use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseFactoryInterface;
 use Feast\NameHelper;
 
@@ -167,6 +167,9 @@ class CreateController extends WriteTemplateController
         $this->writeSimpleTemplate($name, 'Validator', $file);
     }
 
+    /**
+     * @throws ServerFailureException
+     */
     #[Action(usage: '--connection={connection} --model={model} --overwrite={true|false} {table-name}', description: 'Create a model and mapper for a database table.')]
     #[Param(type: 'string', name: 'table', description: 'Name of table to build model from')]
     #[Param(type: 'string', name: 'connection', description: 'Name of connection to use for database connection. Defaults to "default"', paramType: ParamType::FLAG)]

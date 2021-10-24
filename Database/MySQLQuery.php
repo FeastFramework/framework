@@ -20,7 +20,9 @@ declare(strict_types=1);
 
 namespace Feast\Database;
 
+use Exception;
 use Feast\Date;
+use PDO;
 use stdClass;
 
 /**
@@ -85,7 +87,7 @@ class MySQLQuery extends Query
      *
      * @param string $table
      * @return TableDetails
-     * @throws \Exception
+     * @throws Exception
      */
     public function getDescribedTable(string $table): TableDetails
     {
@@ -95,7 +97,7 @@ class MySQLQuery extends Query
         $compoundPrimary = false;
         $statement = $this->describe($table)->execute();
 
-        while ($row = $statement->fetch(\PDO::FETCH_OBJ)) {
+        while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
             if (isset($row->Key) && (string)$row->Key === 'PRI') {
                 if (!empty($primaryKey)) {
                     $compoundPrimary = true;
@@ -285,7 +287,7 @@ class MySQLQuery extends Query
     {
         return match (true) {
             str_starts_with((string)$field->Type, 'json'),
-            str_ends_with((string)$field->Type, 'json') => \stdClass::class,
+            str_ends_with((string)$field->Type, 'json') => stdClass::class,
             str_starts_with((string)$field->Type, 'int'),
             str_starts_with((string)$field->Type, 'tinyint'),
             str_starts_with((string)$field->Type, 'bigint'),
@@ -302,7 +304,7 @@ class MySQLQuery extends Query
         $nullPrefix = (string)$field->Null === 'YES' ? 'null|' : '';
         return $nullPrefix . match (true) {
                 str_starts_with((string)$field->Type, 'json'),
-                str_ends_with((string)$field->Type, 'json') => '\\' . \stdClass::class . '|array',
+                str_ends_with((string)$field->Type, 'json') => '\\' . stdClass::class . '|array',
                 str_starts_with((string)$field->Type, 'int'),
                 str_starts_with((string)$field->Type, 'tinyint'),
                 str_starts_with((string)$field->Type, 'bigint'),

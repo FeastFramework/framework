@@ -20,9 +20,14 @@ declare(strict_types=1);
 
 namespace Feast\Database;
 
+use DirectoryIterator;
+use Exception;
 use Feast\BaseMapper;
+use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseDetailsInterface;
 use Feast\Interfaces\DatabaseFactoryInterface;
+use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 
@@ -32,11 +37,12 @@ class DatabaseDetails implements ServiceContainerItemInterface, DatabaseDetailsI
 
     /** @var array<array<string,string>> */
     protected array $databaseDataTypes = [];
-    protected ?DatabaseFactoryInterface $dbFactory;
 
-    public function __construct(DatabaseFactoryInterface $dbFactory)
+    /**
+     * @throws ContainerException|NotFoundException
+     */
+    public function __construct(protected DatabaseFactoryInterface $dbFactory)
     {
-        $this->dbFactory = $dbFactory;
         $this->checkInjected();
     }
 
@@ -45,10 +51,13 @@ class DatabaseDetails implements ServiceContainerItemInterface, DatabaseDetailsI
         $this->dbFactory = $dbFactory;
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function cache(): void
     {
         $this->databaseDataTypes = [];
-        $dir = new \DirectoryIterator(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'Mapper');
+        $dir = new DirectoryIterator(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'Mapper');
 
         foreach ($dir as $file) {
             if ($file->isDot() || $file->isDir()) {
@@ -77,9 +86,12 @@ class DatabaseDetails implements ServiceContainerItemInterface, DatabaseDetailsI
         return $this->databaseDataTypes[$table] ?? [];
     }
 
+    /**
+     * @throws ServerFailureException|Exception
+     */
     protected function buildDetailsForTable(string $table, string $connection): void
     {
-        $dbFactory = $this->dbFactory ?? di(DatabaseFactoryInterface::class);
+        $dbFactory = $this->dbFactory;
         $connection = $dbFactory->getConnection($connection);
         $details = $connection->getDescribedTable($table);
         $tableType = [];
