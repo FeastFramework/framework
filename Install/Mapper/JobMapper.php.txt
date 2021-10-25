@@ -6,7 +6,8 @@ namespace Mapper;
 
 use \Feast\BaseMapper;
 use \Model\Job;
-
+use \Feast\Exception\ServerFailureException;
+use \Feast\ServiceContainer\NotFoundException;
 class JobMapper extends BaseMapper
 {
     protected const OBJECT_NAME = Job::class;
@@ -17,6 +18,8 @@ class JobMapper extends BaseMapper
      * @param int|string $value
      * @param bool $validate
      * @return ?Job
+     * @throws ServerFailureException
+     * @throws NotFoundException
      */
     public function findByPrimaryKey(int|string $value, bool $validate = false): ?Job
     {
@@ -37,7 +40,7 @@ class JobMapper extends BaseMapper
         }
         return null;
     }
-    
+
     public function markJobPendingIfAble(Job $job): bool {
         $query = $this->connection->update(self::TABLE_NAME,['status' => \Feast\Jobs\QueueableJob::JOB_STATUS_RUNNING])
             ->where('job_id = ? and status IN (?,?)',[$job->job_id,\Feast\Jobs\QueueableJob::JOB_STATUS_PENDING,\Feast\Jobs\QueueableJob::JOB_STATUS_FAILED]);
