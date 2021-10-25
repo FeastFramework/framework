@@ -51,11 +51,8 @@ class Database implements DatabaseInterface
     {
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
-        /**
-         * @var DatabaseType
-         * @psalm-suppress UndefinedMethod
-         */
-        $this->databaseType = DatabaseType::from($connectionDetails->connectionType);
+        /** @var DatabaseType */
+        $this->databaseType = $connectionDetails->connectionType;
         $queryClass = (string)($connectionDetails->queryClass ?? '');
         if ($queryClass === '') {
             throw new InvalidOptionException(

@@ -45,7 +45,7 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->queryClass = $queryClass;
-        $details->connectionType = $connectionType->value;
+        $details->connectionType = $connectionType;
         if ($options) {
             $details->config = [
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
@@ -81,7 +81,7 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = 'This Database Doesn\'t Exist';
-        $this->expectException(\ValueError::class);
+        $this->expectException(\TypeError::class);
         new Database($details, PDOMock::class);
     }
 
@@ -93,7 +93,7 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->url = 'mysql:host=localhost;port=3306;';
-        $details->connectionType = DatabaseType::MYSQL->value;
+        $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = MySQLQuery::class;
         $database = new Database($details, PDOMock::class);
         $this->assertTrue($database instanceof Database);
@@ -106,7 +106,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::MYSQL->value;
+        $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = MySQLQuery::class;
         $this->expectException(InvalidOptionException::class);
         new Database($details, \stdClass::class);
@@ -119,7 +119,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::MYSQL->value;
+        $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = 'completegibberishdefinitelynotaclass';
         $this->expectException(InvalidOptionException::class);
         new Database($details, \stdClass::class);
@@ -132,7 +132,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::MYSQL->value;
+        $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = \stdClass::class;
         $this->expectException(InvalidOptionException::class);
         new Database($details, \stdClass::class);
@@ -145,7 +145,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::MYSQL->value;
+        $details->connectionType = DatabaseType::MYSQL;
         $this->expectException(InvalidOptionException::class);
         $database = new Database($details, PDOMock::class);
     }
@@ -157,7 +157,7 @@ class DatabaseTest extends TestCase
         $details->user = 'root';
         $details->pass = 'test';
         $details->name = 'Test';
-        $details->connectionType = DatabaseType::SQLITE->value;
+        $details->connectionType = DatabaseType::SQLITE;
         $this->expectException(InvalidOptionException::class);
         $database = new Database($details, PDOMock::class);
     }

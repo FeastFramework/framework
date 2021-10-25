@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Config;
 
+use BackedEnum;
 use Feast\Exception\ConfigException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
@@ -292,14 +293,40 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     private function cloneObjectOrArrayAsObject(stdClass|array $settings): stdClass
     {
+        $return = new stdClass();
+        /**
+         * @psalm-suppress PossibleRawObjectIteration
+         * @var string $key
+         * @var scalar|array|stdClass|BackedEnum $val
+         */
+        foreach($settings as $key => $val) {
+            if ( is_array($val) || $val instanceof stdClass ) {
+                $return->$key = $this->cloneObjectOrArrayAsObject($val);
+            } else {
+                $return->$key = $val;
+            }
+        }
         /** @var stdClass */
-        return json_decode(json_encode($settings));
+        return $return;
     }
 
-    private function objectToArray(stdClass $object): array
+    private function objectToArray(stdClass|array $settings): array
     {
+        $return = [] ;
+        /**
+         * @psalm-suppress PossibleRawObjectIteration
+         * @var string $key
+         * @var scalar|array|stdClass|BackedEnum $val
+         */
+        foreach($settings as $key => $val) {
+            if ( is_array($val) || $val instanceof stdClass ) {
+                $return[$key] = $this->objectToArray($val);
+            } else {
+                $return[$key] = $val;
+            }
+        }
         /** @var array */
-        return json_decode(json_encode($object), true);
+        return $return;
     }
 
 }

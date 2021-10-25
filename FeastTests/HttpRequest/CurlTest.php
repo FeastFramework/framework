@@ -19,6 +19,7 @@ declare(strict_types=1);
 
 namespace HttpRequest;
 
+use Feast\Enums\RequestMethod;
 use Feast\Enums\ResponseCode;
 use Feast\Exception\BadRequestException;
 use Feast\Exception\CurlException;
@@ -33,7 +34,7 @@ class CurlTest extends TestCase
     {
         $request = new Curl();
         $request->get('http://www.google.com');
-        $this->assertEquals('GET', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::GET, $request->getMethod());
         $this->assertTrue($request->getUrl() === 'http://www.google.com');
         /** THIS METHOD IS EXPECTED TO FAIL WITH AN EXCEPTION BECAUSE WE ARE MOCKING THE CURL ITEM WITH stdClass */
         $this->expectException(\TypeError::class);
@@ -44,7 +45,7 @@ class CurlTest extends TestCase
     {
         $request = new Curl();
         $request->patch('http://www.google.com');
-        $this->assertEquals('PATCH', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::PATCH, $request->getMethod());
         $this->assertTrue($request->getUrl() === 'http://www.google.com');
     }
 
@@ -73,7 +74,7 @@ class CurlTest extends TestCase
     {
         $request = new Curl();
         $request->post('http://www.google.com');
-        $this->assertEquals('POST', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::POST, $request->getMethod());
         $this->assertTrue($request->getUrl() === 'http://www.google.com');
     }
 
@@ -81,7 +82,7 @@ class CurlTest extends TestCase
     {
         $request = new Curl();
         $request->postJson('http://www.google.com');
-        $this->assertEquals('POST', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::POST, $request->getMethod());
         $this->assertEquals(HttpRequest::CONTENT_TYPE_JSON, $request->getContentType());
     }
 
@@ -89,7 +90,7 @@ class CurlTest extends TestCase
     {
         $request = new Curl();
         $request->put('http://www.google.com');
-        $this->assertEquals('PUT', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::PUT, $request->getMethod());
         $this->assertTrue($request->getUrl() === 'http://www.google.com');
     }
 
@@ -97,7 +98,7 @@ class CurlTest extends TestCase
     {
         $request = new Curl();
         $request->delete('http://www.google.com');
-        $this->assertEquals('DELETE', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::DELETE, $request->getMethod());
         $this->assertTrue($request->getUrl() === 'http://www.google.com');
     }
 
@@ -362,7 +363,7 @@ Test
         $this->assertIsArray($arguments['type']);
         $this->assertEquals('text', $arguments['type'][0]);
         $this->assertEquals('pass', $arguments['type'][1]);
-        $this->assertEquals('POST', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::POST, $request->getMethod());
         $request->makeRequest();
     }
 
@@ -382,7 +383,7 @@ Test
         $this->assertIsArray($arguments['type']);
         $this->assertEquals('text', $arguments['type'][0]);
         $this->assertEquals('pass', $arguments['type'][1]);
-        $this->assertEquals('PUT', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::PUT, $request->getMethod());
         $request->makeRequest();
     }
 
@@ -402,7 +403,7 @@ Test
         $this->assertIsArray($arguments['type']);
         $this->assertEquals('text', $arguments['type'][0]);
         $this->assertEquals('pass', $arguments['type'][1]);
-        $this->assertEquals('PATCH', $request->getMethod()->value);
+        $this->assertEquals(RequestMethod::PATCH, $request->getMethod());
         $request->makeRequest();
     }
 

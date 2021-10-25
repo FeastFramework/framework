@@ -23,9 +23,6 @@ use Feast\Interfaces\ConfigInterface;
 use Feast\View;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class ViewTest extends TestCase
 {
     protected View $view;

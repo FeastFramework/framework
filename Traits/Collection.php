@@ -210,7 +210,6 @@ trait Collection
 
     public function walk(callable $callback, mixed $arg = null): bool
     {
-        /** @psalm-suppress PossiblyInvalidPropertyAssignmentValue - Wrong */
         return array_walk($this->array, $callback, $arg);
     }
 
