@@ -247,16 +247,17 @@ class Binary
      * @param array $classes
      * @throws ReflectionException
      */
-    private function analyzeFeast(array $classes = [
-        TemplateController::class,
-        CreateController::class,
-        MigrationController::class,
-        CacheController::class,
-        JobController::class,
-        MaintenanceController::class,
-        ServeController::class
-    ]): void
-    {
+    private function analyzeFeast(
+        array $classes = [
+            TemplateController::class,
+            CreateController::class,
+            MigrationController::class,
+            CacheController::class,
+            JobController::class,
+            MaintenanceController::class,
+            ServeController::class
+        ]
+    ): void {
         /** @var class-string $class */
         foreach ($classes as $class) {
             $this->processCliClass(new ReflectionClass($class));
