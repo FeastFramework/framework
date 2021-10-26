@@ -249,13 +249,13 @@ class Binary
      */
     private function analyzeFeast(
         array $classes = [
+            TemplateController::class,
             CreateController::class,
             MigrationController::class,
             CacheController::class,
             JobController::class,
             MaintenanceController::class,
-            ServeController::class,
-            TemplateController::class
+            ServeController::class
         ]
     ): void {
         /** @var class-string $class */
