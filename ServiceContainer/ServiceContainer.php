@@ -43,7 +43,6 @@ class ServiceContainer implements ContainerInterface, ServiceContainerItemInterf
      * @psalm-param returned::class $id
      * @param mixed ...$arguments
      * @return returned
-     * @psalm-suppress MismatchingDocblockReturnType - Needed for the dynamic return
      * @psalm-suppress MoreSpecificImplementedParamType - Needed for the dynamic return
      * @psalm-suppress InvalidReturnStatement
      * @psalm-suppress InvalidReturnType
