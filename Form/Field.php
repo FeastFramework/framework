@@ -113,7 +113,7 @@ abstract class Field
         return $showLabel && $labelData && $labelData->position == $positionToCheck;
     }
 
-    /** @psalm-suppress InvalidToString
+    /** 
      * @throws ServerFailureException
      */
     public function __toString()

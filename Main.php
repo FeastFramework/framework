@@ -187,10 +187,7 @@ class Main implements MainInterface
             $this->checkForControllerAndAction($controllerClass, $controllerName, $actionName);
             /* @var $controller ControllerInterface */
             $arguments = $this->buildDynamicParameters($controllerClass, '__construct', $request, false);
-            /**
-             * @var HttpController $controller
-             * @psalm-suppress UnsafeInstantiation
-             */
+            /** @var HttpController $controller */
             $controller = new $controllerClass(...$arguments);
             $allowRunning = $controller->init();
 

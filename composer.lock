@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "624629d1572b727bf614189f9684bdb0",
+    "content-hash": "32c69987730e6e109822c299eb3fc80d",
     "packages": [],
     "packages-dev": [
         {
             "name": "psalm/phar",
-            "version": "4.11.0",
+            "version": "4.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "8f45082f92bdea722bf22a6c56b32a8c4ce22178"
+                "reference": "ec8acfd8cb0332e68fc57bfb2a57942a3e028d4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/8f45082f92bdea722bf22a6c56b32a8c4ce22178",
-                "reference": "8f45082f92bdea722bf22a6c56b32a8c4ce22178",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/ec8acfd8cb0332e68fc57bfb2a57942a3e028d4e",
+                "reference": "ec8acfd8cb0332e68fc57bfb2a57942a3e028d4e",
                 "shasum": ""
             },
             "require": {
@@ -38,9 +38,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/4.11.0"
+                "source": "https://github.com/psalm/phar/tree/4.11.1"
             },
-            "time": "2021-10-23T22:03:58+00:00"
+            "time": "2021-10-24T13:47:38+00:00"
         }
     ],
     "aliases": [],
@@ -50,7 +50,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.0.0",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-xml": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"
