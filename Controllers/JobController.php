@@ -176,7 +176,7 @@ class JobController extends CliController
         if ($jobData instanceof QueueableJob) {
             try {
                 $success = $jobData->run();
-            } catch (Exception) {
+            } catch (\Throwable) {
                 // Empty catch
             }
             $job->status = $success ? QueueableJob::JOB_STATUS_COMPLETE : QueueableJob::JOB_STATUS_PENDING;
