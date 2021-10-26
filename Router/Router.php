@@ -764,8 +764,8 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             $request->clearArguments();
         }
         $i = 0;
+        
         /** @var array<string,string> $arguments */
-
         foreach ($arguments as $key => $val) {
             $request->setArgument($key, $params[$i] ?? $val);
             $i++;

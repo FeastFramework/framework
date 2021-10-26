@@ -306,13 +306,13 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
                 $return->$key = $val;
             }
         }
-        /** @var stdClass */
+
         return $return;
     }
 
     private function objectToArray(stdClass|array $settings): array
     {
-        $return = [] ;
+        $return = [];
         /**
          * @psalm-suppress PossibleRawObjectIteration
          * @var string $key
@@ -325,7 +325,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
                 $return[$key] = $val;
             }
         }
-        /** @var array */
+
         return $return;
     }
 
