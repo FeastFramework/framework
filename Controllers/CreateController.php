@@ -86,6 +86,10 @@ class CreateController extends WriteTemplateController
         ?string $action = null,
 
     ): void {
+        if ($controller === null || $action === null) {
+            $this->help('feast:create:cli-action');
+            return;
+        }
         $this->actionGet($controller, $action, module: 'CLI');
     }
 

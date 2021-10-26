@@ -575,6 +575,20 @@ class CreateControllerTest extends TestCase
         $this->assertStringContainsString('use Feast\Attributes\Action;', trim($output));
     }
 
+    public function testCliActionGetNoName(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:cli-action'])
+        );
+        $controller->cliActionGet();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('Create a new CLI controller action from the template file.', trim($output));
+    }
+    
     public function testCliActionGetControllerPathExistsAndControllerCliExists(): void
     {
         $config = $this->createStub(Config::class);
