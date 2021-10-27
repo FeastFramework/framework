@@ -182,6 +182,7 @@ class JobController extends CliController
                 // Empty catch
             }
             $job->status = $success ? QueueableJob::JOB_STATUS_COMPLETE : QueueableJob::JOB_STATUS_PENDING;
+            $job->ran_at = Date::createFromNow();
             $job->tries++;
             if ($job->tries >= $job->max_tries && $success === false) {
                 $job->status = QueueableJob::JOB_STATUS_FAILED;
