@@ -170,6 +170,8 @@ class JobController extends CliController
             $this->terminal->error('Could not lock job ' . $job->job_id . '.');
             return false;
         }
+        /** @var Job $job */
+        $job = $jobMapper->findByPrimaryKey($job->job_id);
         /** @var ?QueueableJob $jobData */
         $jobData = unserialize($job->job_context);
         $success = false;

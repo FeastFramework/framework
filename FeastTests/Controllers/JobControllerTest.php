@@ -112,6 +112,7 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findOnePendingByQueues')->willReturn($job);
+        $jobMapper->method('findByPrimaryKey')->willReturn($job);
         $jobMapper->method('markJobPendingIfAble')->willReturn(true);
 
         $controller->listenGet($this->createStub(LoggerInterface::class), $jobMapper, 'default', false);
