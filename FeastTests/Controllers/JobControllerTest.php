@@ -23,6 +23,7 @@ use Feast\CliArguments;
 use Feast\Config\Config;
 use Feast\Controllers\JobController;
 use Feast\Date;
+use Feast\Interfaces\ErrorLoggerInterface;
 use Feast\Interfaces\LoggerInterface;
 use Feast\Jobs\QueueableJob;
 use Mapper\JobMapper;
@@ -47,7 +48,11 @@ class JobControllerTest extends TestCase
             $config,
             new CliArguments(['famine', 'feast:job:listen'])
         );
-        $controller->listenGet($this->createStub(LoggerInterface::class), $this->createStub(JobMapper::class));
+        $controller->listenGet(
+            $this->createStub(LoggerInterface::class),
+            $this->createStub(JobMapper::class),
+            $this->createStub(ErrorLoggerInterface::class)
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString(
             'Usage: php famine feast:job:listen --keepalive={true|false} {queues}',
@@ -67,7 +72,13 @@ class JobControllerTest extends TestCase
         );
         $jobMapper = $this->createStub(JobMapper::class);
 
-        $controller->listenGet($this->createStub(LoggerInterface::class), $jobMapper, 'default', false);
+        $controller->listenGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default',
+            false
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('No jobs found. Exiting', $output);
     }
@@ -84,7 +95,13 @@ class JobControllerTest extends TestCase
         );
         $jobMapper = $this->createStub(JobMapper::class);
 
-        $controller->listenGet($this->createStub(LoggerInterface::class), $jobMapper, 'default', exitLoop: true);
+        $controller->listenGet(
+                      $this->createStub(LoggerInterface::class),
+                      $jobMapper,
+                      $this->createStub(ErrorLoggerInterface::class),
+                      'default',
+            exitLoop: true
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('No jobs found. Sleeping for 10 seconds', $output);
     }
@@ -115,7 +132,13 @@ class JobControllerTest extends TestCase
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
         $jobMapper->method('markJobPendingIfAble')->willReturn(true);
 
-        $controller->listenGet($this->createStub(LoggerInterface::class), $jobMapper, 'default', false);
+        $controller->listenGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default',
+            false
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals('Listening for jobs on the following queues: default', trim($output));
     }
@@ -130,7 +153,11 @@ class JobControllerTest extends TestCase
             $config,
             new CliArguments(['famine', 'feast:job:listen'])
         );
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $this->createStub(JobMapper::class));
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $this->createStub(JobMapper::class),
+            $this->createStub(ErrorLoggerInterface::class)
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Usage: php famine feast:job:run-one {job}', $output);
     }
@@ -147,7 +174,12 @@ class JobControllerTest extends TestCase
         );
         $jobMapper = $this->createStub(JobMapper::class);
 
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Job default not found.', $output);
@@ -168,7 +200,12 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Job default is currently running.', $output);
@@ -189,7 +226,12 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Job default already ran successfully.', $output);
@@ -212,7 +254,12 @@ class JobControllerTest extends TestCase
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
         $jobMapper->method('markJobPendingIfAble')->willReturn(false);
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Could not lock job default.', $output);
@@ -241,7 +288,12 @@ class JobControllerTest extends TestCase
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
         $jobMapper->method('markJobPendingIfAble')->willReturn(true);
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Job default ran successfully.', $output);
@@ -270,7 +322,12 @@ class JobControllerTest extends TestCase
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
         $jobMapper->method('markJobPendingIfAble')->willReturn(true);
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Job default failed.', $output);
@@ -299,7 +356,12 @@ class JobControllerTest extends TestCase
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
         $jobMapper->method('markJobPendingIfAble')->willReturn(true);
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Job default failed.', $output);
@@ -327,7 +389,12 @@ class JobControllerTest extends TestCase
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
         $jobMapper->method('markJobPendingIfAble')->willReturn(true);
-        $controller->runOneGet($this->createStub(LoggerInterface::class), $jobMapper, 'default');
+        $controller->runOneGet(
+            $this->createStub(LoggerInterface::class),
+            $jobMapper,
+            $this->createStub(ErrorLoggerInterface::class),
+            'default'
+        );
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Searching for job default.', $output);
         $this->assertStringContainsString('Job default contains invalid serialized data.', $output);
