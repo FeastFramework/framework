@@ -13,7 +13,8 @@
     "require": {
         "php": "^8.0.0",
         "ext-pdo": "*",
-        "ext-xml": "*"
+        "ext-xml": "*",
+        "ext-readline": "*"
     },
     "suggest": {
         "ext-mysql": "*",
