@@ -40,12 +40,14 @@ class JobController extends CliController
     #[Action(usage: '--keepalive={true|false} {queues}', description: 'Listen for and run all jobs on one or more queues.')]
     #[Param(type: 'string', name: 'queues', description: 'Name of queues to monitor, pipe delimited')]
     #[Param(type: 'bool', name: 'keepalive', description: 'True to run as a process loop (default: true)', paramType: ParamType::FLAG)]
+    #[Param(type: 'int', name: 'wait', description: 'Number of seconds to pause if no jobs found (default: 10)', paramType: ParamType::FLAG)]
     public function listenGet(
         LoggerInterface $logger,
         JobMapper $jobMapper,
         ErrorLoggerInterface $errorLogger,
         ?string $queues = null,
         bool $keepalive = true,
+        int $wait = 10,
         bool $exitLoop = false # this param is only used to force loop exit in testing.
     ): void
     {
@@ -62,8 +64,8 @@ class JobController extends CliController
             } else {
                 $this->terminal->command('No jobs found. ', false);
                 if ($keepalive) {
-                    $this->terminal->command('Sleeping for 10 seconds.');
-                    sleep(10);
+                    $this->terminal->command('Sleeping for ' . (string)$wait . ' seconds.');
+                    sleep($wait);
                 } else {
                     $this->terminal->command('Exiting.');
                 }

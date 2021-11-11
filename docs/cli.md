@@ -296,6 +296,7 @@ php famine feast:template:install-action
 This command installs the `action` template file to `bin/templates/Action.php.txt`.
 
 ### feast:template:install-cli-action
+
 ```
 php famine feast:template:install-cli-action
 ```
@@ -303,6 +304,7 @@ php famine feast:template:install-cli-action
 This command installs the `cliAction` template file to `bin/templates/CliAction.php.txt`.
 
 ### feast:template:install-controller
+
 ```
 php famine feast:template:install-controller
 ```
@@ -310,6 +312,7 @@ php famine feast:template:install-controller
 This command installs the `controller` template file to `bin/templates/Controller.php.txt`.
 
 ### feast:template:install-cron-job
+
 ```
 php famine feast:template:install-cron-job
 ```
@@ -317,6 +320,7 @@ php famine feast:template:install-cron-job
 This command installs the `cronJob` template file to `bin/templates/CronJob.php.txt`.
 
 ### feast:template:install-filter
+
 ```
 php famine feast:template:install-filter
 ```
@@ -324,6 +328,7 @@ php famine feast:template:install-filter
 This command installs the `filter` template file to `bin/templates/Filter.php.txt`.
 
 ### feast:template:install-form
+
 ```
 php famine feast:template:install-form
 ```
@@ -331,6 +336,7 @@ php famine feast:template:install-form
 This command installs the `form` template file to `bin/templates/Form.php.txt`.
 
 ### feast:template:install-mapper
+
 ```
 php famine feast:template:install-mapper
 ```
@@ -338,6 +344,7 @@ php famine feast:template:install-mapper
 This command installs the `mapper` template file to `bin/templates/Mapper.php.txt`.
 
 ### feast:template:install-migration
+
 ```
 php famine feast:template:install-migration
 ```
@@ -345,6 +352,7 @@ php famine feast:template:install-migration
 This command installs the `migration` template file to `bin/templates/Migration.php.txt`.
 
 ### feast:template:install-model
+
 ```
 php famine feast:template:install-model
 ```
@@ -352,6 +360,7 @@ php famine feast:template:install-model
 This command installs the `model` template file to `bin/templates/Model.php.txt`.
 
 ### feast:template:install-model-generated
+
 ```
 php famine feast:template:install-action
 ```
@@ -359,6 +368,7 @@ php famine feast:template:install-action
 This command installs the `modelGenerated` template file to `bin/templates/ModelGenerated.php.txt`.
 
 ### feast:template:install-plugin
+
 ```
 php famine feast:template:install-plugin
 ```
@@ -366,6 +376,7 @@ php famine feast:template:install-plugin
 This command installs the `plugin` template file to `bin/templates/Plugin.php.txt`.
 
 ### feast:template:install-queueable-job
+
 ```
 php famine feast:template:install-queueable-job
 ```
@@ -373,6 +384,7 @@ php famine feast:template:install-queueable-job
 This command installs the `queueableJob` template file to `bin/templates/QueueableJob.php.txt`.
 
 ### feast:template:install-service
+
 ```
 php famine feast:template:install-service
 ```
@@ -380,6 +392,7 @@ php famine feast:template:install-service
 This command installs the `service` template file to `bin/templates/Service.php.txt`.
 
 ### feast:template:install-validator
+
 ```
 php famine feast:template:install-validator
 ```
@@ -387,6 +400,7 @@ php famine feast:template:install-validator
 This command installs the `action` template file to `bin/templates/Action.php.txt`.
 
 ### feast:template:install-all
+
 ```
 php famine feast:template:install-all
 ```
@@ -400,13 +414,13 @@ The `feast:job` group allows interacting with both scheduled (or cron) jobs and 
 ### feast:job:listen
 
 ```
-php famine feast:job:listen --keepalive={true|false} {queues}
+php famine feast:job:listen --keepalive={true|false} --wait={seconds-to-wait} {queues}
 ```
 
 Listen for available jobs on the specified queues. Queues are separated by the pipe character. Keep Alive defaults to
-true. If no jobs are available, the worker will sleep for 10 seconds before checking again. All jobs are processed by
-the worker in a first-in, first-out manner. If a job fails, it is placed back into the queue and retried up to the
-maximum number of tries.
+true. If no jobs are available, the worker will sleep for the specified number of seconds passed to wait (default: 10)
+before checking again. All jobs are processed by the worker in a first-in, first-out manner. If a job fails, it is
+placed back into the queue and retried up to the maximum number of tries.
 
 ### feast:job:run-one
 
