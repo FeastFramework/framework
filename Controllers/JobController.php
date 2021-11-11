@@ -27,6 +27,7 @@ use Feast\CliController;
 use Feast\Date;
 use Feast\Enums\ParamType;
 use Feast\Interfaces\ConfigInterface;
+use Feast\Interfaces\ErrorLoggerInterface;
 use Feast\Interfaces\LoggerInterface;
 use Feast\Jobs\CronJob;
 use Feast\Jobs\QueueableJob;
@@ -39,11 +40,14 @@ class JobController extends CliController
     #[Action(usage: '--keepalive={true|false} {queues}', description: 'Listen for and run all jobs on one or more queues.')]
     #[Param(type: 'string', name: 'queues', description: 'Name of queues to monitor, pipe delimited')]
     #[Param(type: 'bool', name: 'keepalive', description: 'True to run as a process loop (default: true)', paramType: ParamType::FLAG)]
+    #[Param(type: 'int', name: 'wait', description: 'Number of seconds to pause if no jobs found (default: 10)', paramType: ParamType::FLAG)]
     public function listenGet(
         LoggerInterface $logger,
         JobMapper $jobMapper,
+        ErrorLoggerInterface $errorLogger,
         ?string $queues = null,
         bool $keepalive = true,
+        int $wait = 10,
         bool $exitLoop = false # this param is only used to force loop exit in testing.
     ): void
     {
@@ -56,12 +60,12 @@ class JobController extends CliController
         do {
             $job = $jobMapper->findOnePendingByQueues($queueList);
             if ($job instanceof Job && !file_exists(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'maintenance.txt')) {
-                $this->runJob($job, $logger, $jobMapper);
+                $this->runJob($job, $errorLogger,$logger, $jobMapper);
             } else {
                 $this->terminal->command('No jobs found. ', false);
                 if ($keepalive) {
-                    $this->terminal->command('Sleeping for 10 seconds.');
-                    sleep(10);
+                    $this->terminal->command('Sleeping for ' . (string)$wait . ' seconds.');
+                    sleep($wait);
                 } else {
                     $this->terminal->command('Exiting.');
                 }
@@ -78,6 +82,7 @@ class JobController extends CliController
     public function runOneGet(
         LoggerInterface $logger,
         JobMapper $jobMapper,
+        ErrorLoggerInterface $errorLogger,
         ?string $job = null,
     ): void {
         if ($job === null) {
@@ -100,7 +105,7 @@ class JobController extends CliController
             $this->terminal->command('Job ' . $job . ' already ran successfully.');
             return;
         }
-        $success = $this->runJob($jobData, $logger, $jobMapper);
+        $success = $this->runJob($jobData, $errorLogger, $logger, $jobMapper);
         if ($success) {
             $this->terminal->message('Job ' . $job . ' ran successfully.');
         }
@@ -162,7 +167,7 @@ class JobController extends CliController
     /**
      * @throws Exception
      */
-    protected function runJob(Job $job, LoggerInterface $logger, JobMapper $jobMapper): bool
+    protected function runJob(Job $job, ErrorLoggerInterface $errorLogger, LoggerInterface $logger, JobMapper $jobMapper): bool
     {
         $canRun = $jobMapper->markJobPendingIfAble($job);
         if ($canRun === false) {
@@ -178,8 +183,8 @@ class JobController extends CliController
         if ($jobData instanceof QueueableJob) {
             try {
                 $success = $jobData->run();
-            } catch (\Throwable) {
-                // Empty catch
+            } catch (\Throwable $exception) {
+                $errorLogger->exceptionHandler($exception, true);
             }
             $job->status = $success ? QueueableJob::JOB_STATUS_COMPLETE : QueueableJob::JOB_STATUS_PENDING;
             $job->ran_at = Date::createFromNow();

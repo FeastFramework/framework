@@ -20,9 +20,10 @@ declare(strict_types=1);
 
 namespace Feast\Interfaces;
 
+use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Throwable;
 
-interface ErrorLoggerInterface
+interface ErrorLoggerInterface extends ServiceContainerItemInterface
 {
     /**
      * Error handler for all errors (not exceptions).
