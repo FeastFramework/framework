@@ -4,7 +4,6 @@
         totallyTyped="true"
         autoloader="PsalmLoader.php"
         reportMixedIssues="true"
-        allowPhpStormGenerics="true"
         strictBinaryOperands="true"
         allowStringToStandInForClass="true"
         findUnusedPsalmSuppress="true"
