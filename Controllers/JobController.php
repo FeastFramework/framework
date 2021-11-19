@@ -60,7 +60,7 @@ class JobController extends CliController
         do {
             $job = $jobMapper->findOnePendingByQueues($queueList);
             if ($job instanceof Job && !file_exists(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'maintenance.txt')) {
-                $this->runJob($job, $errorLogger,$logger, $jobMapper);
+                $this->runJob($job, $errorLogger, $logger, $jobMapper);
             } else {
                 $this->terminal->command('No jobs found. ', false);
                 if ($keepalive) {
@@ -167,9 +167,13 @@ class JobController extends CliController
     /**
      * @throws Exception
      */
-    protected function runJob(Job $job, ErrorLoggerInterface $errorLogger, LoggerInterface $logger, JobMapper $jobMapper): bool
-    {
-        $canRun = $jobMapper->markJobPendingIfAble($job);
+    protected function runJob(
+        Job $job,
+        ErrorLoggerInterface $errorLogger,
+        LoggerInterface $logger,
+        JobMapper $jobMapper
+    ): bool {
+        $canRun = $jobMapper->markJobRunningIfAble($job);
         if ($canRun === false) {
             $logger->error('Could not lock job ' . $job->job_id . '.');
             $this->terminal->error('Could not lock job ' . $job->job_id . '.');

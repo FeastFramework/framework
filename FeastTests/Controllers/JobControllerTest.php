@@ -130,7 +130,7 @@ class JobControllerTest extends TestCase
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findOnePendingByQueues')->willReturn($job);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $jobMapper->method('markJobPendingIfAble')->willReturn(true);
+        $jobMapper->method('markJobRunningIfAble')->willReturn(true);
 
         $controller->listenGet(
             $this->createStub(LoggerInterface::class),
@@ -253,7 +253,7 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $jobMapper->method('markJobPendingIfAble')->willReturn(false);
+        $jobMapper->method('markJobRunningIfAble')->willReturn(false);
         $controller->runOneGet(
             $this->createStub(LoggerInterface::class),
             $jobMapper,
@@ -287,7 +287,7 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $jobMapper->method('markJobPendingIfAble')->willReturn(true);
+        $jobMapper->method('markJobRunningIfAble')->willReturn(true);
         $controller->runOneGet(
             $this->createStub(LoggerInterface::class),
             $jobMapper,
@@ -321,7 +321,7 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $jobMapper->method('markJobPendingIfAble')->willReturn(true);
+        $jobMapper->method('markJobRunningIfAble')->willReturn(true);
         $controller->runOneGet(
             $this->createStub(LoggerInterface::class),
             $jobMapper,
@@ -355,7 +355,7 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $jobMapper->method('markJobPendingIfAble')->willReturn(true);
+        $jobMapper->method('markJobRunningIfAble')->willReturn(true);
         $controller->runOneGet(
             $this->createStub(LoggerInterface::class),
             $jobMapper,
@@ -388,7 +388,7 @@ class JobControllerTest extends TestCase
 
         $jobMapper = $this->createStub(JobMapper::class);
         $jobMapper->method('findByPrimaryKey')->willReturn($job);
-        $jobMapper->method('markJobPendingIfAble')->willReturn(true);
+        $jobMapper->method('markJobRunningIfAble')->willReturn(true);
         $controller->runOneGet(
             $this->createStub(LoggerInterface::class),
             $jobMapper,
