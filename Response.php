@@ -65,8 +65,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      */
     public function sendResponseCode(): void
     {
-        /** @psalm-suppress UndefinedPropertyFetch */
-        http_response_code((int)$this->responseCode->value);
+        http_response_code($this->responseCode->value);
     }
 
     /**

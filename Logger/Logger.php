@@ -165,13 +165,11 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
             $message = strtoupper($level) . ': ' . $message;
             $level = $this->getLevelFromString($level);
         }
-        /** @psalm-suppress UndefinedPropertyFetch - False error */
         if ($level instanceof LogLevelCode === false || $level->value < $this->logLevel->value) {
             return;
         }
         $message = $this->interpolateContext($message, $context);
-        /** @psalm-suppress UndefinedPropertyFetch - False error */
-        $this->rawLog((int)$level->value, (date('[Y-m-d H:i:s] ')) . trim($message));
+        $this->rawLog($level->value, (date('[Y-m-d H:i:s] ')) . trim($message));
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
             $exception = $context['exception'];
 
@@ -209,7 +207,6 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
      */
     public function rawLog(int $level, string $message): void
     {
-        /** @psalm-suppress UndefinedPropertyFetch */
         if ($level < $this->logLevel->value) {
             return;
         }

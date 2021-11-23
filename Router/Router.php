@@ -877,14 +877,13 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         /** @var Path $pathAttribute */
         $pathAttribute = $attribute->newInstance();
         foreach ($pathAttribute->getMethods() as $methodType) {
-            /** @psalm-suppress UndefinedPropertyFetch */
             $this->addRoute(
                 $pathAttribute->path,
                 $className,
                 $methodName,
                 $pathAttribute->name,
                 $pathAttribute->defaults,
-                (string)$methodType->value,
+                $methodType->value,
                 $module
             );
         }
