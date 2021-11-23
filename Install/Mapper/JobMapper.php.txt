@@ -39,7 +39,7 @@ class JobMapper extends BaseMapper
     }
     
     /**
-     * Mark job as running. Method name is incorrect and will be removed in 3.0
+     * Mark job as running. Method name is incorrect and will be removed in 2.0
      *
      * @param \Model\Job $job
      * @return bool
