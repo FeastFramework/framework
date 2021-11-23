@@ -37,6 +37,17 @@ use Model\Job;
 class JobController extends CliController
 {
 
+    /**
+     * @param LoggerInterface $logger
+     * @param JobMapper $jobMapper
+     * @param ErrorLoggerInterface $errorLogger
+     * @param string|null $queues
+     * @param bool $keepalive
+     * @param positive-int $wait
+     * @param bool $exitLoop
+     * @return void
+     * @throws Exception
+     */
     #[Action(usage: '--keepalive={true|false} {queues}', description: 'Listen for and run all jobs on one or more queues.')]
     #[Param(type: 'string', name: 'queues', description: 'Name of queues to monitor, pipe delimited')]
     #[Param(type: 'bool', name: 'keepalive', description: 'True to run as a process loop (default: true)', paramType: ParamType::FLAG)]
