@@ -52,19 +52,12 @@ class JobMapper extends BaseMapper
     }
 
     /**
-     * Mark job as running. Method name is incorrect and will be removed in 2.0
+     * Mark job as running.
      *
      * @param \Model\Job $job
      * @return bool
      * @throws \Exception
-     * @deprecated
      */
-    public function markJobPendingIfAble(Job $job): bool
-    {
-        trigger_error('This method is deprecated. Use JobMapper::markJobRunningIfAble', E_USER_DEPRECATED);
-        return $this->markJobRunningIfAble($job);
-    }
-
     public function markJobRunningIfAble(Job $job): bool
     {
         $query = $this->connection->update(self::TABLE_NAME, ['status' => \Feast\Jobs\QueueableJob::JOB_STATUS_RUNNING])

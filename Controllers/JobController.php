@@ -185,8 +185,7 @@ class JobController extends CliController
         LoggerInterface $logger,
         JobMapper $jobMapper
     ): bool {
-        /** @psalm-suppress DeprecatedMethod @todo: switch to markJobRunningIfAble */
-        $canRun = $jobMapper->markJobPendingIfAble($job);
+        $canRun = $jobMapper->markJobRunningIfAble($job);
         if ($canRun === false) {
             $logger->error('Could not lock job ' . $job->job_id . '.');
             $this->terminal->error('Could not lock job ' . $job->job_id . '.');
