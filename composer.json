@@ -14,7 +14,11 @@
         "php": "^8.1.0",
         "ext-pdo": "*",
         "ext-xml": "*",
-        "ext-readline": "*"
+        "ext-readline": "*",
+        "ext-ctype": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*",
+        "ext-fileinfo": "*"
     },
     "suggest": {
         "ext-mysql": "*",
