@@ -4,7 +4,7 @@
 
 ![PHPUnit](https://github.com/FeastFramework/framework/workflows/PHPUnit/badge.svg?branch=v2.x)
 ![Psalm Static analysis](https://github.com/FeastFramework/framework/workflows/Psalm%20Static%20analysis/badge.svg?branch=v2.x)
-[![codecov](https://codecov.io/gh/FeastFramework/framework/branch/master/graph/badge.svg?token=FBP2AKLJB3)](https://codecov.io/gh/FeastFramework/framework)
+[![codecov](https://codecov.io/gh/FeastFramework/framework/branch/v2.x/graph/badge.svg?token=FBP2AKLJB3)](https://codecov.io/gh/FeastFramework/framework)
 
 [![Packagist](https://img.shields.io/packagist/php-v/feast/framework/v2.x-dev)](https://packagist.org/packages/feast/framework)
 ![License](https://img.shields.io/packagist/l/feast/framework.svg)
