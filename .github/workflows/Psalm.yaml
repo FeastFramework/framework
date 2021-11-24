@@ -11,7 +11,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          tools: psalm
+         # tools: psalm
       - name: Checkout project
         uses: actions/checkout@v2
 
@@ -30,7 +30,7 @@ jobs:
         run: composer install --prefer-dist
 
       - name: Run Psalm
-        run: psalm --show-info=true --no-diff --report=results.sarif
+        run: ./vendor/bin/psalm --show-info=true --no-diff --report=results.sarif
 
       - name: Upload Security Analysis results to GitHub
         continue-on-error: true
