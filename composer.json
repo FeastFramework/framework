@@ -22,7 +22,7 @@
         "ext-curl": "*"
     },
     "require-dev": {
-        "psalm/phar": "^4.10"
+        "psalm/phar": "dev-master"
     },
     "autoload": {
         "psr-4": {
