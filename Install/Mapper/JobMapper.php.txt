@@ -58,7 +58,7 @@ class JobMapper extends BaseMapper
     */
     public function markJobRunningIfAble(Job $job): bool {
         $query = $this->connection->update(self::TABLE_NAME,['status' => \Feast\Jobs\QueueableJob::JOB_STATUS_RUNNING])
-            ->where('job_id = ? and status IN (?,?)',[$job->job_id,\Feast\Jobs\QueueableJob::JOB_STATUS_PENDING,\Feast\Jobs\QueueableJob::JOB_STATUS_FAILED]);
+            ->where('job_id = ? and status IN (?,?)',$job->job_id,\Feast\Jobs\QueueableJob::JOB_STATUS_PENDING,\Feast\Jobs\QueueableJob::JOB_STATUS_FAILED);
         $result = $query->execute();
         return $result->rowCount() !== 0;
     }
