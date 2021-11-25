@@ -142,7 +142,7 @@ class CollectionListTest extends TestCase
     public function testSortInvalid(): void
     {
         $collection = new CollectionList('string', ['b' => 'early', 'a' => 'testing']);
-        $this->expectException(InvalidOptionException::class);
+        $this->expectException(\TypeError::class);
         $collection->sort(7, true);
     }
 
@@ -237,7 +237,7 @@ class CollectionListTest extends TestCase
     public function testObjectSortTypeInvalid(): void
     {
         $collection = new CollectionList(stdClass::class);
-        $this->expectException(InvalidOptionException::class);
+        $this->expectException(\TypeError::class);
         $collection->objectSort('test', 7);
     }
 

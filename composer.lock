@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da5daea481c1324c0861881b62d11060",
+    "content-hash": "c485b209d8b022f85b5a4317b180c7cc",
     "packages": [],
     "packages-dev": [
         {
             "name": "psalm/phar",
-            "version": "4.13.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "2883fa6aaff05564365cb16435196616bd853e3a"
+                "reference": "882ca87ee9b10237b0e952d6cb713bcead486d3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/2883fa6aaff05564365cb16435196616bd853e3a",
-                "reference": "2883fa6aaff05564365cb16435196616bd853e3a",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/882ca87ee9b10237b0e952d6cb713bcead486d3b",
+                "reference": "882ca87ee9b10237b0e952d6cb713bcead486d3b",
                 "shasum": ""
             },
             "require": {
@@ -27,6 +27,7 @@
             "conflict": {
                 "vimeo/psalm": "*"
             },
+            "default-branch": true,
             "bin": [
                 "psalm.phar"
             ],
@@ -38,21 +39,27 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/4.13.0"
+                "source": "https://github.com/psalm/phar/tree/master"
             },
-            "time": "2021-11-21T02:42:44+00:00"
+            "time": "2021-11-24T22:46:14+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "psalm/phar": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0.0",
+        "php": "^8.1.0",
         "ext-pdo": "*",
         "ext-xml": "*",
-        "ext-readline": "*"
+        "ext-readline": "*",
+        "ext-ctype": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*",
+        "ext-fileinfo": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.1.0"

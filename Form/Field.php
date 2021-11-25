@@ -27,7 +27,6 @@ use Feast\Form\Field\SelectValue;
 use Feast\Form\Field\Value;
 use Feast\Form\Filter\Filter;
 use Feast\Form\Validator\Validator;
-use stdClass;
 
 /**
  * This class is used to create form fields.
@@ -35,8 +34,8 @@ use stdClass;
 abstract class Field
 {
 
-    public const LABEL_POSITION_FIRST = 'first';
-    public const LABEL_POSITION_LAST = 'last';
+    final public const LABEL_POSITION_FIRST = 'first';
+    final public const LABEL_POSITION_LAST = 'last';
 
     public string $class = '';
     public ?string $default = null;

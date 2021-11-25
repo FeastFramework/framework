@@ -32,7 +32,7 @@ class Terminal
     public function __construct(?bool $useColor = null)
     {
         if ($useColor === null) {
-            $this->isTty = (function_exists('posix_isatty') ? posix_isatty(STDOUT) : false);
+            $this->isTty = (function_exists('posix_isatty') && posix_isatty(STDOUT));
         } else {
             $this->isTty = $useColor;
         }

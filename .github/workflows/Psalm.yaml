@@ -10,8 +10,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.0'
-          tools: psalm
+          php-version: '8.1'
       - name: Checkout project
         uses: actions/checkout@v2
 
@@ -30,9 +29,10 @@ jobs:
         run: composer install --prefer-dist
 
       - name: Run Psalm
-        run: psalm --show-info=true --no-diff --report=results.sarif
+        run: ./vendor/bin/psalm.phar --show-info=true --no-diff --report=results.sarif
 
       - name: Upload Security Analysis results to GitHub
+        continue-on-error: true
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: results.sarif

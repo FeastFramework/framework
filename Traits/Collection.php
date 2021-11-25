@@ -90,15 +90,13 @@ trait Collection
     /**
      * Sort the collection by different sort options.
      *
-     * @param $sortType
+     * @param CollectionSort $sortType
      * @param bool $modifyOriginal
      * @param int $sortOptions
      * @return array
-     * @throws InvalidOptionException
      * @see CollectionSort
-     *
      */
-    public function sort(int $sortType, bool $modifyOriginal = false, int $sortOptions = SORT_REGULAR): array
+    public function sort(CollectionSort $sortType, bool $modifyOriginal = false, int $sortOptions = SORT_REGULAR): array
     {
         $array = $this->array;
         switch ($sortType) {
@@ -114,8 +112,6 @@ trait Collection
             case CollectionSort::VALUE_REVERSE:
                 arsort($array, $sortOptions);
                 break;
-            default:
-                throw new InvalidOptionException('Invalid sort type');
         }
         if ($modifyOriginal) {
             $this->array = $array;
@@ -128,7 +124,7 @@ trait Collection
      * Sort named-class based collection by the value of a key or multiple keys.
      *
      * @param string|array<string> $key
-     * @param int $sortType
+     * @param CollectionSort $sortType
      * @param bool $modifyOriginal
      * @return array
      * @throws InvalidOptionException
@@ -136,7 +132,7 @@ trait Collection
      */
     public function objectSort(
         string|array $key,
-        int $sortType = CollectionSort::VALUE,
+        CollectionSort $sortType = CollectionSort::VALUE,
         bool $modifyOriginal = false
     ): array {
         switch ($this->type) {
@@ -151,13 +147,7 @@ trait Collection
                     'Collection must contain objects of a named class in order to use objectSort'
                 );
         }
-        switch ($sortType) {
-            case CollectionSort::VALUE:
-            case CollectionSort::VALUE_REVERSE:
-                break;
-            default:
-                throw new InvalidOptionException('Invalid sort option');
-        }
+
         /** @var array<object> $array */
         $array = $this->array;
         usort(
@@ -272,7 +262,7 @@ trait Collection
     /**
      * Check if item exists in collection.
      *
-     * @param $value
+     * @param mixed $value
      * @param bool $strictMatch
      * @return bool
      */
@@ -280,7 +270,7 @@ trait Collection
         mixed $value,
         bool $strictMatch = true
     ): bool {
-        return array_search($value, $this->array, $strictMatch) !== false;
+        return in_array($value, $this->array, $strictMatch);
     }
 
     /**
@@ -307,7 +297,7 @@ trait Collection
     /**
      * Find the first index of an item in the collection.
      *
-     * @param $value
+     * @param mixed $value
      * @param bool $strictMatch
      * @return null|int|string
      */
@@ -326,7 +316,7 @@ trait Collection
     /**
      * Find the last index of an item in the collection.
      *
-     * @param $value
+     * @param mixed $value
      * @param bool $strictMatch
      * @return array-key|null
      */
@@ -355,7 +345,7 @@ trait Collection
     /**
      * Remove an item from the collection.
      *
-     * @param $valueMatch
+     * @param mixed $valueMatch
      * @param bool $strictMatch
      */
     public function remove(

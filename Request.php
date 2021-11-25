@@ -213,7 +213,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      */
     public function isPost(): bool
     {
-        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::POST;
+        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::POST->value;
     }
 
     /**
@@ -223,7 +223,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      */
     public function isGet(): bool
     {
-        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::GET;
+        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::GET->value;
     }
 
     /**
@@ -233,7 +233,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      */
     public function isDelete(): bool
     {
-        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::DELETE;
+        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::DELETE->value;
     }
 
     /**
@@ -243,7 +243,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      */
     public function isPut(): bool
     {
-        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::PUT;
+        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::PUT->value;
     }
 
     /**
@@ -253,7 +253,7 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      */
     public function isPatch(): bool
     {
-        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::PATCH;
+        return !empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === RequestMethod::PATCH->value;
     }
 
     /**

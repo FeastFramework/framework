@@ -28,10 +28,10 @@ use Model\Job;
 
 abstract class QueueableJob implements JobInterface
 {
-    public const JOB_STATUS_PENDING = 'pending';
-    public const JOB_STATUS_RUNNING = 'running';
-    public const JOB_STATUS_COMPLETE = 'complete';
-    public const JOB_STATUS_FAILED = 'failed';
+    final public const JOB_STATUS_PENDING = 'pending';
+    final public const JOB_STATUS_RUNNING = 'running';
+    final public const JOB_STATUS_COMPLETE = 'complete';
+    final public const JOB_STATUS_FAILED = 'failed';
 
     protected int $maxTries = 3;
     protected string $queueName = 'default';
@@ -40,14 +40,13 @@ abstract class QueueableJob implements JobInterface
     /**
      * Store job in the database for the queue to pick up.
      *
-     * @param ?JobMapper $jobMapper
+     * @param JobMapper $jobMapper
      * @return Job
      * @throws InvalidDateException
      * @throws \Exception
      */
-    public function store(JobMapper $jobMapper = null): Job
+    public function store(JobMapper $jobMapper = new JobMapper()): Job
     {
-        $jobMapper ??= new JobMapper();
         $model = new Job();
         $model->job_id = $this->generateUuid();
         $model->job_name = $this->jobName;

@@ -23,6 +23,7 @@ namespace Feast\Interfaces;
 use Exception;
 use Feast\Database\Query;
 use Feast\Database\TableDetails;
+use Feast\Enums\DatabaseType;
 use PDO;
 
 /**
@@ -175,7 +176,7 @@ interface DatabaseInterface
     /**
      * Get Database type.
      *
-     * @return string
+     * @return DatabaseType
      */
-    public function getDatabaseType(): string;
+    public function getDatabaseType(): DatabaseType;
 }

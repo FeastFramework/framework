@@ -30,10 +30,10 @@ use Feast\ServiceContainer\ServiceContainer;
 // Application start time
 $startTime = microtime(true);
 
-define('APPLICATION_ROOT', __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
-define('CONTROLLERS_FOLDER', 'Controllers');
-define('HANDLERS_FOLDER', 'Handlers');
-define('PLUGINS_FOLDER', 'Plugins');
+const APPLICATION_ROOT = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const CONTROLLERS_FOLDER = 'Controllers';
+const HANDLERS_FOLDER = 'Handlers';
+const PLUGINS_FOLDER = 'Plugins';
 
 if (file_exists(APPLICATION_ROOT . 'maintenance.txt')) {
     http_response_code(503);
@@ -43,7 +43,7 @@ if (file_exists(APPLICATION_ROOT . 'maintenance.txt')) {
 }
 if (file_exists(APPLICATION_ROOT . 'vendor/autoload.php')) {
     require_once(APPLICATION_ROOT . 'vendor/autoload.php');
-};
+}
 // Initialize autoloader
 if (file_exists(APPLICATION_ROOT . '/Feast/Autoloader.php')) {
     require_once(APPLICATION_ROOT . '/Feast/Autoloader.php');
@@ -53,7 +53,7 @@ $autoLoader->register();
 
 $autoLoader->addPathMapping('Psr', ['/Feast/Psr']);
 
-define('RUN_AS', Main::RUN_AS_WEBAPP);
+const RUN_AS = Main::RUN_AS_WEBAPP;
 require_once(APPLICATION_ROOT . 'container.php');
 /** @var ServiceContainer $container */
 $container->add(Autoloader::class, $autoLoader);

@@ -65,13 +65,13 @@ abstract class Query
     /**
      * Add where clause.
      *
-     * Bindings can be a scalar or Feast\Date or an array for multiple bindings.
+     * Bindings can be a scalar or Feast\Date and are variadic for multiple bindings.
      *
      * @param string $statement
-     * @param Date|string|int|bool|float|array|null $bindings
+     * @param Date|string|int|bool|float|null $bindings
      * @return static
      */
-    public function where(string $statement, Date|string|int|bool|float|array|null $bindings = null): static
+    public function where(string $statement, Date|string|int|bool|float|null ...$bindings): static
     {
         $this->where[] = ['statement' => $statement, 'bindings' => $bindings];
 
@@ -81,13 +81,13 @@ abstract class Query
     /**
      * Add having clause.
      *
-     * Bindings can be a scalar or an array for multiple bindings.
+     * Bindings can be a scalar or Feast\Date and are variadic for multiple bindings.
      *
      * @param string $statement
-     * @param Date|string|int|bool|float|array|null $bindings
+     * @param Date|string|int|bool|float|null $bindings
      * @return static
      */
-    public function having(string $statement, Date|string|int|bool|float|array|null $bindings = null): static
+    public function having(string $statement, Date|string|int|bool|float|null ...$bindings): static
     {
         $this->having[] = ['statement' => $statement, 'bindings' => $bindings];
 

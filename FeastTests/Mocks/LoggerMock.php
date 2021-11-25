@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Mocks;
 
+use Feast\Enums\LogLevelCode;
 use Feast\Interfaces\LoggerInterface;
 
 class LoggerMock implements LoggerInterface

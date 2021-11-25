@@ -40,7 +40,7 @@ abstract class BaseMapper
     protected const PRIMARY_KEY = null;
     protected const OBJECT_NAME = null;
     public const CONNECTION = 'default';
-    public const NOT_NULL = 'not_null';
+    final public const NOT_NULL = 'not_null';
     protected DatabaseInterface $connection;
 
     /**

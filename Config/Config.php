@@ -20,10 +20,12 @@ declare(strict_types=1);
 
 namespace Feast\Config;
 
+use BackedEnum;
 use Feast\Exception\ConfigException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 use stdClass;
@@ -44,7 +46,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
      *
      * @param bool $pullFromContainer - True to check if already in service container
      * @param string|null $overriddenEnvironment - if set, the environment will be the one passed in
-     * @throws ServerFailureException|ContainerException
+     * @throws ServerFailureException|ContainerException|NotFoundException
      */
     public function __construct(bool $pullFromContainer = true, string $overriddenEnvironment = null)
     {
@@ -291,14 +293,40 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
 
     private function cloneObjectOrArrayAsObject(stdClass|array $settings): stdClass
     {
-        /** @var stdClass */
-        return json_decode(json_encode($settings));
+        $return = new stdClass();
+        /**
+         * @psalm-suppress PossibleRawObjectIteration
+         * @var string $key
+         * @var scalar|array|stdClass|BackedEnum $val
+         */
+        foreach($settings as $key => $val) {
+            if ( is_array($val) || $val instanceof stdClass ) {
+                $return->$key = $this->cloneObjectOrArrayAsObject($val);
+            } else {
+                $return->$key = $val;
+            }
+        }
+
+        return $return;
     }
 
-    private function objectToArray(stdClass $object): array
+    private function objectToArray(stdClass|array $settings): array
     {
-        /** @var array */
-        return json_decode(json_encode($object), true);
+        $return = [];
+        /**
+         * @psalm-suppress PossibleRawObjectIteration
+         * @var string $key
+         * @var scalar|array|stdClass|BackedEnum $val
+         */
+        foreach($settings as $key => $val) {
+            if ( is_array($val) || $val instanceof stdClass ) {
+                $return[$key] = $this->objectToArray($val);
+            } else {
+                $return[$key] = $val;
+            }
+        }
+
+        return $return;
     }
 
 }

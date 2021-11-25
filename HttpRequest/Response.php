@@ -21,13 +21,14 @@ declare(strict_types=1);
 namespace Feast\HttpRequest;
 
 use Exception;
+use Feast\Enums\ResponseCode;
 use SimpleXMLElement;
 use stdClass;
 
 class Response
 {
     
-    public function __construct(protected string $rawResponse, protected int $responseCode)
+    public function __construct(protected string $rawResponse, protected ResponseCode $responseCode)
     {
         
     }

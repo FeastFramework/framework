@@ -129,11 +129,11 @@ FEAST has many methods to delete records from the database. The main methods to 
 
 #### Events
 
-FEAST has methods for different database events that you can override in the child class. These events 
-can fire when a model is saved or when a model is deleted. The methods are `onSave` and `onDelete`.
+FEAST has methods for different database events that you can override in the child class. These events can fire when a
+model is saved or when a model is deleted. The methods are `onSave` and `onDelete`.
 
-Note that `onDelete` will only fire if `delete` is called, rather than the other deletion methods, as delete
-is the only method that has access to a model.
+Note that `onDelete` will only fire if `delete` is called, rather than the other deletion methods, as delete is the only
+method that has access to a model.
 
 [Back to Top](#working-with-databases)
 
@@ -216,15 +216,16 @@ parameters.
 3. `autoIncrement` - True if you wish for this to be an autoincrement column.
 
 An easier way to create an auto incrementing primary key is with the `autoIncrement` method. This method will create an
-int column with the passed in name and optional length. 
+int column with the passed in name and optional length.
 
 #### Adding primary key
 
-FEAST can add a primary key to specified column with the `primary` method. The `primary` method takes only one parameter:
-`columnName`. Note that the column specified within this parameter must exist. Also, `primary` method can be called only 
+FEAST can add a primary key to specified column with the `primary` method. The `primary` method takes only one
+parameter:
+`columnName`. Note that the column specified within this parameter must exist. Also, `primary` method can be called only
 once per table. Otherwise, an exception will be thrown.
 
-The `autoIncrement` method already calls the `primary` method, so the `primary` method should not be called when 
+The `autoIncrement` method already calls the `primary` method, so the `primary` method should not be called when
 creating an auto incrementing column with the `autoIncrement` method.
 
 #### Altering tables
@@ -237,8 +238,8 @@ To quickly run all migrations that have not ran up, simply run
 `php famine feast:migration:run-all` in your terminal. For more detailed or advanced usage,
 see [feast:migration](cli.md#feastmigration) in the CLI docs.
 
-If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the cache
-will automatically re-generate after migrations are ran.
+If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the
+cache will automatically re-generate after migrations are ran.
 
 [Back to Top](#working-with-databases)
 
@@ -274,14 +275,15 @@ All bindings in the below methods are passed in as a prepared statement executio
 ##### Where
 
 The `where` method creates a where clause on the query. It takes in a statement (or the where clause)
-and bindings as either a `\Feast\Date` argument, a scalar, or an array of bindings for multiple. Each call to
-the `where` method will create a parenthesis wrapped group, allowing you to focus only on what you need for that piece
-of the statement.
+and bindings as either a `\Feast\Date` argument, or a scalar. Multiple bindings may be passed in as needed. In versions
+of FEAST Framework prior to 2.0, multiple bindings are passed in as an array. Each call to the `where` method will create
+a parenthesis wrapped group, allowing you to focus only on what you need for that piece of the statement.
 
 Example
 
 ```php
-$query->where('test = ? or test_name = ?', ['feast','feast])->where('active' => 1);
+$query->where('test = ? or test_name = ?', ['feast','feast'])->where('active' => 1); // In version 1.x
+$query->where('test = ? or test_name = ?', 'feast','feast')->where('active' => 1); // In version 2.0.0 and above
 // This will result in the following where clause on the query. 
 // where (test = ? or test_name = ?) and (active = ?) 
 ```

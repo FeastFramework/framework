@@ -20,8 +20,9 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class ServiceContainer {
+enum ServiceContainer: string
+{
     // This flag should only be used when running unit tests and needing to add mock items.
     // Use at your own risk. Better yet, don't use it at all. Ever. Not even for fun. Nope.
-    public const CLEAR_CONTAINER = 'clear';
+    case CLEAR_CONTAINER = 'clear';
 }

@@ -28,7 +28,7 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
  */
 interface ConfigInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     /**
      * Cache the config and store on disk

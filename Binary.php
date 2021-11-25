@@ -244,7 +244,7 @@ class Binary
     /**
      * Process custom actions built into Feast. Defaults to all classes.
      *
-     * @param array $classes
+     * @param array<class-string> $classes
      * @throws ReflectionException
      */
     private function analyzeFeast(

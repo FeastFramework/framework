@@ -22,6 +22,7 @@ namespace Feast\Exception;
 
 use Exception;
 
+use Feast\Enums\ResponseCode;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\RequestInterface;
 use Feast\Interfaces\ResponseInterface;
@@ -45,14 +46,14 @@ class ServerFailureException extends Exception
      * Construct a new Exception, and include the response code.
      *
      * @param string $message
-     * @param int|null $responseCode
+     * @param ResponseCode|null $responseCode
      * @param int $errorCode
      * @param Throwable|null $previousException
      * @param string|null $overrideRunAs
      */
     public function __construct(
         string $message,
-        private ?int $responseCode = null,
+        private ?ResponseCode $responseCode = null,
         int $errorCode = 0,
         Throwable $previousException = null,
         ?string $overrideRunAs = null
@@ -67,9 +68,9 @@ class ServerFailureException extends Exception
     /**
      * Get the response code
      *
-     * @return int|null
+     * @return ResponseCode|null
      */
-    public function getResponseCode(): ?int
+    public function getResponseCode(): ?ResponseCode
     {
         return $this->responseCode;
     }

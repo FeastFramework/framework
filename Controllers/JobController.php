@@ -46,7 +46,8 @@ class JobController extends CliController
      * @param positive-int $wait
      * @param bool $exitLoop
      * @return void
-     * @throws Exception
+     * @throws \Feast\Exception\ServerFailureException
+     * @throws \Feast\ServiceContainer\NotFoundException
      */
     #[Action(usage: '--keepalive={true|false} {queues}', description: 'Listen for and run all jobs on one or more queues.')]
     #[Param(type: 'string', name: 'queues', description: 'Name of queues to monitor, pipe delimited')]
@@ -71,7 +72,7 @@ class JobController extends CliController
         do {
             $job = $jobMapper->findOnePendingByQueues($queueList);
             if ($job instanceof Job && !file_exists(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'maintenance.txt')) {
-                $this->runJob($job, $errorLogger,$logger, $jobMapper);
+                $this->runJob($job, $errorLogger, $logger, $jobMapper);
             } else {
                 $this->terminal->command('No jobs found. ', false);
                 if ($keepalive) {
@@ -178,10 +179,13 @@ class JobController extends CliController
     /**
      * @throws Exception
      */
-    protected function runJob(Job $job, ErrorLoggerInterface $errorLogger, LoggerInterface $logger, JobMapper $jobMapper): bool
-    {
-        /** @psalm-suppress DeprecatedMethod @todo: switch to markJobRunningIfAble */
-        $canRun = $jobMapper->markJobPendingIfAble($job);
+    protected function runJob(
+        Job $job,
+        ErrorLoggerInterface $errorLogger,
+        LoggerInterface $logger,
+        JobMapper $jobMapper
+    ): bool {
+        $canRun = $jobMapper->markJobRunningIfAble($job);
         if ($canRun === false) {
             $logger->error('Could not lock job ' . $job->job_id . '.');
             $this->terminal->error('Could not lock job ' . $job->job_id . '.');

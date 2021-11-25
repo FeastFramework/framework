@@ -23,7 +23,9 @@ declare(strict_types=1);
 #             DO NOT MODIFY THIS FILE AT ALL             #
 ##########################################################
 #
-use Feast\ServiceContainer\ServiceContainer;
+
+use Feast\Autoloader;
+use Feast\Interfaces\RouterInterface;
 
 use Feast\Autoloader;
 use Feast\Interfaces\RouterInterface;

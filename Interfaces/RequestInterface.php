@@ -26,7 +26,7 @@ use stdClass;
 
 interface RequestInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     /**
      * Clear all request arguments.

@@ -91,8 +91,9 @@ class CsvReader extends Csv
             $this->buildHeader();
         }
         $return = [];
+        /** @var array<int,string>|false $row */
         $row = $this->file->fgetcsv();
-        if ($row === null || $row === false) {
+        if ($row === false) {
             return false;
         }
 

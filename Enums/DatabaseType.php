@@ -20,9 +20,9 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class DatabaseType
+enum DatabaseType: string
 {
-    public const MYSQL = 'mysql';
-    public const SQLITE = 'sqlite';
+    case MYSQL = 'mysql';
+    case SQLITE = 'sqlite';
 
 }

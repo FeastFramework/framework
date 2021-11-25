@@ -24,11 +24,11 @@ use Feast\Main;
 chdir(__DIR__);
 if (file_exists('vendor/autoload.php')) {
     require_once('vendor/autoload.php');
-};
+}
 // Set up framework
-define('APPLICATION_ROOT', __DIR__ . DIRECTORY_SEPARATOR);
-define('CONTROLLERS_FOLDER', 'Controllers');
-define('PLUGINS_FOLDER', 'Plugins');
+const APPLICATION_ROOT = __DIR__ . DIRECTORY_SEPARATOR;
+const CONTROLLERS_FOLDER = 'Controllers';
+const PLUGINS_FOLDER = 'Plugins';
 
 // Initialize autoloader
 if (file_exists(APPLICATION_ROOT . 'Feast/Autoloader.php')) {

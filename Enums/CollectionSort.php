@@ -20,11 +20,11 @@ declare(strict_types=1);
 
 namespace Feast\Enums;
 
-class CollectionSort
+enum CollectionSort: int
 {
-    public const KEY = 1;
-    public const KEY_REVERSE = 2;
-    public const VALUE = 3;
-    public const VALUE_REVERSE = 4;
+    case KEY = 1;
+    case KEY_REVERSE = 2;
+    case VALUE = 3;
+    case VALUE_REVERSE = 4;
 
 }

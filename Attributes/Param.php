@@ -31,7 +31,7 @@ class Param
         public string $type = '',
         public string $name = '',
         public string $description = '',
-        public string $paramType = ParamType::PARAM
+        public ParamType $paramType = ParamType::PARAM
     ) {
     }
 
@@ -44,7 +44,7 @@ class Param
     public function getParamText(Terminal $terminal): string
     {
         $name = $this->paramType == ParamType::FLAG ? '--' . $this->name . '=' : '{' . $this->name . '} ';
-        $name = $terminal->commandText(str_pad($name . $this->type . '', 19));
+        $name = $terminal->commandText(str_pad($name . $this->type, 19));
         $name .= ' ' . $terminal->messageText($this->description);
 
         return trim($name);

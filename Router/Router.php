@@ -249,7 +249,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         if (str_ends_with($path, 'index')) {
             $path = substr($path, 0, -5);
         }
-        if (str_ends_with($path, '/',)) {
+        if (str_ends_with($path, '/')) {
             $path = substr($path, 0, -1);
         }
         return $path;
@@ -330,8 +330,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $routeGroup = $this->routes->$requestMethod;
         /** @var RouteData $routeData */
         foreach ((array)$routeGroup as $routeData) {
-            $arguments = [];
-            if (preg_match_all($routeData->pattern, $checkString, $arguments)) {
+            if (preg_match_all($routeData->pattern, $checkString)) {
                 return $routeData;
             }
         }
@@ -354,7 +353,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             $instance = $parameter->newInstance();
             if ($instance->paramType === ParamType::PARAM) {
                 $parameterList[] = $instance->name;
-            } elseif ($instance->paramType === ParamType::FLAG) {
+            } else {
                 $flagList[$instance->name] = $instance->name;
             }
         }
@@ -771,7 +770,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             $request->setArgument($key, $params[$i] ?? $val);
             $i++;
         }
-        /** @psalm-suppress TypeDoesNotContainType  */
+        /** @psalm-suppress TypeDoesNotContainType */
         if ($allowVariadic === false || !isset($key) || $i <= 1 || count($params) === $i) {
             return;
         }
@@ -884,7 +883,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
                 $methodName,
                 $pathAttribute->name,
                 $pathAttribute->defaults,
-                $methodType,
+                $methodType->value,
                 $module
             );
         }
@@ -913,7 +912,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      */
     protected function getCurrentRequestMethod(): string
     {
-        return !empty($_SERVER['REQUEST_METHOD']) ? (string)$_SERVER['REQUEST_METHOD'] : RequestMethod::GET;
+        return !empty($_SERVER['REQUEST_METHOD']) ? (string)$_SERVER['REQUEST_METHOD'] : RequestMethod::GET->value;
     }
 
 }

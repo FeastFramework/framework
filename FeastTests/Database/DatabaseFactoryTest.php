@@ -23,6 +23,7 @@ namespace Database;
 use Feast\Config\Config;
 use Feast\Database\Database;
 use Feast\Database\DatabaseFactory;
+use Feast\Database\MySQLQuery;
 use Feast\Enums\DatabaseType;
 use Feast\Exception\DatabaseException;
 use Feast\ServiceContainer\ServiceContainer;
@@ -40,6 +41,7 @@ class DatabaseFactoryTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
+        $details->queryClass = MySQLQuery::class;
         $config = $this->createStub(Config::class);
         $config->method('getSetting')->willReturnMap(
             [

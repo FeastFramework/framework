@@ -38,8 +38,8 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
 
     use DependencyInjected;
 
-    private const LOG_DIR = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
-    private ?int $logLevel;
+    protected const LOG_DIR = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
+    protected LogLevelCode $logLevel;
 
     /**
      * @throws ContainerException|NotFoundException
@@ -165,11 +165,11 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
             $message = strtoupper($level) . ': ' . $message;
             $level = $this->getLevelFromString($level);
         }
-        if ($level < $this->logLevel) {
+        if ($level instanceof LogLevelCode === false || $level->value < $this->logLevel->value) {
             return;
         }
         $message = $this->interpolateContext($message, $context);
-        $this->rawLog((int)$level, (date('[Y-m-d H:i:s] ')) . trim($message));
+        $this->rawLog($level->value, (date('[Y-m-d H:i:s] ')) . trim($message));
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
             $exception = $context['exception'];
 
@@ -207,7 +207,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
      */
     public function rawLog(int $level, string $message): void
     {
-        if ($level < $this->logLevel) {
+        if ($level < $this->logLevel->value) {
             return;
         }
         $fileName = self::LOG_DIR . 'feast.log';
@@ -233,7 +233,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         }
     }
 
-    private function getLevelFromString(string $level): int
+    private function getLevelFromString(string $level): LogLevelCode
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         return match (strtolower($level)) {

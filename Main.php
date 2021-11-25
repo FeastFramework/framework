@@ -49,9 +49,9 @@ use ReflectionParameter;
 class Main implements MainInterface
 {
 
-    public const RUN_AS_WEBAPP = 'webapp';
-    public const RUN_AS_CLI = 'cli';
-    public const FRAMEWORK_ROOT = __DIR__;
+    final public const RUN_AS_WEBAPP = 'webapp';
+    final public const RUN_AS_CLI = 'cli';
+    final public const FRAMEWORK_ROOT = __DIR__;
 
     private array $plugins = [];
     private ErrorLoggerInterface $logger;
@@ -294,7 +294,6 @@ class Main implements MainInterface
 
             if (is_subclass_of($argumentType, BaseModel::class)) {
                 $this->buildBaseModelArgument($argumentType, $request, $argument, $return);
-                return;
             } elseif (is_subclass_of($argumentType, BaseMapper::class)) {
                 $mapper = new $argumentType();
                 $return[] = $mapper;
@@ -475,7 +474,7 @@ class Main implements MainInterface
         /** @var string|null $errorUrl */
         $errorUrl = $config->getSetting('error.http404.url', 'error/fourohfour');
         if (is_string($errorUrl)) {
-            header('Location:/' . $errorUrl, true, ResponseCode::HTTP_CODE_302);
+            header('Location:/' . $errorUrl, true, ResponseCode::HTTP_CODE_302->value);
             return;
         }
         throw $exception;

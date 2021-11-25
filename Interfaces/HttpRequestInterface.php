@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast\Interfaces;
 
 use CurlHandle;
+use Feast\Enums\ResponseCode;
 use Feast\Exception\ServerFailureException;
 use Feast\HttpRequest\HttpRequest;
 use Feast\HttpRequest\Response;
@@ -42,9 +43,9 @@ interface HttpRequestInterface
     /**
      * Get the http response code for the request.
      *
-     * @return int|null
+     * @return ResponseCode|null
      */
-    public function getResponseCode(): ?int;
+    public function getResponseCode(): ?ResponseCode;
 
     /**
      * Get cookies from the request.

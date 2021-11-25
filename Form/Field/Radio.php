@@ -39,7 +39,7 @@ class Radio extends CheckboxAndRadio
      */
     public function setValue(string $value, bool $overwrite = true): static
     {
-        return parent::setValue($value,true);
+        return parent::setValue($value);
     }
 
 }
