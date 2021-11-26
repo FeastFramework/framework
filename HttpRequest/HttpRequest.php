@@ -477,9 +477,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Get the request result as a json object.
      *
-     * @return stdClass|null
+     * @return array|stdClass|null
      */
-    public function getResponseAsJson(): ?stdClass
+    public function getResponseAsJson(): null|array|stdClass
     {
         if ($this->response === null) {
             return null;

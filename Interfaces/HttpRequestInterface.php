@@ -64,9 +64,9 @@ interface HttpRequestInterface
     /**
      * Get the request result as a json object.
      *
-     * @return stdClass|null
+     * @return null|array|stdClass
      */
-    public function getResponseAsJson(): ?stdClass;
+    public function getResponseAsJson(): null|array|stdClass;
 
     /**
      * Get the request result as a string.
