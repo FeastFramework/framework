@@ -73,7 +73,7 @@ class Curl extends HttpRequest implements HttpRequestInterface
     {
         $url = $this->url ?? '';
         curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $this->method);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, $this->method->value);
         curl_setopt($this->curl, CURLOPT_USERAGENT, $this->userAgent);
         $header = [];
         $header[] = 'Accept-language: ' . $this->language;
