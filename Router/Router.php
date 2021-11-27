@@ -105,7 +105,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
     public function buildRouteForRequestUrl(string $arguments): void
     {
         $arguments = $this->cleanArguments($arguments);
-        if ($this->checkAndBuildNamedRoute($arguments)) {
+        if ($this->runAs === Main::RUN_AS_WEBAPP && $this->checkAndBuildNamedRoute($arguments)) {
             return;
         }
         $queryString = explode('/', $arguments);
