@@ -47,6 +47,7 @@ use Feast\View;
 if (!function_exists('di') && file_exists(
         APPLICATION_ROOT . 'Feast' . DIRECTORY_SEPARATOR . 'DependencyInjector.php'
     )) {
+    /** @psalm-suppress MissingFile */
     require_once(APPLICATION_ROOT . 'Feast' . DIRECTORY_SEPARATOR . 'DependencyInjector.php');
 }
 ###############################################
@@ -85,11 +86,9 @@ if (file_exists($routerCache)) {
     $router = unserialize(file_get_contents($routerCache));
     if (!$router instanceof RouterInterface) {
         $logger->error('Router cache file is not a valid router object. Discarding.');
-        /** @psalm-suppress MixedArgument */
         $router = new Router($runAs);
     }
 } else {
-    /** @psalm-suppress MixedArgument */
     $router = new Router($runAs);
 }
 $container->add(RouterInterface::class, $router);
@@ -117,13 +116,11 @@ if (file_exists($databaseCache)) {
     $databaseDetails = unserialize(file_get_contents($databaseCache));
     if (!$databaseDetails instanceof DatabaseDetailsInterface) {
         $logger->error('Database info cache file is not a valid database details object. Discarding.');
-        /** @psalm-suppress MixedArgument */
         $databaseDetails = new DatabaseDetails($databaseFactory);
     } else {
         $databaseDetails->setDatabaseFactory($databaseFactory);
     }
 } else {
-    /** @psalm-suppress MixedArgument */
     $databaseDetails = new DatabaseDetails($databaseFactory);
 }
 $container->add(DatabaseDetailsInterface::class, $databaseDetails);
