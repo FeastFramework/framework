@@ -307,7 +307,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $queryString[0] ??= 'index';
         $queryString[1] ??= 'index';
 
-        if (($this->runAs === Main::RUN_AS_CLI || $queryString['0'] !== 'CLI') && is_dir(
+        if (($queryString['0'] !== 'CLI') && is_dir(
                 APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'Modules' . DIRECTORY_SEPARATOR . $queryString['0']
             )) {
             array_shift($queryString);
