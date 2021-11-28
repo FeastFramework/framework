@@ -129,7 +129,7 @@ class Main implements MainInterface
         $config = $this->serviceContainer->get(ConfigInterface::class);
         $request = $this->serviceContainer->get(RequestInterface::class);
         $response = $this->serviceContainer->get(ResponseInterface::class);
-
+        $router->setRunAs($this->runAs);
         $view->setTitle((string)$config->getSetting('title'));
 
         if ($config->getSetting('buildroutes') === true && $this->runAs === self::RUN_AS_WEBAPP) {
