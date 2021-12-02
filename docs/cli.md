@@ -217,6 +217,13 @@ php famine feast:migration:run-all
 Run all un-ran migrations up. This includes migrations that the `down` command has explicitly been called on.
 See [Working with Migrations](models.md#working-with-migrations) for more information.
 
+### feast:migration:list
+
+```
+php famine feast:migration:list
+```
+Print a list of all migrations and whether they have been ran.
+
 [Back to Top](#the-feast-cli)
 
 ## feast:cache
