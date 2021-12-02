@@ -78,6 +78,35 @@ class MigrationController extends WriteTemplateController
         }
     }
 
+    #[Action(usage: '{name}', description: 'List all migrations')]
+    public function listGet(
+        DatabaseDetailsInterface $dbDetails,
+    ): void {
+        $this->buildMigrationList();
+        $this->printTableBox();
+        $this->printTableHeader();
+        $this->printTableBox(true);
+        foreach($this->migrationsByName as $migration => $status ) {
+            $this->terminal->message('| ' . str_pad($migration,48,' ') . '|' . ($status ? ' Yes ' : ' ' . $this->terminal->commandText('No') . '  ') . '|');
+        }
+        $this->printTableBox();
+    }
+
+    protected function printTableBox(bool $border = false): void
+    {
+        $outsideCharacter = '-';
+        if ( $border ) {
+            $outsideCharacter = '|';
+        }
+        $this->terminal->message($outsideCharacter . str_repeat('-', 55) . $outsideCharacter);
+    }
+
+    protected function printTableHeader(): void
+    {
+        $this->terminal->message('| Migration Name' . str_repeat(' ', 34) . '|' . ' Ran |');
+
+    }
+
     protected function recacheIfExists(DatabaseDetailsInterface $dbDetails): void
     {
         if ($this->dbCacheFileExists()) {

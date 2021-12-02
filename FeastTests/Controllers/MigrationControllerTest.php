@@ -248,6 +248,28 @@ class MigrationControllerTest extends TestCase
         $this->assertStringContainsString('Migration Blowup failed', $output);
     }
 
+    public function testList(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturn(false);
+        $controller = new MigrationController(
+            $this->buildContainerMock(),
+            $config,
+            new CliArguments(['famine', 'feast:migration:list'])
+        );
+        $controller->listGet($this->createStub(DatabaseDetailsInterface::class));
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('---------------------------------------------------------
+| Migration Name                                  | Ran |
+|-------------------------------------------------------|
+| 1_migrations                                    | No  |
+| 2_test                                          | No  |
+| 3_blowup                                        | No  |
+| 4_feast                                         | Yes |
+---------------------------------------------------------
+', $output);
+    }
+
     protected function buildContainerMock(bool $tableExists = true): ServiceContainer
     {
         /** @var ServiceContainer $container */
