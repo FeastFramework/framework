@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "882ca87ee9b10237b0e952d6cb713bcead486d3b"
+                "reference": "f9d8fed0c36503ef37884d40b1f490803e2bcf05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/882ca87ee9b10237b0e952d6cb713bcead486d3b",
-                "reference": "882ca87ee9b10237b0e952d6cb713bcead486d3b",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/f9d8fed0c36503ef37884d40b1f490803e2bcf05",
+                "reference": "f9d8fed0c36503ef37884d40b1f490803e2bcf05",
                 "shasum": ""
             },
             "require": {
@@ -41,7 +41,7 @@
                 "issues": "https://github.com/psalm/phar/issues",
                 "source": "https://github.com/psalm/phar/tree/master"
             },
-            "time": "2021-11-24T22:46:14+00:00"
+            "time": "2021-12-01T22:46:28+00:00"
         }
     ],
     "aliases": [],

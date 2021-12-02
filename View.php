@@ -63,10 +63,6 @@ class View extends stdClass implements ServiceContainerItemInterface
     {
         $this->checkInjected();
         $this->baseUrl = (string)$config->getSetting('siteurl');
-        /** 
-         * @var DocType $docType
-         * @psalm-suppress UndefinedMethod 
-         */
         $docType = DocType::tryFrom((string)$config->getSetting('html.doctype', DocType::HTML_5->value)) ?? DocType::HTML_5;
         $this->setDoctype($docType);
     }
