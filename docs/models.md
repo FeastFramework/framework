@@ -241,6 +241,9 @@ see [feast:migration](cli.md#feastmigration) in the CLI docs.
 If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the
 cache will automatically re-generate after migrations are ran.
 
+### List Migrations 
+You can quickly get a list of all migrations as well as their status by running `php famine feast:migration:list`
+
 [Back to Top](#working-with-databases)
 
 ## Complex Queries
