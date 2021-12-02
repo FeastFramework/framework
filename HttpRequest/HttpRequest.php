@@ -424,10 +424,6 @@ abstract class HttpRequest implements HttpRequestInterface
         }
         $status = explode(' ', $responseHeaders[0]);
         $responseCode = !empty($status[1]) ? (int)$status[1] : ResponseCode::HTTP_CODE_500->value;
-        /**
-         * @var ResponseCode
-         * @psalm-suppress UndefinedMethod
-         */
         $this->responseCode = ResponseCode::tryFrom($responseCode) ?? ResponseCode::HTTP_CODE_500;
 
         foreach ($responseHeaders as $header) {
