@@ -250,18 +250,18 @@ php famine feast:cache:config-generate
 This command will re-generate the config cache. No changes to the configuration files will take effect unless the cache
 is cleared or re-generated again.
 
-### feast:cache:route-clear
+### feast:cache:router-clear
 
 ```
-php famine feast:cache:route-clear
+php famine feast:cache:router-clear
 ```
 
 This command will delete the routing cache and resume building on each request.
 
-### feast:cache:routing-generate
+### feast:cache:router-generate
 
 ```
-php famine feast:cache:routing-generate
+php famine feast:cache:router-generate
 ```
 
 This command will re-generate the routing cache. No changes to the URL routing information will take effect unless the
@@ -447,7 +447,7 @@ php famine feast:job:run-cron
 Run all scheduled job items. See [Queues](queues.md) for more information.
 
 ```
-php famine feast:job:run-cron-tem {job}
+php famine feast:job:run-cron-item {job}
 ```
 
 Run the specified job item. The job will run even if it is not inside its assigned schedule.

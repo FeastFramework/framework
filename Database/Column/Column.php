@@ -47,6 +47,7 @@ class Column
         protected bool $nullable = false,
         protected string|int|float|null $default = null
     ) {
+        /** @psalm-suppress TypeDoesNotContainType - even though the docblock says positive-int, nothing forces it to be positive. */
         if ($length !== null && $length <= 0) {
             throw new DatabaseException('Column cannot have non-positive length');
         }
