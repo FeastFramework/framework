@@ -432,10 +432,10 @@ abstract class Query
             if ($location === false) {
                 return $query;
             }
-            $query = substr_replace($query, '\'' . (string)$binding . '\'', $location, 1);
+            $query = substr_replace($query, '\'' . str_replace('?','{question_mark}',(string)$binding) . '\'', $location, 1);
         }
-
-        return $query;
+        
+        return str_replace('{question_mark}','?',$query);
     }
 
 }
