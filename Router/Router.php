@@ -771,7 +771,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             $request->setArgument($key, $params[$i] ?? $val);
             $i++;
         }
-        /** @psalm-suppress TypeDoesNotContainType  */
+        
         if ($allowVariadic === false || !isset($key) || $i <= 1 || count($params) === $i) {
             return;
         }
