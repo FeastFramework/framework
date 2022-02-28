@@ -175,10 +175,10 @@ class Database implements DatabaseInterface
 
     /**
      * Get Query class from DatabaseType (Deprecated)
-     * 
+     *
      * @return string
      * @throws DatabaseException
-     * @deprecated 
+     * @deprecated
      */
     public function getQueryClass(): string
     {
@@ -255,11 +255,13 @@ class Database implements DatabaseInterface
     /**
      * Get last insert id as string.
      *
+     * @param string|null $name
      * @return string
      */
-    public function lastInsertId(): string
+    public function lastInsertId(?string $name = null): string
     {
-        return $this->connection->lastInsertId();
+        $name = $name !== '' ? $name : null;
+        return $this->connection->lastInsertId($name);
     }
 
     /**
@@ -369,6 +371,8 @@ class Database implements DatabaseInterface
             sprintf('mysql:host=%s;port=%s;dbname=%s', $hostname, $port, $database),
             DatabaseType::SQLITE =>
             sprintf('sqlite:%s', $database),
+            DatabaseType::POSTGRES =>
+            sprintf('pgsql:host=%s;port=%s;dbname=%s', $hostname, $port, $database),
             default =>
             throw new DatabaseException('Invalid Database type')
         };

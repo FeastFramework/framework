@@ -102,3 +102,23 @@ class UserMapper extends BaseMapper
     }
 }
 Mapper class created. Save method must be manually created due to no primary key.
+Model/Generated/ createdUser.php<?php
+
+declare(strict_types=1);
+
+namespace Model\Generated;
+
+use \Feast\BaseModel;
+use \Mapper\UserMapper;
+
+class User extends BaseModel
+{
+    protected const MAPPER_NAME = UserMapper::class;
+
+    public int $user_id;
+    public ?\Feast\Date $created_at;
+    public string $username;
+
+}
+Model class created
+Mapper class already exists - not created.

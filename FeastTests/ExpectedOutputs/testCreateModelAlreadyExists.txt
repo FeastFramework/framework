@@ -34,48 +34,28 @@ declare(strict_types=1);
 namespace Mapper;
 
 use \Feast\BaseMapper;
-use \Feast\BaseModel;
-use \Feast\Exception\DatabaseException;
 use \Model\User;
 
 class UserMapper extends BaseMapper
 {
     protected const OBJECT_NAME = User::class;
-    protected const PRIMARY_KEY = '';
+    protected const PRIMARY_KEY = 'user_id';
     public const TABLE_NAME = 'users2';
+    public const SEQUENCE_NAME = 'test_sequence';
 
     /**
      * @param int|string $value
      * @param bool $validate
      * @return ?User
-     * @throws DatabaseException
      */
     public function findByPrimaryKey(int|string $value, bool $validate = false): ?User
     {
-        throw new DatabaseException('No primary key specified for ' . static::TABLE_NAME); 
-    }
-    
-    /**
-     * Delete record by Model. Uses primary key.
-     *
-     * @param BaseModel $record
-     * @return int
-     * @throws DatabaseException
-     */
-    public function delete(BaseModel $record): int
-    {
-        throw new DatabaseException('No primary key specified for ' . static::TABLE_NAME); 
-    }
-    /**
-     * Save model to database.
-     *
-     * @param BaseModel $record
-     * @throws DatabaseException
-     */
-    public function save(BaseModel $record): void
-    {
-        // @todo: Create save method
-        throw new DatabaseException('Save method not yet implemented for ' . static::class);
+        $record = parent::findByPrimaryKey($value, $validate);
+        if ($record instanceof User) {
+            return $record;
+        }
+
+        return null;
     }
 
     /**
@@ -101,4 +81,24 @@ class UserMapper extends BaseMapper
     {
     }
 }
-Mapper class created. Save method must be manually created due to no primary key.
+Mapper class created
+Model/Generated/ createdUser.php<?php
+
+declare(strict_types=1);
+
+namespace Model\Generated;
+
+use \Feast\BaseModel;
+use \Mapper\UserMapper;
+
+class User extends BaseModel
+{
+    protected const MAPPER_NAME = UserMapper::class;
+
+    public int $user_id;
+    public ?\Feast\Date $created_at;
+    public string $username;
+
+}
+Model class created
+Mapper class already exists - not created.

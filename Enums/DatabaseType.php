@@ -24,5 +24,6 @@ class DatabaseType
 {
     public const MYSQL = 'mysql';
     public const SQLITE = 'sqlite';
+    public const POSTGRES = 'postgres';
 
 }

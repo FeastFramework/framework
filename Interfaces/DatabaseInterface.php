@@ -121,9 +121,10 @@ interface DatabaseInterface
     /**
      * Get last insert id as string.
      *
+     * @param string|null $name
      * @return string
      */
-    public function lastInsertId(): string;
+    public function lastInsertId(?string $name = null): string;
 
     /**
      * Start a describe query and return the Query object.

@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Database;
 
 use Feast\Database\MySQLQuery;
+use Feast\Database\PostgresQuery;
 use Feast\Database\Query;
 use Feast\Database\SQLiteQuery;
 use Feast\Database\TableDetails;
@@ -32,12 +33,12 @@ use Feast\Exception\InvalidArgumentException;
 use Mocks\PDOMock;
 use PHPUnit\Framework\TestCase;
 
-class MySQLQueryTest extends TestCase
+class PostgresQueryTest extends TestCase
 {
 
     public function getValidQuery(): Query
     {
-        return new MySQLQuery(new PDOMock('dsnstring'));
+        return new PostgresQuery(new PDOMock('dsnstring'));
     }
 
     public function testFrom(): void
@@ -78,8 +79,8 @@ class MySQLQueryTest extends TestCase
     public function testReplace(): void
     {
         $query = $this->getValidQuery();
+        $this->expectException(DatabaseException::class);
         $query->replace('test', ['test' => 'test']);
-        $this->assertEquals('REPLACE INTO test (test) VALUES (?)', $query->__toString());
     }
 
     public function testWhere(): void
@@ -104,19 +105,11 @@ class MySQLQueryTest extends TestCase
         $this->assertTrue($result instanceof \PDOStatement);
     }
 
-    public function testExecuteFail(): void
-    {
-        $query = $this->getValidQuery();
-        $query->describe('testing');
-        $this->expectException(DatabaseException::class);
-        $query->execute();
-    }
-
     public function testDescribe(): void
     {
         $query = $this->getValidQuery();
         $query->describe('test');
-        $this->assertEquals('DESCRIBE test', $query->__toString());
+        $this->assertEquals('SELECT * FROM information_schema.columns WHERE table_schema = \'public\' and table_name = \'test\'', $query->__toString());
     }
 
     public function testDelete(): void
@@ -202,8 +195,29 @@ class MySQLQueryTest extends TestCase
     public function testGetDescribedTable(): void
     {
         $query = $this->getValidQuery();
-        $result = $query->getDescribedTable('test_describe');
+        $result = $query->getDescribedTable('public.test_describe');
         $this->assertTrue($result instanceof TableDetails);
+    }
+
+    public function testGetSequenceWithCompound(): void
+    {
+        $query = $this->getValidQuery();
+        $result = $query->getSequenceForPrimary('test', 'test', true);
+        $this->assertNull($result);
+    }
+
+    public function testGetSequenceValid(): void
+    {
+        $query = $this->getValidQuery();
+        $result = $query->getSequenceForPrimary('test', 'test', false);
+        $this->assertEquals('test',$result);
+    }
+
+    public function testGetSequenceInvalid(): void
+    {
+        $query = $this->getValidQuery();
+        $result = $query->getSequenceForPrimary('false', 'test', false);
+        $this->assertNull($result);
     }
 
     public function testLeftJoin(): void
@@ -259,13 +273,6 @@ class MySQLQueryTest extends TestCase
     {
         $query = new SQLiteQuery(new PDOMock('dsnstring'));
         $this->assertTrue($query instanceof SQLiteQuery && $query instanceof MySQLQuery);
-    }
-
-    public function testGetSequenceValid(): void
-    {
-        $query = $this->getValidQuery();
-        $result = $query->getSequenceForPrimary('test', 'test', false);
-        $this->assertNull($result);
     }
 
 }

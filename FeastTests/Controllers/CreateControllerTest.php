@@ -737,10 +737,10 @@ class CreateControllerTest extends TestCase
 
         $tableInfo = new TableDetails(
             false, 'int', 'user_id', [
-                     new FieldDetails('user_id', 'tinyint', 'int', 'int'),
-                     new FieldDetails('created_at', 'datetime', '?\\' . Date::class, Date::class),
-                     new FieldDetails('username', 'varchar(255)', 'string', 'string')
-                 ]
+            new FieldDetails('user_id', 'tinyint', 'int', 'int'),
+            new FieldDetails('created_at', 'datetime', '?\\' . Date::class, Date::class),
+            new FieldDetails('username', 'varchar(255)', 'string', 'string')
+        ],'test_sequence'
         );
         $connection->method('getDescribedTable')->willReturn($tableInfo);
 
@@ -750,6 +750,39 @@ class CreateControllerTest extends TestCase
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals(
             file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModel.txt'),
+            $output
+        );
+    }
+
+    public function testCreateModelAlreadyExists(): void
+    {
+        $config = $this->createStub(ConfigInterface::class);
+
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:model'])
+        );
+        $dbFactory = $this->createStub(DatabaseFactory::class);
+        $connection = $this->createStub(DatabaseInterface::class);
+
+        $tableInfo = new TableDetails(
+            false, 'int', 'user_id', [
+            new FieldDetails('user_id', 'tinyint', 'int', 'int'),
+            new FieldDetails('created_at', 'datetime', '?\\' . Date::class, Date::class),
+            new FieldDetails('username', 'varchar(255)', 'string', 'string')
+        ],'test_sequence'
+        );
+        $connection->method('getDescribedTable')->willReturn($tableInfo);
+
+        $dbFactory->method('getConnection')->willReturn($connection);
+
+        $controller->modelGet($dbFactory, 'users2', model: 'user');
+        $controller->modelGet($dbFactory, 'users2', model: 'user');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals(
+            file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExists.txt'),
             $output
         );
     }
@@ -835,9 +868,44 @@ class CreateControllerTest extends TestCase
             ),
             $output
         );
+    
+    
     }
 
-    protected function buildTestField(string $field, string $type, string $phpType): stdClass
+    public function testCreateModelAlreadyExistsNoPrimary(): void
+    {
+        $config = $this->createStub(ConfigInterface::class);
+
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:model'])
+        );
+        $dbFactory = $this->createStub(DatabaseFactory::class);
+        $connection = $this->createStub(DatabaseInterface::class);
+        $tableInfo = new TableDetails(
+            false, null, null, [
+                     new FieldDetails('user_id', 'tinyint', 'int', 'int'),
+                     new FieldDetails('created_at', 'datetime', '?\\' . Date::class, Date::class),
+                     new FieldDetails('username', 'varchar(255)', 'string', 'string')
+                 ]
+        );
+        $connection->method('getDescribedTable')->willReturn($tableInfo);
+        $dbFactory->method('getConnection')->willReturn($connection);
+
+        $controller->modelGet($dbFactory, 'users2', model: 'user');
+        $controller->modelGet($dbFactory, 'users2', model: 'user');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals(
+            file_get_contents(
+                APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExistsNoPrimary.txt'
+            ),
+            $output
+        );
+    }
+
+        protected function buildTestField(string $field, string $type, string $phpType): stdClass
     {
         $return = new stdClass();
         $return->name = $field;
