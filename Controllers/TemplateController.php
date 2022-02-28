@@ -90,6 +90,15 @@ class TemplateController extends CliController
         );
     }
 
+    #[Action(description: 'Copy "NoKeyMapper" template to bin/templates folder.')]
+    public function installNoKeyMapperGet(): void
+    {
+        $this->installFile('NoKeyMapper.php.txt');
+        $this->terminal->message(
+            'File ' . $this->terminal->commandText('NoKeyMapper.php.txt') . ' has been copied to bin/templates.'
+        );
+    }
+
     #[Action(description: 'Copy "Migration" template to bin/templates folder.')]
     public function installMigrationGet(): void
     {
@@ -163,6 +172,7 @@ class TemplateController extends CliController
         $this->installFilterGet();
         $this->installFormGet();
         $this->installMapperGet();
+        $this->installNoKeyMapperGet();
         $this->installMigrationGet();
         $this->installModelGet();
         $this->installModelGeneratedGet();

@@ -29,7 +29,9 @@ return [
         'connectionType' => \Feast\Enums\DatabaseType::MYSQL,
         'queryClass' => \Feast\Database\MySQLQuery::class,
         // 'queryClass' => \Feast\Database\SQLiteQuery::class,
-        // 'connectionType' => \Feast\Enums\DatabaseType::SQLITE,     
+        // 'connectionType' => \Feast\Enums\DatabaseType::SQLITE,
+        // 'connectionType' => \Feast\Enums\DatabaseType::POSTGRES,
+        // 'queryClass' => \Feast\Database\PostgresQuery::class,     
         'options' => [ // NOTE: the below options are not required. The ones below are applied by default.
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
             PDO::ATTR_EMULATE_PREPARES => false
@@ -150,8 +152,9 @@ down should undo whatever is done in the up call.
 
 #### Creating and Dropping Tables
 
-FEAST provides a TableFactory to retrieve an instance of a table builder. Using this table builder, you can quickly
-specify your table details and run the create without writing a single line of SQL. Example:
+FEAST provides a TableFactory to retrieve an instance of a table builder. Currently, this table builder is limited to
+MySQL. Using this table builder, you can quickly specify your table details and run the create without writing a single
+line of SQL. Example:
 
 ```php
     public function up() : void
@@ -241,7 +244,9 @@ see [feast:migration](cli.md#feastmigration) in the CLI docs.
 If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the
 cache will automatically re-generate after migrations are ran.
 
-### List Migrations 
+
+### List Migrations
+
 You can quickly get a list of all migrations as well as their status by running `php famine feast:migration:list`
 
 [Back to Top](#working-with-databases)

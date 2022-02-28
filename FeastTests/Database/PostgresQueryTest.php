@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace Database;
 
 use Feast\Database\MySQLQuery;
+use Feast\Database\PostgresQuery;
 use Feast\Database\Query;
 use Feast\Database\SQLiteQuery;
 use Feast\Database\TableDetails;
@@ -32,54 +33,54 @@ use Feast\Exception\InvalidArgumentException;
 use Mocks\PDOMock;
 use PHPUnit\Framework\TestCase;
 
-class MySQLQueryTest extends TestCase
+class PostgresQueryTest extends TestCase
 {
 
     public function getValidQuery(): Query
     {
-        return new MySQLQuery(new PDOMock('dsnstring'));
+        return new PostgresQuery(new PDOMock('dsnstring'));
     }
 
     public function testFrom(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test']);
-        $this->assertEquals('SELECT test FROM test', (string)$query);
+        $this->assertEquals('SELECT test FROM test', $query->__toString());
     }
 
     public function testSelect(): void
     {
         $query = $this->getValidQuery();
         $query->select('test');
-        $this->assertEquals('SELECT test.* FROM test', (string)$query);
+        $this->assertEquals('SELECT test.* FROM test', $query->__toString());
     }
 
     public function testFromNoColumn(): void
     {
         $query = $this->getValidQuery();
         $query->from('test');
-        $this->assertEquals('SELECT test.* FROM test', (string)$query);
+        $this->assertEquals('SELECT test.* FROM test', $query->__toString());
     }
 
     public function testLimit(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->limit(1, 1);
-        $this->assertEquals('SELECT test FROM test LIMIT 1,1', (string)$query);
+        $this->assertEquals('SELECT test FROM test LIMIT 1,1', $query->__toString());
     }
 
     public function testGroupBy(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->groupBy('test');
-        $this->assertEquals('SELECT test FROM test GROUP BY test', (string)$query);
+        $this->assertEquals('SELECT test FROM test GROUP BY test', $query->__toString());
     }
 
     public function testReplace(): void
     {
         $query = $this->getValidQuery();
+        $this->expectException(DatabaseException::class);
         $query->replace('test', ['test' => 'test']);
-        $this->assertEquals('REPLACE INTO test (test) VALUES (?)', (string)$query);
     }
 
     public function testWhereMulti(): void
@@ -97,6 +98,13 @@ class MySQLQueryTest extends TestCase
         $this->assertEquals('SELECT test FROM test WHERE (test = ?)', (string)$query);
     }
 
+    public function testWhereNonArray(): void
+    {
+        $query = $this->getValidQuery();
+        $query->from('test', ['test'])->where('test = ?', 'test');
+        $this->assertEquals('SELECT test FROM test WHERE (test = ?)', $query->__toString());
+    }
+
     public function testExecute(): void
     {
         $query = $this->getValidQuery();
@@ -105,33 +113,25 @@ class MySQLQueryTest extends TestCase
         $this->assertTrue($result instanceof \PDOStatement);
     }
 
-    public function testExecuteFail(): void
-    {
-        $query = $this->getValidQuery();
-        $query->describe('testing');
-        $this->expectException(DatabaseException::class);
-        $query->execute();
-    }
-
     public function testDescribe(): void
     {
         $query = $this->getValidQuery();
         $query->describe('test');
-        $this->assertEquals('DESCRIBE test', (string)$query);
+        $this->assertEquals('SELECT * FROM information_schema.columns WHERE table_schema = \'public\' and table_name = \'test\'', $query->__toString());
     }
 
     public function testDelete(): void
     {
         $query = $this->getValidQuery();
         $query->delete('test');
-        $this->assertEquals('DELETE FROM test', (string)$query);
+        $this->assertEquals('DELETE FROM test', $query->__toString());
     }
 
     public function testInnerJoin(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->innerJoin('test2', 'test.ing', 'test2.ing');
-        $this->assertEquals('SELECT test FROM test INNER JOIN test2 ON test.ing = test2.ing', (string)$query);
+        $this->assertEquals('SELECT test FROM test INNER JOIN test2 ON test.ing = test2.ing', $query->__toString());
     }
 
     public function testInnerJoinArray(): void
@@ -140,7 +140,7 @@ class MySQLQueryTest extends TestCase
         $query->from('test', ['test'])->innerJoin('test2', ['test.ing', 'test.feast'], ['test2.ing', 'test2.feast']);
         $this->assertEquals(
             'SELECT test FROM test INNER JOIN test2 ON test.ing = test2.ing AND test.feast = test2.feast',
-            (string)$query
+            $query->__toString()
         );
     }
 
@@ -162,28 +162,28 @@ class MySQLQueryTest extends TestCase
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->leftJoinUsing('test2', 'ing');
-        $this->assertEquals('SELECT test FROM test LEFT JOIN test2 USING (ing)', (string)$query);
+        $this->assertEquals('SELECT test FROM test LEFT JOIN test2 USING (ing)', $query->__toString());
     }
 
     public function testLeftJoinUsingArray(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->leftJoinUsing('test2', ['ing', 'feast']);
-        $this->assertEquals('SELECT test FROM test LEFT JOIN test2 USING (ing,feast)', (string)$query);
+        $this->assertEquals('SELECT test FROM test LEFT JOIN test2 USING (ing,feast)', $query->__toString());
     }
 
     public function testInsert(): void
     {
         $query = $this->getValidQuery();
         $query->insert('test', ['testing' => 'test2']);
-        $this->assertEquals('INSERT INTO test (testing) VALUES (?)', (string)$query);
+        $this->assertEquals('INSERT INTO test (testing) VALUES (?)', $query->__toString());
     }
 
     public function testInnerJoinUsing(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->innerJoinUsing('test2', 'ing');
-        $this->assertEquals('SELECT test FROM test INNER JOIN test2 USING (ing)', (string)$query);
+        $this->assertEquals('SELECT test FROM test INNER JOIN test2 USING (ing)', $query->__toString());
     }
 
     public function testGetRawQueryWithParams(): void
@@ -191,13 +191,6 @@ class MySQLQueryTest extends TestCase
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->where('test = ?', 'test');
         $this->assertEquals('SELECT test FROM test WHERE (test = \'test\')', $query->getRawQueryWithParams());
-    }
-
-    public function testGetRawQueryWithMultiParams(): void
-    {
-        $query = $this->getValidQuery();
-        $query->from('test', ['test'])->where('test = ? and feast = ?', 'test', 'framework');
-        $this->assertEquals('SELECT test FROM test WHERE (test = \'test\' and feast = \'framework\')', $query->getRawQueryWithParams());
     }
 
     public function testGetRawQueryNoParams(): void
@@ -210,50 +203,71 @@ class MySQLQueryTest extends TestCase
     public function testGetDescribedTable(): void
     {
         $query = $this->getValidQuery();
-        $result = $query->getDescribedTable('test_describe');
+        $result = $query->getDescribedTable('public.test_describe');
         $this->assertTrue($result instanceof TableDetails);
+    }
+
+    public function testGetSequenceWithCompound(): void
+    {
+        $query = $this->getValidQuery();
+        $result = $query->getSequenceForPrimary('test', 'test', true);
+        $this->assertNull($result);
+    }
+
+    public function testGetSequenceValid(): void
+    {
+        $query = $this->getValidQuery();
+        $result = $query->getSequenceForPrimary('test', 'test', false);
+        $this->assertEquals('test',$result);
+    }
+
+    public function testGetSequenceInvalid(): void
+    {
+        $query = $this->getValidQuery();
+        $result = $query->getSequenceForPrimary('false', 'test', false);
+        $this->assertNull($result);
     }
 
     public function testLeftJoin(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->leftJoin('test2', 'test.ing', 'test2.ing');
-        $this->assertEquals('SELECT test FROM test LEFT JOIN test2 ON test.ing = test2.ing', (string)$query);
+        $this->assertEquals('SELECT test FROM test LEFT JOIN test2 ON test.ing = test2.ing', $query->__toString());
     }
 
     public function testRightJoinUsing(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->rightJoinUsing('test2', 'ing');
-        $this->assertEquals('SELECT test FROM test RIGHT JOIN test2 USING (ing)', (string)$query);
+        $this->assertEquals('SELECT test FROM test RIGHT JOIN test2 USING (ing)', $query->__toString());
     }
 
     public function testRightJoin(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->rightJoin('test2', 'test.ing', 'test2.ing');
-        $this->assertEquals('SELECT test FROM test RIGHT JOIN test2 ON test.ing = test2.ing', (string)$query);
+        $this->assertEquals('SELECT test FROM test RIGHT JOIN test2 ON test.ing = test2.ing', $query->__toString());
     }
 
     public function testOrderBy(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->orderBy('test');
-        $this->assertEquals('SELECT test FROM test ORDER BY test', (string)$query);
+        $this->assertEquals('SELECT test FROM test ORDER BY test', $query->__toString());
     }
 
     public function testUpdate(): void
     {
         $query = $this->getValidQuery();
         $query->update('test', ['field' => 'test']);
-        $this->assertEquals('UPDATE test SET field = ?', (string)$query);
+        $this->assertEquals('UPDATE test SET field = ?', $query->__toString());
     }
 
     public function testHaving(): void
     {
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->having('test > ?', '1');
-        $this->assertEquals('SELECT test FROM test HAVING (test > ?)', (string)$query);
+        $this->assertEquals('SELECT test FROM test HAVING (test > ?)', $query->__toString());
     }
 
     public function testHavingMulti(): void
@@ -267,13 +281,6 @@ class MySQLQueryTest extends TestCase
     {
         $query = new SQLiteQuery(new PDOMock('dsnstring'));
         $this->assertTrue($query instanceof SQLiteQuery && $query instanceof MySQLQuery);
-    }
-
-    public function testGetSequenceValid(): void
-    {
-        $query = $this->getValidQuery();
-        $result = $query->getSequenceForPrimary('test', 'test', false);
-        $this->assertNull($result);
     }
 
 }

@@ -22,6 +22,7 @@ namespace Database;
 
 use Feast\Database\Database;
 use Feast\Database\MySQLQuery;
+use Feast\Database\PostgresQuery;
 use Feast\Database\Query;
 use Feast\Database\SQLiteQuery;
 use Feast\Database\TableDetails;
@@ -70,6 +71,12 @@ class DatabaseTest extends TestCase
     public function testInstantiationSqlite(): void
     {
         $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
+        $this->assertTrue($database instanceof Database);
+    }
+
+    public function testInstantiationPostgres(): void
+    {
+        $database = $this->getValidConnection(DatabaseType::POSTGRES, PostgresQuery::class);
         $this->assertTrue($database instanceof Database);
     }
 

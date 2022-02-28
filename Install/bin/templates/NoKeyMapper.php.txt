@@ -1,33 +1,4 @@
-User.php<?php
-
-declare(strict_types=1);
-
-namespace Model;
-
-class User extends Generated\User
-{
-    // PLACE CUSTOM MODEL CODE HERE
-}
-Model/Generated/ createdUser.php<?php
-
-declare(strict_types=1);
-
-namespace Model\Generated;
-
-use \Feast\BaseModel;
-use \Mapper\UserMapper;
-
-class User extends BaseModel
-{
-    protected const MAPPER_NAME = UserMapper::class;
-
-    public int $user_id;
-    public ?\Feast\Date $created_at;
-    public string $username;
-
-}
-Model class created
-UserMapper.php<?php
+<?php
 
 declare(strict_types=1);
 
@@ -36,21 +7,21 @@ namespace Mapper;
 use \Feast\BaseMapper;
 use \Feast\BaseModel;
 use \Feast\Exception\DatabaseException;
-use \Model\User;
+use \Model\{name};
 
-class UserMapper extends BaseMapper
+class {name}{classExtra} extends BaseMapper
 {
-    protected const OBJECT_NAME = User::class;
-    protected const PRIMARY_KEY = '';
-    public const TABLE_NAME = 'users2';
-
+    protected const OBJECT_NAME = {name}::class;
+    protected const PRIMARY_KEY = '{primaryKey}';
+    public const TABLE_NAME = '{table}';
+{connection}
     /**
      * @param int|string $value
      * @param bool $validate
-     * @return ?User
+     * @return ?{name}
      * @throws DatabaseException
      */
-    public function findByPrimaryKey(int|string $value, bool $validate = false): ?User
+    public function findByPrimaryKey(int|string $value, bool $validate = false): ?{name}
     {
         throw new DatabaseException('No primary key specified for ' . static::TABLE_NAME); 
     }
@@ -83,10 +54,10 @@ class UserMapper extends BaseMapper
      *
      * Update this to call actions on save.
      *
-     * @param User $record
+     * @param {name} $record
      * @param bool $new
      */
-    protected function onSave(\Feast\BaseModel|User $record, bool $new = true): void
+    protected function onSave({name} $record, bool $new = true): void
     {
     }
 
@@ -95,10 +66,9 @@ class UserMapper extends BaseMapper
      *
      * Update this to call actions on deletion.
      *
-     * @param User $record
+     * @param {name} $record
      */
-    protected function onDelete(\Feast\BaseModel|User $record): void
+    protected function onDelete({name} $record): void
     {
     }
 }
-Mapper class created. Save method must be manually created due to no primary key.

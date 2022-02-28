@@ -32,6 +32,7 @@ class PDOMock extends \PDO
 
     /**
      * PDOMock constructor.
+     *
      * @param string $dsn
      * @param null|string $username
      * @param null|string $password
@@ -59,7 +60,7 @@ class PDOMock extends \PDO
         return 1;
     }
 
-    public function execute() : bool
+    public function execute(): bool
     {
         return true;
     }
@@ -116,11 +117,19 @@ class PDOMock extends \PDO
      * @param array $options
      * @return PDOStatementMock
      */
-    public function prepare($query, array $options = array())
+    public function prepare($query, array $options = [])
     {
-        if ( $query === 'DESCRIBE test_schema_no' || $query === 'DESCRIBE test_describe' ) {
+        if ($query === 'DESCRIBE test_schema_no' || $query === 'DESCRIBE test_describe') {
             $return = new PDOStatementSchemaMock();
-        } else {
+        } elseif (
+            str_starts_with($query, 'SELECT * FROM information_schema.columns') ||
+            str_starts_with($query, 'SELECT a.attname') ||
+            str_starts_with($query, 'select pg_get_serial_sequence')
+        ) {
+            $return = new PDOStatementSchemaPostgresMock();
+        }
+
+         else {
             $return = new PDOStatementMock();
         }
         $return->query = $query;

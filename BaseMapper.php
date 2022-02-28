@@ -39,6 +39,8 @@ abstract class BaseMapper
     public const TABLE_NAME = null;
     protected const PRIMARY_KEY = null;
     protected const OBJECT_NAME = null;
+    /** @var string|null SEQUENCE_NAME */
+    protected const SEQUENCE_NAME = null;
     public const CONNECTION = 'default';
     final public const NOT_NULL = 'not_null';
     protected DatabaseInterface $connection;
@@ -281,9 +283,11 @@ abstract class BaseMapper
         } else {
             $insert = $this->connection->insert((string)static::TABLE_NAME, $recordArray);
             $insert->execute();
-            $lastInsert = $this->connection->lastInsertId();
-            $recordPrimaryKey = ctype_digit($lastInsert) && $lastInsert !== '0' ? (int)$lastInsert : $lastInsert;
-            $record->{$primaryKey} = $recordPrimaryKey;
+            $lastInsert = $this->connection->lastInsertId((string)static::SEQUENCE_NAME);
+            if ($record->{$primaryKey} === null) {
+                $recordPrimaryKey = ctype_digit($lastInsert) && $lastInsert !== '0' ? (int)$lastInsert : $lastInsert;
+                $record->{$primaryKey} = $recordPrimaryKey;
+            }
             $this->onSave($record);
         }
         $record->makeOriginalModel();

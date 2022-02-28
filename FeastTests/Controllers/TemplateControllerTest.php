@@ -268,6 +268,7 @@ class TemplateControllerTest extends TestCase
         $this->assertStringContainsString('CronJob.php.txt', $output);
         $this->assertStringContainsString('Filter.php.txt', $output);
         $this->assertStringContainsString('Form.php.txt', $output);
+        $this->assertStringContainsString('NoKeyMapper.php.txt', $output);
         $this->assertStringContainsString('Mapper.php.txt', $output);
         $this->assertStringContainsString('Migration.php.txt', $output);
         $this->assertStringContainsString('Model.php.txt', $output);
