@@ -83,6 +83,7 @@ abstract class BaseMapper
                         (string)$val
                     ),
                     'int' => (int)$val,
+                    'bool' => $this->getBoolValue($val),
                     default => utf8_encode((string)$val)
                 };
             }
@@ -91,6 +92,11 @@ abstract class BaseMapper
         $return->makeOriginalModel();
 
         return $return;
+    }
+
+    protected function getBoolValue(string|int|bool $value): ?bool
+    {
+        return ($value === 'false') ? false : (bool)$value;
     }
 
     protected function getQueryBase(): Query
@@ -120,7 +126,6 @@ abstract class BaseMapper
      * @return BaseModel|null
      * @throws ServerFailureException
      * @throws ServiceContainer\NotFoundException
-     * @noinspection PhpUnusedParameterInspection
      */
     public function findByPrimaryKey(int|string $value, bool $validate = false): ?BaseModel
     {

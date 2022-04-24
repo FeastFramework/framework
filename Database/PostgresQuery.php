@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 Jeremy Presutti <Jeremy@Presutti.us>
+ * Copyright 2022 Jeremy Presutti <Jeremy@Presutti.us>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,6 +145,7 @@ AND    i.indisprimary'
 
     protected function getCastTypeForField(stdClass $field): string
     {
+        /** @psalm-suppress RedundantIdentityWithTrue -- false positive */
         return match (true) {
             str_starts_with((string)$field->data_type, 'json'),
             str_ends_with((string)$field->data_type, 'json') => stdClass::class,
@@ -153,6 +154,7 @@ AND    i.indisprimary'
             str_starts_with((string)$field->data_type, 'bigint'),
             str_starts_with((string)$field->data_type, 'mediumint'),
             str_starts_with((string)$field->data_type, 'smallint') => 'int',
+            str_starts_with((string)$field->data_type, 'bool') => 'bool',
             str_starts_with((string)$field->data_type, 'datetime'),
             str_starts_with((string)$field->data_type, 'timestamp') => Date::class,
             default => 'string'
