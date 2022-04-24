@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 Jeremy Presutti <Jeremy@Presutti.us>
+ * Copyright 2022 Jeremy Presutti <Jeremy@Presutti.us>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace Mocks;
 
 /**
- * Class PDOStatementPostgresMock extends PDOStatement.
+ * Class PDOStatementPostgresMock extends PDOStatementMock.
  * This class is solely to be used to test functions in the Database class.
  * DO NOT USE IN PRODUCTION AS NO QUERIES WILL BE EXECUTED!
  */
