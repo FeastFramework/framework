@@ -22,7 +22,6 @@ namespace Feast\Database\Table;
 
 use Feast\Database\Column\BigInt;
 use Feast\Database\Column\Blob;
-use Feast\Database\Column\Bytea;
 use Feast\Database\Column\Char;
 use Feast\Database\Column\Column;
 use Feast\Database\Column\Decimal;
