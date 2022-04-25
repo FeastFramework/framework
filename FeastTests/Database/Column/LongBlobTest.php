@@ -29,7 +29,7 @@ class LongBlobTest extends TestCase
     public function testCreate(): void
     {
         $column = new LongBlob('test');
-        $this->assertTrue($column instanceof LongBlob);
+        $this->assertInstanceOf(LongBlob::class,$column);
     }
 
     public function testGetLength(): void

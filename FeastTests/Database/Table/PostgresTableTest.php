@@ -20,38 +20,32 @@ declare(strict_types=1);
 
 namespace Database\Table;
 
-use Feast\Database\Column\BigInt;
-use Feast\Database\Column\Blob;
+use Feast\Database\Column\Postgres\Boolean;
+use Feast\Database\Column\Postgres\Bytea;
+use Feast\Database\Column\Postgres\BigInt;
 use Feast\Database\Column\Char;
 use Feast\Database\Column\Column;
 use Feast\Database\Column\Decimal;
-use Feast\Database\Column\Integer;
-use Feast\Database\Column\LongBlob;
-use Feast\Database\Column\LongText;
-use Feast\Database\Column\MediumBlob;
-use Feast\Database\Column\MediumInt;
-use Feast\Database\Column\MediumText;
-use Feast\Database\Column\SmallInt;
-use Feast\Database\Column\Text;
-use Feast\Database\Column\TinyBlob;
-use Feast\Database\Column\TinyInt;
-use Feast\Database\Column\TinyText;
+use Feast\Database\Column\Postgres\Integer;
+use Feast\Database\Column\Postgres\SmallInt;
+use Feast\Database\Column\Postgres\Text;
 use Feast\Database\Column\VarChar;
 use Feast\Database\Database;
-use Feast\Database\Table\MySQLTable;
+use Feast\Database\Table\PostgresTable;
 use Feast\Exception\DatabaseException;
+use Feast\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-class MySQLTableTest extends TestCase
+class PostgresTableTest extends TestCase
 {
 
-    protected MySQLTable $table;
+    protected PostgresTable $table;
 
     public function setUp(): void
     {
         $database = $this->createStub(Database::class);
         $database->method('rawQuery')->willReturn(false);
-        $this->table = new MySQLTable('Test', $database);
+        $this->table = new PostgresTable('Test', $database);
     }
 
     public function testTime(): void
@@ -65,7 +59,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->mediumInt('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(MediumInt::class, $columns[0]);
+        $this->assertInstanceOf(\Feast\Database\Column\Postgres\BigInt::class, $columns[0]);
     }
 
     public function testFloat(): void
@@ -100,7 +94,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->mediumText('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(MediumText::class, $columns[0]);
+        $this->assertInstanceOf(Text::class, $columns[0]);
     }
 
     public function testVarChar(): void
@@ -131,7 +125,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->tinytext('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(TinyText::class, $columns[0]);
+        $this->assertInstanceOf(Text::class, $columns[0]);
     }
 
     public function testIndex(): void
@@ -151,35 +145,6 @@ class MySQLTableTest extends TestCase
         $this->assertEquals('test2', $indexes[0]['columns'][1]);
     }
 
-    public function testUnique(): void
-    {
-        $this->table->uniqueIndex('test');
-        $indexes = $this->table->getUniqueIndexes();
-        $this->assertEquals('unique_index_test', $indexes[0]['name']);
-        $this->assertEquals('test', $indexes[0]['columns'][0]);
-    }
-
-    public function testUniqueArray(): void
-    {
-        $this->table->uniqueIndex(['test', 'test2']);
-        $indexes = $this->table->getUniqueIndexes();
-        $this->assertEquals('unique_index_test_test2', $indexes[0]['name']);
-        $this->assertEquals('test', $indexes[0]['columns'][0]);
-        $this->assertEquals('test2', $indexes[0]['columns'][1]);
-    }
-
-    public function testForeignKeys(): void
-    {
-        $this->table->foreignKey('test','noTest','notATest','CASCADE');
-        $indexes = $this->table->getForeignKeys();
-        $this->assertEquals('fk_test_noTest_notATest', $indexes[0]['name']);
-        $this->assertEquals('test', $indexes[0]['columns'][0]);
-        $this->assertEquals('noTest', $indexes[0]['referencesTable']);
-        $this->assertEquals('notATest', $indexes[0]['referencesColumns'][0]);
-        $this->assertEquals('CASCADE', $indexes[0]['onDelete']);
-        $this->assertEquals('RESTRICT', $indexes[0]['onUpdate']);
-    }
-
     public function testSmallInt(): void
     {
         $this->table->smallInt('Test');
@@ -191,7 +156,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->longText('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(LongText::class, $columns[0]);
+        $this->assertInstanceOf(Text::class, $columns[0]);
     }
 
     public function testChar(): void
@@ -203,23 +168,9 @@ class MySQLTableTest extends TestCase
 
     public function testBlob(): void
     {
-        $this->table->blob('Test');
+        @$this->table->blob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Blob::class, $columns[0]);
-    }
-
-    public function testBytea(): void
-    {
-        @$this->table->bytea('Test');
-        $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Blob::class, $columns[0]);
-    }
-
-    public function testBool(): void
-    {
-        @$this->table->boolean('Test');
-        $columns = $this->table->getColumns();
-        $this->assertInstanceOf(TinyInt::class, $columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testDrop(): void
@@ -245,16 +196,16 @@ class MySQLTableTest extends TestCase
 
     public function testDateTime(): void
     {
-        $this->table->dateTime('Test');
+        @$this->table->dateTime('Test');
         $columns = $this->table->getColumns();
         $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testMediumBlob(): void
     {
-        $this->table->mediumBlob('Test');
+        @$this->table->mediumBlob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(MediumBlob::class, $columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testDouble(): void
@@ -289,23 +240,23 @@ class MySQLTableTest extends TestCase
 
     public function testLongBlob(): void
     {
-        $this->table->longBlob('Test');
+        @$this->table->longBlob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(LongBlob::class, $columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testTinyBlob(): void
     {
-        $this->table->tinyBlob('Test');
+        @$this->table->tinyBlob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(TinyBlob::class, $columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testTinyInt(): void
     {
         $this->table->tinyInt('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(TinyInt::class, $columns[0]);
+        $this->assertInstanceOf(SmallInt::class, $columns[0]);
     }
 
     public function testPrimary(): void
@@ -333,15 +284,15 @@ class MySQLTableTest extends TestCase
     {
         $this->table->tinyInt('Test');
         $this->table->int('Test', default: 4);
-        $this->table->tinyBlob('Test');
+        $this->table->bytea('Test');
         $this->table->timestamp('test', 'CURRENT_TIMESTAMP');
         $this->table->primary('Test');
-        $this->table->index('test');
-        $this->table->uniqueIndex('Test');
+        $this->table->index('Test');
+        $this->table->uniqueIndex('test');
         $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB(255) not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'INDEX index_test (test),' . "\n" . 'UNIQUE unique_index_Test (Test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest foreign key (test) REFERENCES `noTest`(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT)',
+            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_test (test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test ON Test (Test);',
             $ddl->ddl
         );
         $this->assertEquals(['4'], $ddl->bindings);
@@ -349,7 +300,48 @@ class MySQLTableTest extends TestCase
 
     public function testSerial(): void
     {
-        $this->expectException(DatabaseException::class);
-        $this->table->serial('test');
+        $this->table->serial('Test');
+        $columns = $this->table->getColumns();
+        /** @var Column $column */
+        $column = $columns[0];
+        $this->assertEquals('serial', $column->getType());
+    }
+
+    public function testBytea(): void
+    {
+        $this->table->bytea('Test');
+        $columns = $this->table->getColumns();
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
+    }
+
+    public function testBool(): void
+    {
+        $this->table->boolean('Test');
+        $columns = $this->table->getColumns();
+        $this->assertInstanceOf(Boolean::class, $columns[0]);
+    }
+
+    public function testBigIntUnsigned(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->table->bigInt('test', true);
+    }
+
+    public function testIntUnsigned(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->table->int('test', true);
+    }
+
+    public function testTinyIntUnsigned(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->table->tinyInt('test', true);
+    }
+
+    public function testSmallIntUnsigned(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->table->smallInt('test', true);
     }
 }

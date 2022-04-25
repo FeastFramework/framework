@@ -35,8 +35,8 @@ class Column
      * @param bool $unsigned
      * @param int|null $decimal
      * @param bool $nullable
-     * @param string|int|float|null $default
-     * @throws ServerFailureException
+     * @param string|int|float|bool|null $default
+     * @throws DatabaseException
      */
     public function __construct(
         protected string $name,
@@ -45,7 +45,7 @@ class Column
         protected bool $unsigned = false,
         protected ?int $decimal = null,
         protected bool $nullable = false,
-        protected string|int|float|null $default = null
+        protected string|int|float|null|bool $default = null
     ) {
         /** @psalm-suppress TypeDoesNotContainType - even though the docblock says positive-int, nothing forces it to be positive. */
         if ($length !== null && $length <= 0) {

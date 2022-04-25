@@ -32,6 +32,6 @@ class PluginTest extends TestCase
         $stubbedRouter = $this->createStub(\Feast\Interfaces\RouterInterface::class);
         $plugin->init($stubbedRouter);
 
-        $this->assertTrue($plugin instanceof Plugin);
+        $this->assertInstanceOf(Plugin::class,$plugin);
     }
 }

@@ -20,6 +20,7 @@ declare(strict_types=1);
 namespace Migrations;
 
 use Feast\Database\Migration;
+use Feast\Database\Table\TableFactory;
 
 class migration1_migrations extends Migration
 {
@@ -28,24 +29,22 @@ class migration1_migrations extends Migration
 
     public function up(): void
     {
-        $this->connection->rawQuery(
-            '
-		create table IF NOT EXISTS migrations (
-			primary_id int unsigned AUTO_INCREMENT PRIMARY KEY,
-			migration_id varchar(255),
-			name varchar(255),
-			last_up datetime default null,
-			last_down datetime default null,
-			status enum(\'up\',\'down\') default null,
-			INDEX (migration_id))
-		'
-        );
+        $table = TableFactory::getTable('migrations');
+        $table->autoIncrement('primary_id');
+        $table->varChar('migration_id');
+        $table->varChar('name');
+        $table->dateTime('last_up', nullable: true);
+        $table->dateTime('last_down', nullable: true);
+        $table->varChar('status');
+        $table->index('migration_id');
+        $table->create();
         parent::up();
     }
 
     public function down(): void
     {
-        $this->connection->rawQuery('DROP TABLE IF EXISTS migrations;');
+        $table = TableFactory::getTable('migrations');
+        $table->drop();
         parent::down();
     }
 }

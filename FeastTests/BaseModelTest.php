@@ -78,7 +78,7 @@ class BaseModelTest extends TestCase
 
         $model->theName = 'Feasty';
         $model->save();
-        $this->assertTrue($model instanceof BaseModel);
+        $this->assertInstanceOf(BaseModel::class,$model);
     }
 
     public function testSaveNoMapper(): void

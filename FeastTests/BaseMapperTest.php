@@ -82,7 +82,7 @@ class BaseMapperTest extends TestCase
 
         $items = $this->baseMapper->findAllByField('id', 1);
         $item = $items->first();
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);
@@ -142,7 +142,7 @@ class BaseMapperTest extends TestCase
 
         /** @var MockBaseModel $items */
         $items = $this->baseMapper->findByPrimaryKey(1);
-        $this->assertTrue($items instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$items);
         $this->assertEquals(1, $items->id);
         $this->assertEquals('20200102080001', $items->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $items->theName);
@@ -205,7 +205,7 @@ class BaseMapperTest extends TestCase
 
         $items = $this->baseMapper->findAllByFields(['id' => 1, 'test' => null, 'otherTest' => BaseMapper::NOT_NULL]);
         $item = $items->first();
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);
@@ -268,7 +268,7 @@ class BaseMapperTest extends TestCase
 
         /** @var MockBaseModel $item */
         $item = $this->baseMapper->findOneByFields(['id' => 1, 'test' => null, 'otherTest' => BaseMapper::NOT_NULL]);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);
@@ -321,7 +321,7 @@ class BaseMapperTest extends TestCase
         $item->theDate = \Feast\Date::createFromString('2020-01-02 03:04:05');
         $item->theThing->potato = 'test';
         $this->baseMapper->save($item);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
     }
 
     public function testSaveNoChange(): void
@@ -354,7 +354,7 @@ class BaseMapperTest extends TestCase
         $item = $this->baseMapper->findOneByFields(['id' => 1, 'test' => null, 'otherTest' => BaseMapper::NOT_NULL]);
 
         $this->baseMapper->save($item);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
     }
 
     public function testSaveNew(): void
@@ -366,7 +366,7 @@ class BaseMapperTest extends TestCase
         $item->theThing = new stdClass();
         $item->theThing->test = 'test';
         $this->baseMapper->save($item);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals('', $item->id);
     }
 
@@ -411,7 +411,7 @@ class BaseMapperTest extends TestCase
         /** @var MockBaseModel $item */
         $item = $this->baseMapper->findOneByField('id', 1);
 
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);

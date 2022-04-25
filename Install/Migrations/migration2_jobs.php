@@ -14,7 +14,6 @@ class migration2_jobs extends Migration
 
     public function up(): void
     {
-        /** @todo Create up query */
         $table = TableFactory::getTable('jobs');
         $table->varChar('job_id')
             ->varChar('job_name')

@@ -49,7 +49,7 @@ class RadioTest extends TestCase
             '<label for="testing_test_true">test</label><input id="testing_test_true" class="" type="radio" name="test" value="true" />',
             $output
         );
-        $this->assertTrue($radio instanceof Radio);
+        $this->assertInstanceOf(Radio::class,$radio);
     }
 
     public function testSetValue(): void

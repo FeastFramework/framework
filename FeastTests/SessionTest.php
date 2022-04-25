@@ -44,7 +44,7 @@ class SessionTest extends TestCase
             ]
         );
         $session = new Session($config);
-        $this->assertTrue($session->getNamespace('test') instanceof stdClass);
+        $this->assertInstanceOf(stdClass::class,$session->getNamespace('test'));
     }
 
     public function testConstructGoodIp(): void
@@ -69,7 +69,7 @@ class SessionTest extends TestCase
         );
         $session = new Session($config);
 
-        $this->assertTrue($session instanceof Session);
+        $this->assertInstanceOf(Session::class,$session);
     }
 
     public function testConstructBadIp(): void
@@ -94,7 +94,7 @@ class SessionTest extends TestCase
         );
         $session = new Session($config);
 
-        $this->assertTrue($session instanceof Session);
+        $this->assertInstanceOf(Session::class,$session);
         $this->assertTrue(!isset($_SESSION['Feast']));
     }
 

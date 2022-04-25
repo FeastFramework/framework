@@ -59,25 +59,25 @@ class DatabaseTest extends TestCase
     public function testInstantiation(): void
     {
         $database = $this->getValidConnection();
-        $this->assertTrue($database instanceof Database);
+        $this->assertInstanceOf(Database::class,$database);
     }
 
     public function testInstantiationWithConfig(): void
     {
         $database = $this->getValidConnection(options: true);
-        $this->assertTrue($database instanceof Database);
+        $this->assertInstanceOf(Database::class,$database);
     }
 
     public function testInstantiationSqlite(): void
     {
         $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
-        $this->assertTrue($database instanceof Database);
+        $this->assertInstanceOf(Database::class,$database);
     }
 
     public function testInstantiationPostgres(): void
     {
         $database = $this->getValidConnection(DatabaseType::POSTGRES, PostgresQuery::class);
-        $this->assertTrue($database instanceof Database);
+        $this->assertInstanceOf(Database::class,$database);
     }
 
     public function testInstantiationUnknownType(): void
@@ -103,7 +103,7 @@ class DatabaseTest extends TestCase
         $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = MySQLQuery::class;
         $database = new Database($details, PDOMock::class);
-        $this->assertTrue($database instanceof Database);
+        $this->assertInstanceOf(Database::class,$database);
     }
 
     public function testInstantiationUnknownDbClass(): void
@@ -173,21 +173,21 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->insert('test', ['test1' => 'test2']);
-        $this->assertTrue($query instanceof Query);
+        $this->assertInstanceOf(Query::class,$query);
     }
 
     public function testSelect(): void
     {
         $database = $this->getValidConnection();
         $query = $database->select('test');
-        $this->assertTrue($query instanceof Query);
+        $this->assertInstanceOf(Query::class,$query);
     }
 
     public function testSelectSqlite(): void
     {
         $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $query = $database->select('test');
-        $this->assertTrue($query instanceof SQLiteQuery);
+        $this->assertInstanceOf(SQLiteQuery::class,$query);
     }
 
     public function testTableExists(): void
@@ -208,7 +208,7 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->update('test');
-        $this->assertTrue($query instanceof MySQLQuery);
+        $this->assertInstanceOf(MySQLQuery::class,$query);
     }
 
     public function testColumnExists(): void
@@ -229,7 +229,7 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->replace('test', ['test' => 'test2']);
-        $this->assertTrue($query instanceof MySQLQuery);
+        $this->assertInstanceOf(MySQLQuery::class,$query);
     }
 
     public function testGetDatabaseTypeMySQL(): void
@@ -248,7 +248,7 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->delete('test');
-        $this->assertTrue($query instanceof Query);
+        $this->assertInstanceOf(Query::class,$query);
     }
 
     public function testLastInsertId(): void
@@ -262,21 +262,21 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->describe('test');
-        $this->assertTrue($query instanceof Query);
+        $this->assertInstanceOf(Query::class,$query);
     }
 
     public function testGetDescribedTable(): void
     {
         $database = $this->getValidConnection();
         $result = $database->getDescribedTable('test_schema_no');
-        $this->assertTrue($result instanceof TableDetails);
+        $this->assertInstanceOf(TableDetails::class,$result);
     }
 
     public function testGetConnection(): void
     {
         $database = $this->getValidConnection();
         $connection = $database->getConnection();
-        $this->assertTrue($connection instanceof \PDO);
+        $this->assertInstanceOf(\PDO::class,$connection);
     }
 
     public function testRawQuery(): void
