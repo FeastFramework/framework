@@ -454,4 +454,27 @@ class PostgresTable extends Table
 
         return $this;
     }
+
+    /**
+     * Add new Double column. Fallback to Float column.
+     *
+     * @param string $name
+     * @param bool $unsigned
+     * @param positive-int $length
+     * @param bool $nullable
+     * @param string|null $default
+     * @return static
+     * @throws ServerFailureException
+     */
+    public function double(
+        string $name,
+        bool $unsigned = true,
+        int $length = 20,
+        bool $nullable = false,
+        ?string $default = null
+    ): static {
+        trigger_error('Using float for double', E_USER_NOTICE);
+        $this->float($name, $unsigned, $length, $nullable, $default);
+        return $this;
+    }
 }
