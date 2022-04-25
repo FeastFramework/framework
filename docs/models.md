@@ -198,7 +198,7 @@ There are many other methods available to the Table instance returned by the Tab
 13. mediumText
 14. longText
 15. tinyBlob
-16. blob
+16. blob|bytea (for MySQL and PostgreSQL respectively)
 17. mediumBlob
 18. longBlob
 19. date
@@ -206,7 +206,9 @@ There are many other methods available to the Table instance returned by the Tab
 21. timestamp
 22. time
 23. json
-24. column - Column is used if you need a column type that does not fit into the other rules.
+24. serial (throws an exception if used on a MySQL table)
+25. boolean (alias to tinyint(1) for MySQL table)
+26. column - Column is used if you need a column type that does not fit into the other rules.
 
 In addition, the `rawQuery` method can be used in a migration to run a specific query.
 
