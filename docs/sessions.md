@@ -10,6 +10,8 @@ FEAST contains the following config parameters for sessions:
 
 1. `session.name` - The name of the session. Defaults to `Feast_Session`.
 2. `session.timeout` - The time in seconds for the session. Defaults to 0 (when browser closes).
+3. `session.strictIp` - boolean value. If set to true, then the session will be destroyed and a redirect issued to the
+   same URL as requested if the IP does not match.
 
 ## Retrieving the session
 
