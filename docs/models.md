@@ -153,7 +153,8 @@ down should undo whatever is done in the up call.
 #### Creating and Dropping Tables
 
 FEAST provides a TableFactory to retrieve an instance of a table builder. Currently, this table builder is limited to
-MySQL. Using this table builder, you can quickly specify your table details and run the create without writing a single
+MySQL and PostgreSQL. Using this table builder, you can quickly specify your table details and run the create without
+writing a single
 line of SQL. Example:
 
 ```php
@@ -218,8 +219,38 @@ parameters.
 2. `name` - String or null. If null, a generic name is dynamically created.
 3. `autoIncrement` - True if you wish for this to be an autoincrement column.
 
-An easier way to create an auto incrementing primary key is with the `autoIncrement` method. This method will create an
+In MySQL, an easier way to create an auto incrementing primary key is with the `autoIncrement` method. This method will
+create an
 int column with the passed in name and optional length.
+
+In PostgreSQL, an easier way to create an auto incrementing primary key is to call the `serial` method rather than an
+integer when creating the table.
+For example:
+
+```php
+TableFactory::getTable('videos')
+            ->serial('id');
+```
+
+#### Adding unique indexes
+
+FEAST can add a unique index at the same time as creating by using the `uniqueIndex` method. This method takes the
+following parameters.
+
+1. `columns` - This can be a string for a single column, or an array of strings for multiple.
+2. `name` - String or null. If null, a generic name is dynamically created.
+
+#### Adding foreign key constraints
+
+FEAST can add a foreign key at the same time as creating the table by using the `foreignKey` method. This method takes
+the following parameters.
+
+1. `columns` - This can be a string for a single column, or an array of strings for multiple.
+2. `referencesTable` - The table to reference.
+3. `referencesColumns` - This can be a string for a single column, or an array of strings for multiple.  
+4. `onDelete` - Defaults to `RESTRICT`
+5. `onUpdate` - Defaults to `RESTRICT`
+6. `name` - String or null. If null, a generic name is dynamically created.
 
 #### Adding primary key
 
@@ -228,7 +259,8 @@ parameter:
 `columnName`. Note that the column specified within this parameter must exist. Also, `primary` method can be called only
 once per table. Otherwise, an exception will be thrown.
 
-The `autoIncrement` method already calls the `primary` method, so the `primary` method should not be called when
+The `autoIncrement` method and `serial` method both already call the `primary` method, so the `primary` method should
+not be called when
 creating an auto incrementing column with the `autoIncrement` method.
 
 #### Altering tables
