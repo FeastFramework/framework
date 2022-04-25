@@ -210,7 +210,7 @@ class PostgresTableTest extends TestCase
 
     public function testDouble(): void
     {
-        $this->table->double('Test');
+        @$this->table->double('Test');
         $columns = $this->table->getColumns();
         $this->assertInstanceOf(Column::class, $columns[0]);
     }

@@ -199,7 +199,7 @@ abstract class Table
      * @param bool $unsigned
      * @param positive-int $length
      * @param bool $nullable
-     * @param int|null $default
+     * @param string|null $default
      * @return static
      * @throws ServerFailureException
      */
@@ -208,7 +208,7 @@ abstract class Table
         bool $unsigned = true,
         int $length = 20,
         bool $nullable = false,
-        ?int $default = null
+        ?string $default = null
     ): static {
         $this->columns[] = new Column($name, $length, 'double', $unsigned, null, $nullable, $default);
 
@@ -704,7 +704,7 @@ abstract class Table
 
     /**
      * Add new serial column. Not implemented in base class.
-     * 
+     *
      * @param string $column
      * @return $this
      * @throws DatabaseException
@@ -716,7 +716,7 @@ abstract class Table
 
     /**
      * Add new bytea column. Base uses blob.
-     * 
+     *
      * @param string $name
      * @param bool $nullable
      * @return $this
@@ -730,6 +730,7 @@ abstract class Table
 
     /**
      * Add new boolean column. Base uses tinyint(1) unsigned.
+     *
      * @param string $name
      * @param bool|null $default
      * @param bool $nullable
@@ -760,7 +761,7 @@ abstract class Table
         }
         return '';
     }
-    
+
     /**
      * Drop table.
      */
