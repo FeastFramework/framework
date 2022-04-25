@@ -70,11 +70,26 @@ class PostgresTable extends Table
         }
 
         /** @var array{name:string,columns:list<string>} $index */
-        foreach ($this->indexes as $index) {
-            $columns[] = 'index ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+        foreach ($this->uniques as $index) {
+            $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
         }
-        $return .= implode(',' . "\n", $columns) . ')';
 
+        /** @var array{name:string,columns:list<string>, referencesTable:string, referencesColumns:list<string>, onDelete:string, onUpdate:string} $foreignKey */
+        foreach ($this->foreignKeys as $foreignKey) {
+            $columns[] = 'CONSTRAINT ' . $foreignKey['name'] . ' FOREIGN KEY (' . implode(',',$foreignKey['columns']) . ') REFERENCES "' . $foreignKey['referencesTable'] . '"(' . implode(',',$foreignKey['referencesColumns']) . ') ON DELETE ' . $foreignKey['onDelete'] . ' ON UPDATE ' . $foreignKey['onUpdate'];
+        }
+
+        $return .= implode(',' . "\n", $columns) . ');';
+
+        $columns = [];
+        /** @var array{name:string,columns:list<string>} $index */
+        foreach ($this->indexes as $index) {
+            $columns[] = 'CREATE INDEX IF NOT EXISTS ' . $index['name'] . ' ON ' . $this->name . ' (' . implode(',', $index['columns']) . ');';
+        }
+        if ( !empty($columns) ) {
+            $return .= "\n";
+        }
+        $return .= implode("\n", $columns);
         return new Ddl($return, $bindings);
     }
 

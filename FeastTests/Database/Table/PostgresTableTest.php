@@ -52,63 +52,63 @@ class PostgresTableTest extends TestCase
     {
         $this->table->time('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testMediumInt(): void
     {
         $this->table->mediumInt('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(\Feast\Database\Column\Postgres\BigInt::class,$columns[0]);
+        $this->assertInstanceOf(\Feast\Database\Column\Postgres\BigInt::class, $columns[0]);
     }
 
     public function testFloat(): void
     {
         $this->table->float('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testJson(): void
     {
         $this->table->json('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testDate(): void
     {
         $this->table->date('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testTimestamp(): void
     {
         $this->table->timestamp('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testMediumText(): void
     {
         $this->table->mediumText('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Text::class,$columns[0]);
+        $this->assertInstanceOf(Text::class, $columns[0]);
     }
 
     public function testVarChar(): void
     {
         $this->table->varChar('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(VarChar::class,$columns[0]);
+        $this->assertInstanceOf(VarChar::class, $columns[0]);
     }
 
     public function testText(): void
     {
         $this->table->text('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Text::class,$columns[0]);
+        $this->assertInstanceOf(Text::class, $columns[0]);
     }
 
     public function testCreate(): void
@@ -125,7 +125,7 @@ class PostgresTableTest extends TestCase
     {
         $this->table->tinytext('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Text::class,$columns[0]);
+        $this->assertInstanceOf(Text::class, $columns[0]);
     }
 
     public function testIndex(): void
@@ -149,28 +149,28 @@ class PostgresTableTest extends TestCase
     {
         $this->table->smallInt('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(SmallInt::class,$columns[0]);
+        $this->assertInstanceOf(SmallInt::class, $columns[0]);
     }
 
     public function testLongText(): void
     {
         $this->table->longText('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Text::class,$columns[0]);
+        $this->assertInstanceOf(Text::class, $columns[0]);
     }
 
     public function testChar(): void
     {
         $this->table->char('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Char::class,$columns[0]);
+        $this->assertInstanceOf(Char::class, $columns[0]);
     }
 
     public function testBlob(): void
     {
         @$this->table->blob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Bytea::class,$columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testDrop(): void
@@ -184,7 +184,7 @@ class PostgresTableTest extends TestCase
     {
         $this->table->int('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Integer::class,$columns[0]);
+        $this->assertInstanceOf(Integer::class, $columns[0]);
     }
 
     public function testDropColumn(): void
@@ -198,28 +198,28 @@ class PostgresTableTest extends TestCase
     {
         @$this->table->dateTime('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testMediumBlob(): void
     {
         @$this->table->mediumBlob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Bytea::class,$columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testDouble(): void
     {
         $this->table->double('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
     }
 
     public function testAutoIncrement(): void
     {
         $this->table->autoIncrement('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Column::class,$columns[0]);
+        $this->assertInstanceOf(Column::class, $columns[0]);
         $this->assertEquals('Test', $this->table->getPrimaryKey());
         $this->assertTrue($this->table->isPrimaryKeyAutoIncrement());
     }
@@ -228,44 +228,44 @@ class PostgresTableTest extends TestCase
     {
         $this->table->bigInt('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(BigInt::class,$columns[0]);
+        $this->assertInstanceOf(BigInt::class, $columns[0]);
     }
 
     public function testDecimal(): void
     {
         $this->table->decimal('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Decimal::class,$columns[0]);
+        $this->assertInstanceOf(Decimal::class, $columns[0]);
     }
 
     public function testLongBlob(): void
     {
         @$this->table->longBlob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Bytea::class,$columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testTinyBlob(): void
     {
         @$this->table->tinyBlob('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Bytea::class,$columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testTinyInt(): void
     {
         $this->table->tinyInt('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(SmallInt::class,$columns[0]);
+        $this->assertInstanceOf(SmallInt::class, $columns[0]);
     }
-    
+
     public function testPrimary(): void
     {
         $this->table->int('Test');
         $this->table->primary('Test');
         $this->assertEquals('Test', $this->table->getPrimaryKey());
     }
-    
+
     public function testPrimaryAlreadyExists(): void
     {
         $this->expectException(DatabaseException::class);
@@ -283,39 +283,42 @@ class PostgresTableTest extends TestCase
     public function testGetDdl(): void
     {
         $this->table->tinyInt('Test');
-        $this->table->int('Test', default:4);
+        $this->table->int('Test', default: 4);
         $this->table->bytea('Test');
         $this->table->timestamp('test', 'CURRENT_TIMESTAMP');
         $this->table->primary('Test');
+        $this->table->index('Test');
+        $this->table->uniqueIndex('test');
+        $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test))',
+            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_test (test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test ON Test (Test);',
             $ddl->ddl
         );
-        $this->assertEquals(['4'],$ddl->bindings);
+        $this->assertEquals(['4'], $ddl->bindings);
     }
-    
+
     public function testSerial(): void
     {
         $this->table->serial('Test');
         $columns = $this->table->getColumns();
         /** @var Column $column */
         $column = $columns[0];
-        $this->assertEquals('serial',$column->getType());
+        $this->assertEquals('serial', $column->getType());
     }
 
     public function testBytea(): void
     {
         $this->table->bytea('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Bytea::class,$columns[0]);
+        $this->assertInstanceOf(Bytea::class, $columns[0]);
     }
 
     public function testBool(): void
     {
         $this->table->boolean('Test');
         $columns = $this->table->getColumns();
-        $this->assertInstanceOf(Boolean::class,$columns[0]);
+        $this->assertInstanceOf(Boolean::class, $columns[0]);
     }
 
     public function testBigIntUnsigned(): void

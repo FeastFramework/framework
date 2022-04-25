@@ -48,6 +48,8 @@ abstract class Table
     protected bool $primaryKeyAutoIncrement = false;
     protected array $columns = [];
     protected array $indexes = [];
+    protected array $uniques = [];
+    protected array $foreignKeys = [];
 
     public function __construct(protected string $name, protected DatabaseInterface $connection)
     {
@@ -537,6 +539,64 @@ abstract class Table
     }
 
     /**
+     * Add unique index to field(s).
+     *
+     * @param string|array<string> $columns
+     * @param string|null $name
+     * @return static
+     */
+    public function uniqueIndex(string|array $columns, ?string $name = null): static
+    {
+        if (!is_array($columns)) {
+            $columns = [$columns];
+        }
+        if ($name === null) {
+            $name = 'unique_index_' . implode('_', $columns);
+        }
+        $this->uniques[] = [
+            'name' => $name,
+            'columns' => $columns
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Add foreign key to field.
+     *
+     * @param string|array<string> $columns
+     * @param string $referencesTable
+     * @param string|array<string> $referencesColumns
+     * @param string $onDelete
+     * @param string $onUpdate
+     * @param string|null $name
+     * @return static
+     */
+    public function foreignKey(string|array $columns, string $referencesTable, string|array $referencesColumns, string $onDelete = 'RESTRICT', string $onUpdate = 'RESTRICT', ?string $name = null): static
+    {
+        if ( !is_array($columns) ) {
+            $columns = [$columns];
+        }
+
+        if ( !is_array($referencesColumns) ) {
+            $referencesColumns = [$referencesColumns];
+        }
+        if ($name === null) {
+            $name = 'fk_' . implode('_',[implode('_',$columns), $referencesTable, implode('_',$referencesColumns)]);
+        }
+        $this->foreignKeys[] = [
+            'name' => $name,
+            'columns' => $columns,
+            'referencesTable' => $referencesTable,
+            'referencesColumns' => $referencesColumns,
+            'onDelete' => $onDelete,
+            'onUpdate' => $onUpdate
+        ];
+
+        return $this;
+    }
+
+    /**
      * Add autoIncrement column.
      *
      * @param string $column
@@ -595,6 +655,26 @@ abstract class Table
     public function getIndexes(): array
     {
         return $this->indexes;
+    }
+
+    /**
+     * Get unique key listing.
+     *
+     * @return array
+     */
+    public function getUniqueIndexes(): array
+    {
+        return $this->uniques;
+    }
+
+    /**
+     * Get foreign key listing.
+     *
+     * @return array
+     */
+    public function getForeignKeys(): array
+    {
+        return $this->foreignKeys;
     }
 
     /**

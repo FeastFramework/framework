@@ -27,7 +27,7 @@ class MySQLTable extends Table
 
     /**
      * Drop specified column on the table.
-     * 
+     *
      * @param string $column
      */
     public function dropColumn(string $column): void
@@ -45,7 +45,7 @@ class MySQLTable extends Table
 
     /**
      * Get DDL object.
-     * 
+     *
      * @return Ddl
      */
     public function getDdl(): Ddl
@@ -63,8 +63,19 @@ class MySQLTable extends Table
 
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->indexes as $index) {
-            $columns[] = 'index ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+            $columns[] = 'INDEX ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
         }
+
+        /** @var array{name:string,columns:list<string>} $index */
+        foreach ($this->uniques as $index) {
+            $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+        }
+
+        /** @var array{name:string,columns:list<string>, referencesTable:string, referencesColumns:list<string>, onDelete:string, onUpdate:string} $foreignKey */
+        foreach ($this->foreignKeys as $foreignKey) {
+            $columns[] = 'CONSTRAINT ' . $foreignKey['name'] . ' foreign key (' . implode(',',$foreignKey['columns']) . ') REFERENCES `' . $foreignKey['referencesTable'] . '`(' . implode(',',$foreignKey['referencesColumns']) . ') ON DELETE ' . $foreignKey['onDelete'] . ' ON UPDATE ' . $foreignKey['onUpdate']; 
+        }
+
         $return .= implode(',' . "\n", $columns) . ')';
 
         return new Ddl($return, $bindings);

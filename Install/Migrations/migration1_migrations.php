@@ -36,9 +36,8 @@ class migration1_migrations extends Migration
         $table->dateTime('last_up', nullable: true);
         $table->dateTime('last_down', nullable: true);
         $table->varChar('status');
+        $table->index('migration_id');
         $table->create();
-
-        $this->connection->rawQuery('CREATE INDEX migration_migration_id ON migrations (migration_id)');
         parent::up();
     }
 
