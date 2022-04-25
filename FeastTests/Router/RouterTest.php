@@ -237,7 +237,7 @@ class RouterTest extends TestCase
         );
         $router->buildRoutes();
         $router->addRoute('test', 'test', 'test');
-        $this->assertTrue($router instanceof Router);
+        $this->assertInstanceOf(Router::class,$router);
         $this->assertTrue($router->isFromCache());
     }
 

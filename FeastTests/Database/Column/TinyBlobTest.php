@@ -29,7 +29,7 @@ class TinyBlobTest extends TestCase
     public function testCreate(): void
     {
         $column = new TinyBlob('test');
-        $this->assertTrue($column instanceof TinyBlob);
+        $this->assertInstanceOf(TinyBlob::class,$column);
     }
 
     public function testGetLength(): void

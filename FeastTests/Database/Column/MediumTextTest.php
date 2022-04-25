@@ -29,7 +29,7 @@ class MediumTextTest extends TestCase
     public function testCreate(): void
     {
         $column = new MediumText('test');
-        $this->assertTrue($column instanceof MediumText);
+        $this->assertInstanceOf(MediumText::class,$column);
     }
 
 }

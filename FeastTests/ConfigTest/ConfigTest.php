@@ -65,7 +65,7 @@ class ConfigTest extends TestCase
                 APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'config.cache'
             )
         );
-        $this->assertTrue($configFromCache instanceof Config);
+        $this->assertInstanceOf(Config::class,$configFromCache);
     }
 
     public function testGetEnvironmentNameDefault(): void
@@ -97,20 +97,20 @@ class ConfigTest extends TestCase
     public function testConstructNotCached(): void
     {
         $config = new Config();
-        $this->assertTrue($config instanceof Config);
+        $this->assertInstanceOf(Config::class,$config);
     }
 
     public function testConstructNoLocal(): void
     {
         \Feast\Config\TempData::$localExists = false;
         $config = new Config();
-        $this->assertTrue($config instanceof Config);
+        $this->assertInstanceOf(Config::class,$config);
     }
 
     public function testConstructOverrideEnv(): void
     {
         $config = new Config(overriddenEnvironment: 'development');
-        $this->assertTrue($config instanceof Config);
+        $this->assertInstanceOf(Config::class,$config);
     }
 
     public function testConstructAfterInContainer(): void

@@ -29,7 +29,7 @@ class CharTest extends TestCase
     public function testCreate(): void
     {
         $column = new Char('Test', 255);
-        $this->assertTrue($column instanceof Char);
+        $this->assertInstanceOf(Char::class,$column);
     }
 
     public function testGetUnsignedNonNumeric(): void

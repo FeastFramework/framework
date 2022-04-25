@@ -18,24 +18,28 @@
 
 declare(strict_types=1);
 
-namespace Database\Column;
+namespace Feast\Database\Column\Postgres;
 
-use Feast\Database\Column\LongText;
-use PHPUnit\Framework\TestCase;
+use Feast\Exception\ServerFailureException;
 
-class LongTextTest extends TestCase
+class SmallInt extends Integer
 {
+    public const TYPE = 'smallint';
 
-    public function testCreate(): void
-    {
-        $column = new LongText('test');
-        $this->assertInstanceOf(LongText::class,$column);
-    }
-
-    public function testGetLength(): void
-    {
-        $column = new LongText('Test', 4_000_000_000);
-        $this->assertEquals(4_000_000_000, $column->getLength());
+    /**
+     * Create Integer column.
+     *
+     * @param string $name
+     * @param bool $nullable
+     * @param int|null $default
+     * @throws ServerFailureException
+     */
+    public function __construct(
+        string $name,
+        bool $nullable = false,
+        ?int $default = null
+    ) {
+        parent::__construct($name, $nullable, $default);
     }
 
 }

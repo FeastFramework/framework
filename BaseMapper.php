@@ -289,7 +289,7 @@ abstract class BaseMapper
             $insert = $this->connection->insert((string)static::TABLE_NAME, $recordArray);
             $insert->execute();
             $lastInsert = $this->connection->lastInsertId((string)static::SEQUENCE_NAME);
-            if ($record->{$primaryKey} === null) {
+            if (!empty($record->{$primaryKey})) {
                 $recordPrimaryKey = ctype_digit($lastInsert) && $lastInsert !== '0' ? (int)$lastInsert : $lastInsert;
                 $record->{$primaryKey} = $recordPrimaryKey;
             }

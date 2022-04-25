@@ -29,7 +29,7 @@ class VarCharTest extends TestCase
     public function testCreate(): void
     {
         $column = new VarChar('Test', 255);
-        $this->assertTrue($column instanceof VarChar);
+        $this->assertInstanceOf(VarChar::class,$column);
     }
 
 }

@@ -98,7 +98,7 @@ class SQLiteQueryTest extends TestCase
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->groupBy('test');
         $result = $query->execute();
-        $this->assertTrue($result instanceof \PDOStatement);
+        $this->assertInstanceOf(\PDOStatement::class,$result);
     }
 
     public function testExecuteFail(): void

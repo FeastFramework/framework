@@ -88,7 +88,7 @@ class ControllerTest extends TestCase
         $controller = new EmptyController($container, $view, $response);
         $controller->forward();
         // If we get this far it didn't fail. The Router tests will test the individual logic pieces.
-        $this->assertTrue($controller instanceof HttpController);
+        $this->assertInstanceOf(HttpController::class,$controller);
     }
 
     public function testExternalRedirect(): void
@@ -103,7 +103,7 @@ class ControllerTest extends TestCase
         $controller = new EmptyController($container, $view, $response);
         $controller->externalRedirect('http://www.google.com');
         // If we get this far it didn't fail. The Router tests will test the individual logic pieces.
-        $this->assertTrue($controller instanceof HttpController);
+        $this->assertInstanceOf(HttpController::class,$controller);
     }
 
     public function testInit(): void
@@ -136,7 +136,7 @@ class ControllerTest extends TestCase
         $controller = new EmptyController($container, $view, $response);
         $controller->redirect();
         // If we get this far it didn't fail. The Router tests will test the individual logic pieces.
-        $this->assertTrue($controller instanceof HttpController);
+        $this->assertInstanceOf(HttpController::class,$controller);
     }
     
     public function testJson(): void
@@ -153,6 +153,6 @@ class ControllerTest extends TestCase
         $controller = new EmptyController($container, $view, $response);
         $controller->sendJsonResponse(new stdClass());
         // If we get this far it didn't fail. The Response test will test the actual json assignment.
-        $this->assertTrue($controller instanceof HttpController);
+        $this->assertInstanceOf(HttpController::class,$controller);
     }
 }

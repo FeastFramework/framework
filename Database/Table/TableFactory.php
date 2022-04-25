@@ -43,6 +43,7 @@ class TableFactory
         $connection = di(DatabaseFactoryInterface::class)->getConnection($connection);
         return match ($connection->getDatabaseType()) {
             DatabaseType::MYSQL => new MySQLTable($name, $connection),
+            DatabaseType::POSTGRES => new PostgresTable($name, $connection),
             default => throw new DatabaseException('Unsupported database type for migrations')
         };
     }

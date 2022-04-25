@@ -22,6 +22,7 @@ namespace Feast\Database\Table;
 
 use Feast\Database\Column\BigInt;
 use Feast\Database\Column\Blob;
+use Feast\Database\Column\Bytea;
 use Feast\Database\Column\Char;
 use Feast\Database\Column\Column;
 use Feast\Database\Column\Decimal;
@@ -614,6 +615,26 @@ abstract class Table
     public function isPrimaryKeyAutoIncrement(): bool
     {
         return $this->primaryKeyAutoIncrement;
+    }
+    
+    public function serial(string $column): static
+    {
+        throw new DatabaseException('Serial datatype not implemented in this database engine');
+    }
+    
+
+    public function bytea(string $name, bool $nullable = false): static
+    {
+        trigger_error('Using blob with default length for bytea', E_USER_NOTICE);
+        return $this->blob($name,nullable: $nullable);
+    }
+
+    public function boolean(string $name, ?bool $default = null, bool $nullable = false): static
+    {
+        trigger_error('Using tinyint(1) for boolean', E_USER_NOTICE);
+
+        $defaultValue = is_bool($default) ? (int)$default : null;
+        return $this->tinyInt($name,true,1,$nullable,$defaultValue);
     }
 
     /**

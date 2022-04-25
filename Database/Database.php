@@ -303,9 +303,9 @@ class Database implements DatabaseInterface
     {
         $query = $this->describe($table);
         try {
-            $query->execute();
+            $result = $query->execute();
 
-            return true;
+            return $result->fetch() ? true : false;
         } catch (Exception) {
             return false;
         }

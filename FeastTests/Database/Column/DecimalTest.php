@@ -30,7 +30,7 @@ class DecimalTest extends TestCase
     public function testCreate(): void
     {
         $column = new Decimal('Test');
-        $this->assertTrue($column instanceof Decimal);
+        $this->assertInstanceOf(Decimal::class,$column);
     }
 
     public function testCreateInvalidDecimal(): void

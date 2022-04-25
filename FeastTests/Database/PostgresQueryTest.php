@@ -102,7 +102,7 @@ class PostgresQueryTest extends TestCase
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->groupBy('test');
         $result = $query->execute();
-        $this->assertTrue($result instanceof \PDOStatement);
+        $this->assertInstanceOf(\PDOStatement::class,$result);
     }
 
     public function testDescribe(): void
@@ -196,7 +196,7 @@ class PostgresQueryTest extends TestCase
     {
         $query = $this->getValidQuery();
         $result = $query->getDescribedTable('public.test_describe');
-        $this->assertTrue($result instanceof TableDetails);
+        $this->assertInstanceOf(TableDetails::class,$result);
     }
 
     public function testGetSequenceWithCompound(): void
@@ -268,11 +268,6 @@ class PostgresQueryTest extends TestCase
         $query->from('test', ['test'])->having('test > ?', ['1']);
         $this->assertEquals('SELECT test FROM test HAVING (test > ?)', $query->__toString());
     }
-
-    public function testSQLiteQuery(): void
-    {
-        $query = new SQLiteQuery(new PDOMock('dsnstring'));
-        $this->assertTrue($query instanceof SQLiteQuery && $query instanceof MySQLQuery);
-    }
+    
 
 }
