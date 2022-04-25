@@ -61,24 +61,62 @@ class MySQLTable extends Table
             $columns[] = 'PRIMARY KEY (' . $this->primaryKeyName . ')';
         }
 
+        $columns = $this->addIndexesForDdl($columns);
+        $columns = $this->addUniqueIndexesForDdl($columns);
+        $columns = $this->addForeignKeysForDdl($columns);
+
+        $return .= implode(',' . "\n", $columns) . ')';
+
+        return new Ddl($return, $bindings);
+    }
+
+    /**
+     * @param list<string> $columns
+     * @return list<string>
+     */
+    protected function addForeignKeysForDdl(array $columns): array
+    {
+        /** @var array{name:string,columns:list<string>, referencesTable:string, referencesColumns:list<string>, onDelete:string, onUpdate:string} $foreignKey */
+        foreach ($this->foreignKeys as $foreignKey) {
+            $columns[] = 'CONSTRAINT ' . $foreignKey['name']
+                . ' foreign key ('
+                . implode(',', $foreignKey['columns'])
+                . ') REFERENCES `' . $foreignKey['referencesTable']
+                . '`(' . implode(',', $foreignKey['referencesColumns'])
+                . ') ON DELETE '
+                . $foreignKey['onDelete']
+                . ' ON UPDATE ' . $foreignKey['onUpdate'];
+        }
+
+        return $columns;
+    }
+
+    /**
+     * @param list<string> $columns
+     * @return list<string>
+     */
+    protected function addIndexesForDdl(array $columns): array
+    {
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->indexes as $index) {
             $columns[] = 'INDEX ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
         }
 
+        return $columns;
+    }
+
+    /**
+     * @param list<string> $columns
+     * @return list<string>
+     */
+    protected function addUniqueIndexesForDdl(array $columns): array
+    {
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->uniques as $index) {
             $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
         }
 
-        /** @var array{name:string,columns:list<string>, referencesTable:string, referencesColumns:list<string>, onDelete:string, onUpdate:string} $foreignKey */
-        foreach ($this->foreignKeys as $foreignKey) {
-            $columns[] = 'CONSTRAINT ' . $foreignKey['name'] . ' foreign key (' . implode(',',$foreignKey['columns']) . ') REFERENCES `' . $foreignKey['referencesTable'] . '`(' . implode(',',$foreignKey['referencesColumns']) . ') ON DELETE ' . $foreignKey['onDelete'] . ' ON UPDATE ' . $foreignKey['onUpdate']; 
-        }
-
-        $return .= implode(',' . "\n", $columns) . ')';
-
-        return new Ddl($return, $bindings);
+        return $columns;
     }
 
     protected function getColumnForDdl(Column $column, array &$bindings): string
@@ -97,21 +135,5 @@ class MySQLTable extends Table
         }
         return $string;
     }
-
-    protected function getDefaultAsBindingOrText(Column $column, array &$bindings): string
-    {
-        $default = $column->getDefault();
-        if ($default !== null) {
-            if (in_array(strtolower($column->getType()), ['datetime', 'timestamp']) && strtolower(
-                    $default
-                ) === 'current_timestamp') {
-                return ' DEFAULT CURRENT_TIMESTAMP';
-            }
-            $return = ' DEFAULT ?';
-            $bindings[] = $default;
-
-            return $return;
-        }
-        return '';
-    }
+    
 }

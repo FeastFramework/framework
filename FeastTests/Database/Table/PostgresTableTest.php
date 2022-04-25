@@ -298,6 +298,23 @@ class PostgresTableTest extends TestCase
         $this->assertEquals(['4'], $ddl->bindings);
     }
 
+    public function testGetDdlNoIndexes(): void
+    {
+        $this->table->tinyInt('Test');
+        $this->table->int('Test', default: 4);
+        $this->table->bytea('Test');
+        $this->table->timestamp('test', 'CURRENT_TIMESTAMP');
+        $this->table->primary('Test');
+        $this->table->uniqueIndex('test');
+        $this->table->foreignKey('test', 'noTest', 'notATest');
+        $ddl = $this->table->getDdl();
+        $this->assertEquals(
+            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_test (test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);',
+            $ddl->ddl
+        );
+        $this->assertEquals(['4'], $ddl->bindings);
+    }
+
     public function testSerial(): void
     {
         $this->table->serial('Test');

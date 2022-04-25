@@ -571,17 +571,23 @@ abstract class Table
      * @param string|null $name
      * @return static
      */
-    public function foreignKey(string|array $columns, string $referencesTable, string|array $referencesColumns, string $onDelete = 'RESTRICT', string $onUpdate = 'RESTRICT', ?string $name = null): static
-    {
-        if ( !is_array($columns) ) {
+    public function foreignKey(
+        string|array $columns,
+        string $referencesTable,
+        string|array $referencesColumns,
+        string $onDelete = 'RESTRICT',
+        string $onUpdate = 'RESTRICT',
+        ?string $name = null
+    ): static {
+        if (!is_array($columns)) {
             $columns = [$columns];
         }
 
-        if ( !is_array($referencesColumns) ) {
+        if (!is_array($referencesColumns)) {
             $referencesColumns = [$referencesColumns];
         }
         if ($name === null) {
-            $name = 'fk_' . implode('_',[implode('_',$columns), $referencesTable, implode('_',$referencesColumns)]);
+            $name = 'fk_' . implode('_', [implode('_', $columns), $referencesTable, implode('_', $referencesColumns)]);
         }
         $this->foreignKeys[] = [
             'name' => $name,
@@ -695,27 +701,66 @@ abstract class Table
     {
         return $this->primaryKeyAutoIncrement;
     }
-    
+
+    /**
+     * Add new serial column. Not implemented in base class.
+     * 
+     * @param string $column
+     * @return $this
+     * @throws DatabaseException
+     */
     public function serial(string $column): static
     {
         throw new DatabaseException('Serial datatype not implemented in this database engine');
     }
-    
 
+    /**
+     * Add new bytea column. Base uses blob.
+     * 
+     * @param string $name
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function bytea(string $name, bool $nullable = false): static
     {
         trigger_error('Using blob with default length for bytea', E_USER_NOTICE);
-        return $this->blob($name,nullable: $nullable);
+        return $this->blob($name, nullable: $nullable);
     }
 
+    /**
+     * Add new boolean column. Base uses tinyint(1) unsigned.
+     * @param string $name
+     * @param bool|null $default
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function boolean(string $name, ?bool $default = null, bool $nullable = false): static
     {
         trigger_error('Using tinyint(1) for boolean', E_USER_NOTICE);
 
         $defaultValue = is_bool($default) ? (int)$default : null;
-        return $this->tinyInt($name,true,1,$nullable,$defaultValue);
+        return $this->tinyInt($name, true, 1, $nullable, $defaultValue);
     }
 
+    protected function getDefaultAsBindingOrText(Column $column, array &$bindings): string
+    {
+        $default = $column->getDefault();
+        if ($default !== null) {
+            if (in_array(strtolower($column->getType()), ['datetime', 'timestamp']) && strtolower(
+                    $default
+                ) === 'current_timestamp') {
+                return ' DEFAULT CURRENT_TIMESTAMP';
+            }
+            $return = ' DEFAULT ?';
+            $bindings[] = $default;
+
+            return $return;
+        }
+        return '';
+    }
+    
     /**
      * Drop table.
      */

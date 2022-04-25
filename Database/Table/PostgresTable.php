@@ -69,28 +69,63 @@ class PostgresTable extends Table
             $columns[] = 'PRIMARY KEY (' . $this->primaryKeyName . ')';
         }
 
+        $columns = $this->addUniqueIndexesForDdl($columns);
+        $columns = $this->addForeignKeysForDdl($columns);
+
+        $return .= implode(',' . "\n", $columns) . ');';
+        $return .= $this->addIndexesForDdl();
+
+        return new Ddl($return, $bindings);
+    }
+
+    protected function addIndexesForDdl(): string
+    {
+        $columns = [];
+        /** @var array{name:string,columns:list<string>} $index */
+        foreach ($this->indexes as $index) {
+            $columns[] = 'CREATE INDEX IF NOT EXISTS ' . $index['name'] . ' ON ' . $this->name . ' (' . implode(
+                    ',',
+                    $index['columns']
+                ) . ');';
+        }
+        if (!empty($columns)) {
+            return "\n" . implode("\n", $columns);
+        }
+
+        return '';
+    }
+
+    /**
+     * @param list<string> $columns
+     * @return list<string>
+     */
+    protected function addForeignKeysForDdl(array $columns): array
+    {
+        /** @var array{name:string,columns:list<string>, referencesTable:string, referencesColumns:list<string>, onDelete:string, onUpdate:string} $foreignKey */
+        foreach ($this->foreignKeys as $foreignKey) {
+            $columns[] = 'CONSTRAINT ' . $foreignKey['name'] . ' FOREIGN KEY ('
+                . implode(',', $foreignKey['columns'])
+                . ') REFERENCES "' . $foreignKey['referencesTable']
+                . '"(' . implode(',', $foreignKey['referencesColumns'])
+                . ') ON DELETE ' . $foreignKey['onDelete']
+                . ' ON UPDATE ' . $foreignKey['onUpdate'];
+        }
+
+        return $columns;
+    }
+
+    /**
+     * @param list<string> $columns
+     * @return list<string>
+     */
+    protected function addUniqueIndexesForDdl(array $columns): array
+    {
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->uniques as $index) {
             $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
         }
 
-        /** @var array{name:string,columns:list<string>, referencesTable:string, referencesColumns:list<string>, onDelete:string, onUpdate:string} $foreignKey */
-        foreach ($this->foreignKeys as $foreignKey) {
-            $columns[] = 'CONSTRAINT ' . $foreignKey['name'] . ' FOREIGN KEY (' . implode(',',$foreignKey['columns']) . ') REFERENCES "' . $foreignKey['referencesTable'] . '"(' . implode(',',$foreignKey['referencesColumns']) . ') ON DELETE ' . $foreignKey['onDelete'] . ' ON UPDATE ' . $foreignKey['onUpdate'];
-        }
-
-        $return .= implode(',' . "\n", $columns) . ');';
-
-        $columns = [];
-        /** @var array{name:string,columns:list<string>} $index */
-        foreach ($this->indexes as $index) {
-            $columns[] = 'CREATE INDEX IF NOT EXISTS ' . $index['name'] . ' ON ' . $this->name . ' (' . implode(',', $index['columns']) . ');';
-        }
-        if ( !empty($columns) ) {
-            $return .= "\n";
-        }
-        $return .= implode("\n", $columns);
-        return new Ddl($return, $bindings);
+        return $columns;
     }
 
     protected function getColumnForDdl(Column $column, array &$bindings): string
@@ -105,23 +140,6 @@ class PostgresTable extends Table
         $string .= $column->isNullable() ? ' null' : ' not null';
         $string .= $this->getDefaultAsBindingOrText($column, $bindings);
         return $string;
-    }
-
-    protected function getDefaultAsBindingOrText(Column $column, array &$bindings): string
-    {
-        $default = $column->getDefault();
-        if ($default !== null) {
-            if (in_array(strtolower($column->getType()), ['datetime', 'timestamp']) && strtolower(
-                    $default
-                ) === 'current_timestamp') {
-                return ' DEFAULT CURRENT_TIMESTAMP';
-            }
-            $return = ' DEFAULT ?';
-            $bindings[] = $default;
-
-            return $return;
-        }
-        return '';
     }
 
     /**
@@ -244,36 +262,89 @@ class PostgresTable extends Table
         return $this;
     }
 
+    /**
+     * Add new blob column. Fallback to bytea for PostgreSQL
+     *
+     * @param string $name
+     * @param int $length
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function blob(string $name, int $length = 65535, bool $nullable = false): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
         return $this->bytea($name, $nullable);
     }
 
+    /**
+     * Add new mediumblob column. Fallback to bytea for PostgreSQL
+     *
+     * @param string $name
+     * @param int $length
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function mediumBlob(string $name, int $length = 65535, bool $nullable = false): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
         return $this->bytea($name, $nullable);
     }
 
+    /**
+     * Add new longblob column. Fallback to bytea for PostgreSQL
+     *
+     * @param string $name
+     * @param int $length
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function longBlob(string $name, int $length = 65535, bool $nullable = false): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
         return $this->bytea($name, $nullable);
     }
 
+    /**
+     * Add new tinyblob column. Fallback to bytea for PostgreSQL
+     *
+     * @param string $name
+     * @param int $length
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function tinyBlob(string $name, int $length = 65535, bool $nullable = false): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
         return $this->bytea($name, $nullable);
     }
 
+    /**
+     * Add new DateTime column.
+     *
+     * @param string $name
+     * @param string|null $default
+     * @param bool $nullable
+     * @return static
+     * @throws ServerFailureException
+     */
     public function dateTime(string $name, ?string $default = null, bool $nullable = false): static
     {
         trigger_error('Using timestamp for datetime', E_USER_NOTICE);
-        return $this->timestamp($name, $default,$nullable);
+        return $this->timestamp($name, $default, $nullable);
     }
-    
+
+    /**
+     * Add new bytea column.
+     *
+     * @param string $name
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function bytea(string $name, bool $nullable = false): static
     {
         $this->columns[] = new Bytea($name, $nullable);
@@ -297,30 +368,74 @@ class PostgresTable extends Table
         return $this;
     }
 
+    /**
+     * Add autoIncrement column. Falls back to serial column in PostgreSQL.
+     *
+     * @param string $column
+     * @param positive-int $length
+     * @return static
+     * @throws ServerFailureException
+     */
     public function autoIncrement(string $column, int $length = 11): static
     {
         return $this->serial($column);
     }
 
+    /**
+     * Add new TinyText column. Falls back to text column in PostgreSQL.
+     *
+     * @param string $name
+     * @param positive-int $length
+     * @param bool $nullable
+     * @return static
+     * @throws ServerFailureException
+     */
     public function tinyText(string $name, int $length = 255, bool $nullable = false): static
     {
         return $this->text($name, $length, $nullable);
     }
 
+    /**
+     * Add new MediumText column. Falls back to text column in PostgreSQL.
+     *
+     * @param string $name
+     * @param positive-int $length
+     * @param bool $nullable
+     * @return static
+     * @throws ServerFailureException
+     */
     public function mediumText(string $name, int $length = 255, bool $nullable = false): static
     {
         return $this->text($name, $length, $nullable);
     }
 
+    /**
+     * Add new LongText column. Falls back to text column in PostgreSQL.
+     *
+     * @param string $name
+     * @param positive-int $length
+     * @param bool $nullable
+     * @return static
+     * @throws ServerFailureException
+     */
     public function longText(string $name, int $length = 255, bool $nullable = false): static
     {
         return $this->text($name, $length, $nullable);
     }
-    
+
+    /**
+     * Add new boolean column.
+     *
+     * @param string $name
+     * @param bool|null $default
+     * @param bool $nullable
+     * @return $this
+     * @throws ServerFailureException
+     */
     public function boolean(string $name, ?bool $default = null, bool $nullable = false): static
     {
         $this->columns[] = new Boolean($name, $nullable, $default);
-        
+
         return $this;
     }
 
