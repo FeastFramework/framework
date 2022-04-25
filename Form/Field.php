@@ -27,7 +27,6 @@ use Feast\Form\Field\SelectValue;
 use Feast\Form\Field\Value;
 use Feast\Form\Filter\Filter;
 use Feast\Form\Validator\Validator;
-use stdClass;
 
 /**
  * This class is used to create form fields.

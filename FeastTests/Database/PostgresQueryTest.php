@@ -23,10 +23,8 @@ declare(strict_types=1);
 
 namespace Database;
 
-use Feast\Database\MySQLQuery;
 use Feast\Database\PostgresQuery;
 use Feast\Database\Query;
-use Feast\Database\SQLiteQuery;
 use Feast\Database\TableDetails;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidArgumentException;
