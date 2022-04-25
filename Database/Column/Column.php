@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace Feast\Database\Column;
 
 use Feast\Exception\DatabaseException;
-use Feast\Exception\ServerFailureException;
 
 class Column
 {
