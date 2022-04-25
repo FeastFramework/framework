@@ -154,8 +154,10 @@ down should undo whatever is done in the up call.
 
 FEAST provides a TableFactory to retrieve an instance of a table builder. Currently, this table builder is limited to
 MySQL and PostgreSQL. Using this table builder, you can quickly specify your table details and run the create without
-writing a single
-line of SQL. Example:
+writing a single line of SQL. Note, however, that this is designed for use on simple structures and may not work in all
+use cases. 
+
+Example table builder usage:
 
 ```php
     public function up() : void
@@ -210,7 +212,7 @@ There are many other methods available to the Table instance returned by the Tab
 25. boolean (alias to tinyint(1) for MySQL table)
 26. column - Column is used if you need a column type that does not fit into the other rules.
 
-In addition, the `rawQuery` method can be used in a migration to run a specific query.
+In addition, the `rawQuery` method can be used in a migration to run a specific query or a more complex CREATE.
 
 #### Adding indexes
 
