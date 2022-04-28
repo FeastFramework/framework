@@ -38,6 +38,8 @@ transformations on JSON data. It has four optional properties.
    ISO-8601.
 4. `included` - Defaults to true. If set to false, Json strings created with the `Json::marshal` function will not
    include the property.
+5. `omitEmpty` - Defaults to false. If set to true, Json strings created with the `Json::marshal` function will not
+      include the property if the value is null or empty string (`''`).
 
 [Back to Top](#working-with-json-and-objects)
 
@@ -58,13 +60,16 @@ class TestJsonItem
     public DateTime $timestamp;
     #[JsonItem(included: false)]
     public string $notIncluded;
+    #[JsonItem(omitEmpty: true)]
+    public string $emptyNotIncluded = '';
 ```
 
-This class has five properties. The first, `$firstName` is a string, and is pulled from the `first_name` key. The second
+This class has six properties. The first, `$firstName` is a string, and is pulled from the `first_name` key. The second
 property is `$lastName` and behaves the same as `$firstName`. The third property is an array. This array contains other
 items of the same class. These items will marshal or unmarshal through all layers. The fourth property is an instance
 of `DateTime`. The fifth property, `$notIncluded` is a string that is pulled from `notIncluded` in the JSON, but will
-NOT be marshalled back into JSON.
+NOT be marshalled back into JSON. The sixth property, `$emptyNotIncluded` will not be marshalled back into JSON if no
+value was set.
 
 Sample string below:
 
@@ -79,7 +84,8 @@ Sample string below:
     }
   ],
   "timestamp": "20210405",
-  "notIncluded": "Feast"
+  "notIncluded": "Feast",
+  "emptyNotIncluded": "test"
 }
 ```
 
@@ -90,7 +96,7 @@ Json::unmarshal($string,TestJsonItem::class);
 ```
 
 In addition, calling either of the following would return the JSON string again (in minified format)  with `notIncluded`
-not contained in the string.
+not contained in the string, but `emptyNotIncluded` will be included since it has a non-empty string value.
 
 ```php
 $object = Json::unmarshal($string,TestJsonItem::class);
@@ -110,6 +116,7 @@ $object->firstName = 'FEAST';
 $object->lastName = 'Framework';
 $object->timestamp = DateTime::createFromFormat('Ymd','20210405');
 $object->notIncluded = 'Feast';
+$object->emptyNotIncluded = 'test';
 
 $secondaryObject = new TestJsonItem();
 $secondaryObject->firstName = 'Jeremy';
