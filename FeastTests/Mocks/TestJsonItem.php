@@ -62,6 +62,13 @@ class TestJsonItem
     public Set $thirdSet;
 
     public ?int $calls = null;
+
+    #[JsonItem(omitEmpty: true)]
+    public ?int $moreCalls = null;
+
+    #[JsonItem(omitEmpty: true)]
+    public string $stringCalls = '';
+
     public int $count;
 
     public int $records;

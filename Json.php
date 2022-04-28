@@ -52,7 +52,7 @@ class Json
         $paramInfo = self::getClassParamInfo($object::class);
         /**
          * @var string $oldName
-         * @var array{name:string|null,type:string|null,dateFormat:string,included:bool} $newInfo
+         * @var array{name:string|null,type:string|null,dateFormat:string,included:bool,omitEmpty:bool} $newInfo
          */
         foreach ($paramInfo as $oldName => $newInfo) {
             if ($newInfo['included'] === false) {
@@ -62,9 +62,11 @@ class Json
 
             $reflected = new ReflectionProperty($object, $oldName);
             if ($reflected->isInitialized($object)) {
-                /** @var scalar|object|array $oldItem */
+                /** @var scalar|object|array|null $oldItem */
                 $oldItem = $object->{$oldName};
-                if (is_array($oldItem) || $oldItem instanceof stdClass) {
+                if ( $newInfo['omitEmpty'] && ($oldItem === null || $oldItem === '')) {
+                    continue;
+                } elseif (is_array($oldItem) || $oldItem instanceof stdClass) {
                     $return->{$newName} = self::marshalArray((array)$oldItem);
                 } elseif (is_object(
                         $oldItem
@@ -165,7 +167,7 @@ class Json
 
     /**
      * @param class-string $class
-     * @return array<array{name:string|null,type:string|null,dateFormat:string|null,included:bool}>
+     * @return array<array{name:string|null,type:string|null,dateFormat:string|null,included:bool,omitEmpty:bool}>
      * @throws ReflectionException
      */
     protected static function getClassParamInfo(
@@ -176,8 +178,9 @@ class Json
         foreach ($classInfo->getProperties() as $property) {
             $name = $property->getName();
             $type = null;
-            $dateFormat = Date::ISO8601;
+            $dateFormat = Date::ATOM;
             $included = true;
+            $omitEmpty = false;
             $attributes = $property->getAttributes(JsonItem::class);
             foreach ($attributes as $attribute) {
                 /** @var JsonItem $attributeObject */
@@ -186,12 +189,14 @@ class Json
                 $type = $attributeObject->arrayOrCollectionType;
                 $dateFormat = $attributeObject->dateFormat;
                 $included = $attributeObject->included;
+                $omitEmpty = $attributeObject->omitEmpty;
             }
             $return[$property->getName()] = [
                 'name' => $name,
                 'type' => $type,
                 'dateFormat' => $dateFormat,
-                'included' => $included
+                'included' => $included,
+                'omitEmpty' => $omitEmpty
             ];
         }
         return $return;
@@ -203,7 +208,7 @@ class Json
      * @param string $propertySubtype
      * @param array $jsonData
      * @throws Exception\ServerFailureException
-     * @throws ReflectionException
+     * @throws ReflectionException|JsonException
      */
     protected static function unmarshalArray(
         ReflectionProperty $property,
