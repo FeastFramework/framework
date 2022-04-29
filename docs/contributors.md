@@ -47,7 +47,7 @@ and pressure to release.
 
 [Bailey Dickens](https://github.com/directionalpad)
 
-Bailey Dickens' contributed assistance on the Contributing guidelines, as well as general feedback on certain features
+Bailey Dickens contributed assistance on the Contributing guidelines, as well as general feedback on certain features
 of the Framework. In addition, he tested an early version of the framework in 2014.
 
 [German Gamboa Gonzalaz](https://github.com/germangamboa95)
@@ -61,6 +61,11 @@ of the Framework. In addition, he tested an early version of the framework in 20
 [SgtVarmint](https://github.com/SgtVarmint)
 
 [Eric Paulson](https://github.com/EricPaulson)
+
+[Brandon Johnson](https://github.com/bzjohnson19)
+
+Brandon Johnson provided testing on the JSON Marshaller as well as suggested adding the `omitEmpty` flag after working
+with it.
 
 # Sponsors
 
