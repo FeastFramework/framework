@@ -49,6 +49,9 @@ abstract class Table
     protected array $indexes = [];
     protected array $uniques = [];
     protected array $foreignKeys = [];
+    protected ?string $collation = null;
+    protected ?string $characterSet = null;
+    protected ?string $dbEngine = null;
 
     public function __construct(protected string $name, protected DatabaseInterface $connection)
     {
@@ -853,6 +856,24 @@ abstract class Table
 
         $defaultValue = is_bool($default) ? (int)$default : null;
         return $this->tinyInt($name, true, 1, $nullable, $defaultValue, $comment);
+    }
+
+    public function collation(string $collation): static
+    {
+        $this->collation = $collation;
+        return $this;
+    }
+
+    public function characterSet(string $characterSet): static
+    {
+        $this->characterSet = $characterSet;
+        return $this;
+    }
+    
+    public function dbEngine(string $dbEngine): static
+    {
+        $this->dbEngine = $dbEngine;
+        return $this;
     }
 
     protected function getDefaultAsBindingOrText(Column $column, array &$bindings): string

@@ -410,4 +410,22 @@ class PostgresTableTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->table->smallInt('test', true);
     }
+
+    public function testCharacterSet(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->characterSet('test');
+    }
+
+    public function testCollation(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->collation('test');
+    }
+
+    public function testDbEngine(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->dbEngine('test');
+    }
 }
