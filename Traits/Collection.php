@@ -420,10 +420,10 @@ trait Collection
      * Return the key of the current element.
      *
      * @link https://php.net/manual/en/iterator.key.php
-     * @return mixed|null scalar on success, or null on failure.
+     * @return string|int|null scalar on success, or null on failure.
      * @noinspection PhpDocSignatureInspection
      */
-    public function key(): mixed
+    public function key(): string|int|null
     {
         return key($this->array);
     }

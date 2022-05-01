@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast;
 
+use Exception;
 use Feast\Enums\ResponseCode;
 use Feast\Interfaces\ControllerInterface;
 use Feast\Interfaces\ResponseInterface;
@@ -73,7 +74,7 @@ abstract class HttpController implements ControllerInterface
      * @param string|null $module
      * @param string $route
      * @throws NotFoundException
-     * @throws \Exception
+     * @throws Exception
      */
     public function forward(
         string $action = null,
@@ -122,7 +123,7 @@ abstract class HttpController implements ControllerInterface
      * @param string $route
      * @param ResponseCode $code (30x)
      * @throws NotFoundException
-     * @throws \Exception
+     * @throws Exception
      */
     public function redirect(
         ?string $action = null,

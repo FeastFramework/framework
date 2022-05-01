@@ -194,6 +194,30 @@ class MySQLTableTest extends TestCase
         $this->assertInstanceOf(LongText::class, $columns[0]);
     }
 
+    public function testLongTextDefault(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->longText('Test',default: 'test');
+    }
+
+    public function testTinyTextDefault(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->tinyText('Test',default: 'test');
+    }
+
+    public function testMediumTextDefault(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->mediumText('Test',default: 'test');
+    }
+
+    public function testTextDefault(): void
+    {
+        $this->expectException(DatabaseException::class);
+        $this->table->text('Test',default: 'test');
+    }
+
     public function testChar(): void
     {
         $this->table->char('Test');
@@ -331,7 +355,7 @@ class MySQLTableTest extends TestCase
 
     public function testGetDdl(): void
     {
-        $this->table->tinyInt('Test');
+        $this->table->tinyInt('Test', comment: 'This is a test');
         $this->table->int('Test', default: 4);
         $this->table->tinyBlob('Test');
         $this->table->timestamp('test', 'CURRENT_TIMESTAMP');
@@ -341,10 +365,10 @@ class MySQLTableTest extends TestCase
         $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB(255) not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'INDEX index_test (test),' . "\n" . 'UNIQUE unique_index_Test (Test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest foreign key (test) REFERENCES `noTest`(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT)',
+            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null COMMENT ?,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB(255) not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'INDEX index_test (test),' . "\n" . 'UNIQUE unique_index_Test (Test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest foreign key (test) REFERENCES `noTest`(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT)',
             $ddl->ddl
         );
-        $this->assertEquals(['4'], $ddl->bindings);
+        $this->assertEquals(['This is a test', '4'], $ddl->bindings);
     }
 
     public function testSerial(): void

@@ -565,7 +565,7 @@ class CreateController extends WriteTemplateController
         $pathParent .= DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR;
 
         $path = $pathParent . ucfirst($controller);
-        if (file_exists($path) == false) {
+        if (!file_exists($path)) {
             mkdir($path, 0755, true);
             $this->terminal->message('Directory ' . $path . ' Created');
         }

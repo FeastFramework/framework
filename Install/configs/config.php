@@ -4,15 +4,19 @@
 # name and a colon. Settings in the chosen environment will be overridden by
 # the config.local.php file
 
+use Feast\Database\MySQLQuery;
+use Feast\Enums\DatabaseType;
+use Feast\HttpRequest\Curl;
+
 $environments = [];
 $environments['production'] = [
     'siteurl' => 'http://feast-framework.com',
     'database.default.host' => 'localhost',
     'database.default.user' => 'prod_user',
     'database.default.pass' => 'prodPassword',
-    'database.default.connectionType' => \Feast\Enums\DatabaseType::MYSQL,
+    'database.default.connectionType' => DatabaseType::MYSQL,
     //'database.default.connectionType' => \Feast\Enums\DatabaseType::SQLITE,
-    'database.default.queryClass' => \Feast\Database\MySQLQuery::class,
+    'database.default.queryClass' => MySQLQuery::class,
     //'database.default.queryClass' => \Feast\Database\SQLiteQuery::class,
     'database.default.name' => 'feasty',
     // 'plugin.throttle' => \Plugins\Throttle::class,
@@ -25,7 +29,7 @@ $environments['production'] = [
     'session.strictIp' => true,
     'error.http404.url' => 'error/fourohfour',
     'cron.spawn' => true,
-    'service.class' => \Feast\HttpRequest\Curl::class,
+    'service.class' => Curl::class,
     #'service.class' => \Feast\HttpRequest\Simple::class,
     'email.sendmailpath' => '/usr/sbin/sendmail -oi -t -f ',
     'log.permissions.path' => 0755,
@@ -40,7 +44,7 @@ $environments['production : development'] = [
 ];
 
 $environments['development : test'] = [
-    'database.default.connectionType' => \Feast\Enums\DatabaseType::SQLITE,
+    'database.default.connectionType' => DatabaseType::SQLITE,
     'database.default.name' => ':memory:'
 ];
 return $environments;

@@ -282,7 +282,7 @@ class PostgresTableTest extends TestCase
 
     public function testGetDdl(): void
     {
-        $this->table->tinyInt('Test');
+        $this->table->tinyInt('Test', comment: 'this is a test');
         $this->table->int('Test', default: 4);
         $this->table->bytea('Test');
         $this->table->timestamp('test', 'CURRENT_TIMESTAMP');
@@ -292,10 +292,43 @@ class PostgresTableTest extends TestCase
         $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_test (test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test ON Test (Test);',
+            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_test (test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test ON Test (Test);' . "\n" . 'comment on column Test.Test is ?;',
             $ddl->ddl
         );
-        $this->assertEquals(['4'], $ddl->bindings);
+        $this->assertEquals(['4', 'this is a test'], $ddl->bindings);
+    }
+
+    public function testGetDdlTimestampDefaultNow(): void
+    {
+        $this->table->timestamp('test', 'NOW()');
+        $ddl = $this->table->getDdl();
+        $this->assertEquals(
+            'CREATE TABLE IF NOT EXISTS Test(test timestamp not null DEFAULT now());',
+            $ddl->ddl
+        );
+        $this->assertEquals([], $ddl->bindings);
+    }
+
+    public function testGetDdlTimestampDefaultNull(): void
+    {
+        $this->table->timestamp('test');
+        $ddl = $this->table->getDdl();
+        $this->assertEquals(
+            'CREATE TABLE IF NOT EXISTS Test(test timestamp not null);',
+            $ddl->ddl
+        );
+        $this->assertEquals([], $ddl->bindings);
+    }
+
+    public function testGetDdlTimestampDefaultReal(): void
+    {
+        $this->table->timestamp('test', '2022-05-01 18:31:22');
+        $ddl = $this->table->getDdl();
+        $this->assertEquals(
+            'CREATE TABLE IF NOT EXISTS Test(test timestamp not null DEFAULT ?);',
+            $ddl->ddl
+        );
+        $this->assertEquals(['2022-05-01 18:31:22'], $ddl->bindings);
     }
 
     public function testGetDdlNoIndexes(): void
@@ -336,6 +369,22 @@ class PostgresTableTest extends TestCase
         $this->table->boolean('Test');
         $columns = $this->table->getColumns();
         $this->assertInstanceOf(Boolean::class, $columns[0]);
+    }
+
+    public function testBoolDefaultTrue(): void
+    {
+        $this->table->boolean('Test', true);
+        /** @var array<Column> $columns */
+        $columns = $this->table->getColumns();
+        $this->assertEquals('true', $columns[0]->getDefault());
+    }
+
+    public function testBoolDefaultFalse(): void
+    {
+        $this->table->boolean('Test', false);
+        /** @var array<Column> $columns */
+        $columns = $this->table->getColumns();
+        $this->assertEquals('false', $columns[0]->getDefault());
     }
 
     public function testBigIntUnsigned(): void

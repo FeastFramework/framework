@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace Feast\Database\Column\Postgres;
 
 use Feast\Database\Column\Column;
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class Integer extends Column
 {
@@ -33,14 +33,16 @@ class Integer extends Column
      * @param string $name
      * @param bool $nullable
      * @param int|null $default
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
     public function __construct(
         string $name,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ) {
-        parent::__construct($name, null, (string)static::TYPE, nullable: $nullable, default: $default);
+        parent::__construct($name, null, (string)static::TYPE, nullable: $nullable, default: $default, comment: $comment);
     }
-    
+
 }

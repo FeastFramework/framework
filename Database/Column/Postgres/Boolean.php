@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace Feast\Database\Column\Postgres;
 
 use Feast\Database\Column\Column;
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class Boolean extends Column
 {
@@ -33,10 +33,11 @@ class Boolean extends Column
      * @param string $name
      * @param bool $nullable
      * @param bool|null $default
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
-    public function __construct(string $name, bool $nullable = false, ?bool $default = null)
+    public function __construct(string $name, bool $nullable = false, ?bool $default = null, ?string $comment = null)
     {
-        parent::__construct($name, null,  self::TYPE,nullable: $nullable, default: $default);
+        parent::__construct($name, null,  self::TYPE,nullable: $nullable, default: $default, comment: $comment);
     }
 }

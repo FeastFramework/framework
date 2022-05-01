@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Database\Column;
 
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class Char extends Column
 {
@@ -33,11 +33,12 @@ class Char extends Column
      * @param positive-int $length
      * @param string|null $default
      * @param bool $nullable
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
-    public function __construct(string $name, int $length = 255, ?string $default = null, bool $nullable = false)
+    public function __construct(string $name, int $length = 255, ?string $default = null, bool $nullable = false, ?string $comment = null)
     {
-        parent::__construct($name, $length, (string)static::TYPE, nullable: $nullable, default: $default);
+        parent::__construct($name, $length, (string)static::TYPE, nullable: $nullable, default: $default, comment: $comment);
     }
 
 }

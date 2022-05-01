@@ -32,4 +32,12 @@ class VarCharTest extends TestCase
         $this->assertInstanceOf(VarChar::class,$column);
     }
 
+    public function testComment(): void
+    {
+        $column = new VarChar('Test', 255, comment: 'This is a comment');
+        $this->assertEquals('This is a comment', $column->getComment());
+    }
+
+
+
 }

@@ -62,6 +62,7 @@ abstract class Table
      * @param bool $nullable
      * @param int|null $default
      * @param positive-int $length
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -70,9 +71,10 @@ abstract class Table
         bool $unsigned = false,
         bool $nullable = false,
         ?int $default = null,
-        int $length = 11
+        int $length = 11,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new Integer($name, $length, $unsigned, $nullable, $default);
+        $this->columns[] = new Integer($name, $length, $unsigned, $nullable, $default, $comment);
 
         return $this;
     }
@@ -85,6 +87,7 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -93,9 +96,10 @@ abstract class Table
         bool $unsigned = false,
         int $length = 4,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new TinyInt($name, $length, $unsigned, $nullable, $default);
+        $this->columns[] = new TinyInt($name, $length, $unsigned, $nullable, $default, $comment);
 
         return $this;
     }
@@ -108,6 +112,7 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -116,9 +121,10 @@ abstract class Table
         bool $unsigned = false,
         int $length = 6,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new SmallInt($name, $length, $unsigned, $nullable, $default);
+        $this->columns[] = new SmallInt($name, $length, $unsigned, $nullable, $default, $comment);
 
         return $this;
     }
@@ -131,6 +137,7 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -139,9 +146,10 @@ abstract class Table
         bool $unsigned = false,
         int $length = 8,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new MediumInt($name, $length, $unsigned, $nullable, $default);
+        $this->columns[] = new MediumInt($name, $length, $unsigned, $nullable, $default, $comment);
 
         return $this;
     }
@@ -154,6 +162,7 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -162,9 +171,10 @@ abstract class Table
         bool $unsigned = true,
         int $length = 20,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new BigInt($name, $length, $unsigned, $nullable, $default);
+        $this->columns[] = new BigInt($name, $length, $unsigned, $nullable, $default, $comment);
 
         return $this;
     }
@@ -177,17 +187,19 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
     public function float(
         string $name,
         bool $unsigned = true,
         int $length = 20,
         bool $nullable = false,
-        ?string $default = null
+        ?string $default = null,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new Column($name, $length, 'float', $unsigned, null, $nullable, $default);
+        $this->columns[] = new Column($name, $length, 'float', $unsigned, null, $nullable, $default, $comment);
 
         return $this;
     }
@@ -200,17 +212,19 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
     public function double(
         string $name,
         bool $unsigned = true,
         int $length = 20,
         bool $nullable = false,
-        ?string $default = null
+        ?string $default = null,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new Column($name, $length, 'double', $unsigned, null, $nullable, $default);
+        $this->columns[] = new Column($name, $length, 'double', $unsigned, null, $nullable, $default, $comment);
 
         return $this;
     }
@@ -224,6 +238,7 @@ abstract class Table
      * @param int $decimal
      * @param string|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -233,9 +248,10 @@ abstract class Table
         int $length = 5,
         int $decimal = 0,
         ?string $default = null,
-        bool $nullable = true
+        bool $nullable = true,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new Decimal($name, $length, $decimal, $nullable, $unsigned, $default);
+        $this->columns[] = new Decimal($name, $length, $decimal, $nullable, $unsigned, $default, $comment);
 
         return $this;
     }
@@ -247,12 +263,18 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param string|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function varChar(string $name, int $length = 255, bool $nullable = false, ?string $default = null): static
-    {
-        $this->columns[] = new VarChar($name, $length, $nullable, $default);
+    public function varChar(
+        string $name,
+        int $length = 255,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
+        $this->columns[] = new VarChar($name, $length, $nullable, $default, $comment);
 
         return $this;
     }
@@ -264,12 +286,18 @@ abstract class Table
      * @param positive-int $length
      * @param bool $nullable
      * @param string|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function char(string $name, int $length = 255, bool $nullable = false, ?string $default = null): static
-    {
-        $this->columns[] = new Char($name, $length, $default, $nullable);
+    public function char(
+        string $name,
+        int $length = 255,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
+        $this->columns[] = new Char($name, $length, $default, $nullable, $comment);
 
         return $this;
     }
@@ -280,12 +308,22 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function tinyText(string $name, int $length = 255, bool $nullable = false): static
-    {
-        $this->columns[] = new TinyText($name, $length, $nullable);
+    public function tinyText(
+        string $name,
+        int $length = 255,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
+        if ($default !== null) {
+            throw new DatabaseException('Default values for text columns not implemented in this database engine');
+        }
+        $this->columns[] = new TinyText($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -296,12 +334,23 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $default
+     * @param string|null $comment
      * @return static
+     * @throws DatabaseException
      * @throws ServerFailureException
      */
-    public function text(string $name, int $length = 65535, bool $nullable = false): static
-    {
-        $this->columns[] = new Text($name, $length, $nullable);
+    public function text(
+        string $name,
+        int $length = 65535,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
+        if ($default !== null) {
+            throw new DatabaseException('Default values for text columns not implemented in this database engine');
+        }
+        $this->columns[] = new Text($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -312,12 +361,21 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function mediumText(string $name, int $length = 16_777_215, bool $nullable = false): static
-    {
-        $this->columns[] = new MediumText($name, $length, $nullable);
+    public function mediumText(
+        string $name,
+        int $length = 16_777_215,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
+        if ($default !== null) {
+            throw new DatabaseException('Default values for text columns not implemented in this database engine');
+        }
+        $this->columns[] = new MediumText($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -328,12 +386,21 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function longText(string $name, int $length = 4_294_967_295, bool $nullable = false): static
-    {
-        $this->columns[] = new LongText($name, $length, $nullable);
+    public function longText(
+        string $name,
+        int $length = 4_294_967_295,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
+        if ($default !== null) {
+            throw new DatabaseException('Default values for text columns not implemented in this database engine');
+        }
+        $this->columns[] = new LongText($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -344,12 +411,13 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function tinyBlob(string $name, int $length = 255, bool $nullable = false): static
+    public function tinyBlob(string $name, int $length = 255, bool $nullable = false, ?string $comment = null): static
     {
-        $this->columns[] = new TinyBlob($name, $length, $nullable);
+        $this->columns[] = new TinyBlob($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -360,12 +428,13 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function blob(string $name, int $length = 65535, bool $nullable = false): static
+    public function blob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
     {
-        $this->columns[] = new Blob($name, $length, $nullable);
+        $this->columns[] = new Blob($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -376,12 +445,17 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function mediumBlob(string $name, int $length = 16_777_215, bool $nullable = false): static
-    {
-        $this->columns[] = new MediumBlob($name, $length, $nullable);
+    public function mediumBlob(
+        string $name,
+        int $length = 16_777_215,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
+        $this->columns[] = new MediumBlob($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -392,12 +466,17 @@ abstract class Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function longBlob(string $name, int $length = 4_294_967_295, bool $nullable = false): static
-    {
-        $this->columns[] = new LongBlob($name, $length, $nullable);
+    public function longBlob(
+        string $name,
+        int $length = 4_294_967_295,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
+        $this->columns[] = new LongBlob($name, $length, $nullable, $comment);
 
         return $this;
     }
@@ -408,12 +487,13 @@ abstract class Table
      * @param string $name
      * @param string|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function date(string $name, ?string $default = null, bool $nullable = false): static
+    public function date(string $name, ?string $default = null, bool $nullable = false, ?string $comment = null): static
     {
-        $this->column($name, 'date', $default, null, $nullable);
+        $this->column($name, 'date', $default, null, $nullable, comment: $comment);
         return $this;
     }
 
@@ -423,12 +503,17 @@ abstract class Table
      * @param string $name
      * @param string|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function dateTime(string $name, ?string $default = null, bool $nullable = false): static
-    {
-        $this->column($name, 'datetime', $default, null, $nullable);
+    public function dateTime(
+        string $name,
+        ?string $default = null,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
+        $this->column($name, 'datetime', $default, null, $nullable, comment: $comment);
         return $this;
     }
 
@@ -438,12 +523,17 @@ abstract class Table
      * @param string $name
      * @param string|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function timestamp(string $name, ?string $default = null, bool $nullable = false): static
-    {
-        $this->column($name, 'timestamp', $default, null, $nullable);
+    public function timestamp(
+        string $name,
+        ?string $default = null,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
+        $this->column($name, 'timestamp', $default, null, $nullable, comment: $comment);
         return $this;
     }
 
@@ -453,12 +543,13 @@ abstract class Table
      * @param string $name
      * @param string|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function time(string $name, ?string $default = null, bool $nullable = false): static
+    public function time(string $name, ?string $default = null, bool $nullable = false, ?string $comment = null): static
     {
-        $this->column($name, 'time', $default, null, $nullable);
+        $this->column($name, 'time', $default, null, $nullable, comment: $comment);
 
         return $this;
     }
@@ -468,12 +559,13 @@ abstract class Table
      *
      * @param string $name
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function json(string $name, bool $nullable = false): static
+    public function json(string $name, bool $nullable = false, ?string $comment = null): static
     {
-        $this->column($name, 'json', nullable: $nullable);
+        $this->column($name, 'json', nullable: $nullable, comment: $comment);
 
         return $this;
     }
@@ -487,8 +579,9 @@ abstract class Table
      * @param positive-int|null $length
      * @param bool $nullable
      * @param int|null $decimal
+     * @param string|null $comment
      * @return $this
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
     public function column(
         string $name,
@@ -496,9 +589,18 @@ abstract class Table
         ?string $default = null,
         ?int $length = null,
         bool $nullable = false,
-        ?int $decimal = null
+        ?int $decimal = null,
+        ?string $comment = null
     ): static {
-        $this->columns[] = new Column($name, $length, $type, decimal: $decimal, nullable: $nullable, default: $default);
+        $this->columns[] = new Column(
+                      $name,
+                      $length,
+                      $type,
+            decimal:  $decimal,
+            nullable: $nullable,
+            default:  $default,
+            comment:  $comment
+        );
 
         return $this;
     }
@@ -606,10 +708,11 @@ abstract class Table
      *
      * @param string $column
      * @param positive-int $length
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function autoIncrement(string $column, int $length = 11): static
+    public function autoIncrement(string $column, int $length = 11, ?string $comment = null): static
     {
         $this->int($column, true, false, null, $length);
         $this->primary($column);
@@ -706,10 +809,11 @@ abstract class Table
      * Add new serial column. Not implemented in base class.
      *
      * @param string $column
+     * @param string|null $comment
      * @return $this
      * @throws DatabaseException
      */
-    public function serial(string $column): static
+    public function serial(string $column, ?string $comment = null): static
     {
         throw new DatabaseException('Serial datatype not implemented in this database engine');
     }
@@ -719,13 +823,14 @@ abstract class Table
      *
      * @param string $name
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function bytea(string $name, bool $nullable = false): static
+    public function bytea(string $name, bool $nullable = false, ?string $comment = null): static
     {
         trigger_error('Using blob with default length for bytea', E_USER_NOTICE);
-        return $this->blob($name, nullable: $nullable);
+        return $this->blob($name, nullable: $nullable, comment: $comment);
     }
 
     /**
@@ -734,25 +839,31 @@ abstract class Table
      * @param string $name
      * @param bool|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function boolean(string $name, ?bool $default = null, bool $nullable = false): static
-    {
+    public function boolean(
+        string $name,
+        ?bool $default = null,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
         trigger_error('Using tinyint(1) for boolean', E_USER_NOTICE);
 
         $defaultValue = is_bool($default) ? (int)$default : null;
-        return $this->tinyInt($name, true, 1, $nullable, $defaultValue);
+        return $this->tinyInt($name, true, 1, $nullable, $defaultValue, $comment);
     }
 
     protected function getDefaultAsBindingOrText(Column $column, array &$bindings): string
     {
         $default = $column->getDefault();
         if ($default !== null) {
-            if (in_array(strtolower($column->getType()), ['datetime', 'timestamp']) && strtolower(
-                    $default
-                ) === 'current_timestamp') {
-                return ' DEFAULT CURRENT_TIMESTAMP';
+            if (in_array(strtolower($column->getType()), ['datetime', 'timestamp'])) {
+                $timestampDefaultSpecial = $this->getDefaultForTimestamp($column);
+                if ($timestampDefaultSpecial !== null) {
+                    return $timestampDefaultSpecial;
+                }
             }
             $return = ' DEFAULT ?';
             $bindings[] = $default;
@@ -760,6 +871,20 @@ abstract class Table
             return $return;
         }
         return '';
+    }
+
+    protected function getDefaultForTimestamp(Column $column): ?string
+    {
+        $default = $column->getDefault() ?? '';
+       
+        if (strtolower($default) === 'current_timestamp') {
+            return ' DEFAULT CURRENT_TIMESTAMP';
+        }
+        if (strtolower($default) === 'now' || strtolower($default) === 'now()') {
+            return ' DEFAULT now()';
+        }
+
+        return null;
     }
 
     /**

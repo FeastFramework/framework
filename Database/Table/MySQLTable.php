@@ -133,6 +133,10 @@ class MySQLTable extends Table
         if ($this->primaryKeyAutoIncrement && $this->primaryKeyName === $column->getName()) {
             $string .= ' AUTO_INCREMENT';
         }
+        if ( $column->getComment() !== null ) {
+            $string .= ' COMMENT ?';
+            $bindings[] = $column->getComment();
+        }
         return $string;
     }
     
