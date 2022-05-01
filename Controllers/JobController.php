@@ -26,13 +26,17 @@ use Feast\Attributes\Param;
 use Feast\CliController;
 use Feast\Date;
 use Feast\Enums\ParamType;
+use Feast\Exception\InvalidDateException;
+use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\ErrorLoggerInterface;
 use Feast\Interfaces\LoggerInterface;
 use Feast\Jobs\CronJob;
 use Feast\Jobs\QueueableJob;
+use Feast\ServiceContainer\NotFoundException;
 use Mapper\JobMapper;
 use Model\Job;
+use Throwable;
 
 class JobController extends CliController
 {
@@ -85,8 +89,8 @@ class JobController extends CliController
     }
 
     /**
-     * @throws \Feast\ServiceContainer\NotFoundException
-     * @throws \Feast\Exception\ServerFailureException
+     * @throws NotFoundException
+     * @throws ServerFailureException
      */
     #[Action(usage: '{job}', description: 'Run the specified job. Job will run even if max count exceeded.')]
     #[Param(type: 'string', name: 'job', description: 'Job ID of job to run (uuid)')]
@@ -123,7 +127,7 @@ class JobController extends CliController
     }
 
     /**
-     * @throws \Feast\Exception\InvalidDateException
+     * @throws InvalidDateException
      */
     #[Action(description: 'Run all cron jobs.')]
     public function runCronGet(
@@ -143,7 +147,7 @@ class JobController extends CliController
     }
 
     /**
-     * @throws \Feast\Exception\InvalidDateException
+     * @throws InvalidDateException
      */
     #[Action(usage: '{job}', description: 'Run the specified job.')]
     #[Param(type: 'string', name: 'job', description: 'Job class to run')]
@@ -195,7 +199,7 @@ class JobController extends CliController
         if ($jobData instanceof QueueableJob) {
             try {
                 $success = $jobData->run();
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $errorLogger->exceptionHandler($exception, true);
             }
             $job->status = $success ? QueueableJob::JOB_STATUS_COMPLETE : QueueableJob::JOB_STATUS_PENDING;

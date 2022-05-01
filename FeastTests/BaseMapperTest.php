@@ -47,7 +47,12 @@ class BaseMapperTest extends TestCase
                 'id' => 'int',
                 'theDate' => \Feast\Date::class,
                 'theName' => 'string',
-                'theThing' => \stdClass::class
+                'theThing' => \stdClass::class,
+                'theTruth' => 'bool',
+                'theUnTruth' => 'bool',
+                'theUnknown' => 'bool',
+                'theNumericTruth' => 'bool',
+                'theNumericUnTruth' => 'bool',
             ]
         );
         $container->add(\Feast\Interfaces\DatabaseDetailsInterface::class, $mockDbDetails);
@@ -77,7 +82,7 @@ class BaseMapperTest extends TestCase
 
         $items = $this->baseMapper->findAllByField('id', 1);
         $item = $items->first();
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);
@@ -137,7 +142,7 @@ class BaseMapperTest extends TestCase
 
         /** @var MockBaseModel $items */
         $items = $this->baseMapper->findByPrimaryKey(1);
-        $this->assertTrue($items instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$items);
         $this->assertEquals(1, $items->id);
         $this->assertEquals('20200102080001', $items->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $items->theName);
@@ -200,7 +205,7 @@ class BaseMapperTest extends TestCase
 
         $items = $this->baseMapper->findAllByFields(['id' => 1, 'test' => null, 'otherTest' => BaseMapper::NOT_NULL]);
         $item = $items->first();
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);
@@ -210,7 +215,7 @@ class BaseMapperTest extends TestCase
     {
         $mockQuery = $this->createStub(\Feast\Database\Query::class);
         $mockStatement = $this->createStub(PdoStatement::class);
-        $mockStatement->method('columnCount')->willReturn(3);
+        $mockStatement->method('columnCount')->willReturn(6);
         $mockStatement->method('getColumnMeta')->willReturnOnConsecutiveCalls(
             ['name' => 'id', 'native_type' => 'long'],
             [
@@ -221,10 +226,39 @@ class BaseMapperTest extends TestCase
                 'name' => 'theName',
                 'native_type' => 'varchar'
             ],
+            [
+                'name' => 'theTruth',
+                'native_type' => 'bool'
+            ],
+            [
+                'name' => 'theUnTruth',
+                'native_type' => 'bool'
+            ],
+            [
+                'name' => 'theUnknown',
+                'native_type' => 'bool'
+            ],
+            [
+                'name' => 'theNumericTruth',
+                'native_type' => 'bool'
+            ],
+            [
+                'name' => 'theNumericUnTruth',
+                'native_type' => 'bool'
+            ],
             false
         );
         $mockStatement->method('fetch')->willReturnOnConsecutiveCalls(
-            ['id' => 1, 'theDate' => '2020-01-02 08:00:01', 'theName' => 'FeastyBoys'],
+            [
+                'id' => 1,
+                'theDate' => '2020-01-02 08:00:01',
+                'theName' => 'FeastyBoys',
+                'theTruth' => 'true',
+                'theUnTruth' => 'false',
+                'theUnknown' => null,
+                'theNumericTruth' => 1,
+                'theNumericUnTruth' => 0
+            ],
             false
         );
         $mockQuery->method('execute')->willReturn($mockStatement);
@@ -232,11 +266,17 @@ class BaseMapperTest extends TestCase
         $mockQuery->method('where')->willReturn($mockQuery);
         $mockQuery->method('limit')->willReturn($mockQuery);
 
+        /** @var MockBaseModel $item */
         $item = $this->baseMapper->findOneByFields(['id' => 1, 'test' => null, 'otherTest' => BaseMapper::NOT_NULL]);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);
+        $this->assertTrue($item->theTruth);
+        $this->assertFalse($item->theUnTruth);
+        $this->assertTrue($item->theNumericTruth);
+        $this->assertFalse($item->theNumericUnTruth);
+        $this->assertNull($item->theUnknown);
     }
 
     public function testSave(): void
@@ -281,7 +321,7 @@ class BaseMapperTest extends TestCase
         $item->theDate = \Feast\Date::createFromString('2020-01-02 03:04:05');
         $item->theThing->potato = 'test';
         $this->baseMapper->save($item);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
     }
 
     public function testSaveNoChange(): void
@@ -314,7 +354,7 @@ class BaseMapperTest extends TestCase
         $item = $this->baseMapper->findOneByFields(['id' => 1, 'test' => null, 'otherTest' => BaseMapper::NOT_NULL]);
 
         $this->baseMapper->save($item);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
     }
 
     public function testSaveNew(): void
@@ -326,7 +366,7 @@ class BaseMapperTest extends TestCase
         $item->theThing = new stdClass();
         $item->theThing->test = 'test';
         $this->baseMapper->save($item);
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals('', $item->id);
     }
 
@@ -371,7 +411,7 @@ class BaseMapperTest extends TestCase
         /** @var MockBaseModel $item */
         $item = $this->baseMapper->findOneByField('id', 1);
 
-        $this->assertTrue($item instanceof MockBaseModel);
+        $this->assertInstanceOf(MockBaseModel::class,$item);
         $this->assertEquals(1, $item->id);
         $this->assertEquals('20200102080001', $item->theDate->getFormattedDate('YmdHis'));
         $this->assertEquals('FeastyBoys', $item->theName);

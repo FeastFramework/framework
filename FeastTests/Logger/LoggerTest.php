@@ -52,7 +52,7 @@ class LoggerTest extends TestCase
             ]
         );
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $this->assertTrue($logger instanceof Logger);
+        $this->assertInstanceOf(Logger::class,$logger);
     }
 
     public function testConstructInvalidLevel(): void

@@ -29,12 +29,14 @@ class TableDetails
      * @param string|null $primaryKeyType
      * @param string|null $primaryKey
      * @param array<FieldDetails> $fields
+     * @param string|null $sequence
      */
     public function __construct(
         public bool $compoundPrimary,
         public ?string $primaryKeyType,
         public ?string $primaryKey,
-        public array $fields
+        public array $fields,
+        public ?string $sequence = null
     ) {
     }
 }

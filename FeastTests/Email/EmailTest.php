@@ -34,7 +34,7 @@ class EmailTest extends TestCase
         $configStub = $this->createStub(ConfigInterface::class);
         $configStub->method('getSetting')->willReturn('/usr/bin/sendmail');
         $email = new Email($configStub);
-        $this->assertTrue($email instanceof Email);
+        $this->assertInstanceOf(Email::class,$email);
     }
 
     public function testEmail(): void

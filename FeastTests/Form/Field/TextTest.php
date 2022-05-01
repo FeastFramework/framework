@@ -33,7 +33,7 @@ class TextTest extends TestCase
     public function testCreate(): void
     {
         $text = $this->getTextObject();
-        $this->assertTrue($text instanceof Text);
+        $this->assertInstanceOf(Text::class,$text);
     }
 
     public function testSetValue(): void

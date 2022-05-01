@@ -31,7 +31,7 @@ class QueueableJobTest extends TestCase
     {
         $mock = new MockJob();
         $result = $mock->store($this->createStub(JobMapper::class));
-        $this->assertTrue($result instanceof Job);
+        $this->assertInstanceOf(Job::class,$result);
         $this->assertEquals(36, strlen($result->job_id));
     }
     

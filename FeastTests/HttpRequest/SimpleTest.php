@@ -48,7 +48,7 @@ Test
             $request->getResponseAsString(),
             
         );
-        $this->assertTrue($request->getResponse() instanceof Response);
+        $this->assertInstanceOf(Response::class,$request->getResponse());
     }
 
     public function testGetResponseAsStringEarly(): void

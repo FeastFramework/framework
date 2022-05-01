@@ -41,6 +41,7 @@ class UserMapper extends BaseMapper
     protected const OBJECT_NAME = User::class;
     protected const PRIMARY_KEY = 'user_id';
     public const TABLE_NAME = 'users2';
+    public const SEQUENCE_NAME = 'test_sequence';
 
     /**
      * @param int|string $value

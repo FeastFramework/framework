@@ -29,7 +29,9 @@ return [
         'connectionType' => \Feast\Enums\DatabaseType::MYSQL,
         'queryClass' => \Feast\Database\MySQLQuery::class,
         // 'queryClass' => \Feast\Database\SQLiteQuery::class,
-        // 'connectionType' => \Feast\Enums\DatabaseType::SQLITE,     
+        // 'connectionType' => \Feast\Enums\DatabaseType::SQLITE,
+        // 'connectionType' => \Feast\Enums\DatabaseType::POSTGRES,
+        // 'queryClass' => \Feast\Database\PostgresQuery::class,     
         'options' => [ // NOTE: the below options are not required. The ones below are applied by default.
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
             PDO::ATTR_EMULATE_PREPARES => false
@@ -129,11 +131,11 @@ FEAST has many methods to delete records from the database. The main methods to 
 
 #### Events
 
-FEAST has methods for different database events that you can override in the child class. These events 
-can fire when a model is saved or when a model is deleted. The methods are `onSave` and `onDelete`.
+FEAST has methods for different database events that you can override in the child class. These events can fire when a
+model is saved or when a model is deleted. The methods are `onSave` and `onDelete`.
 
-Note that `onDelete` will only fire if `delete` is called, rather than the other deletion methods, as delete
-is the only method that has access to a model.
+Note that `onDelete` will only fire if `delete` is called, rather than the other deletion methods, as delete is the only
+method that has access to a model.
 
 [Back to Top](#working-with-databases)
 
@@ -150,8 +152,12 @@ down should undo whatever is done in the up call.
 
 #### Creating and Dropping Tables
 
-FEAST provides a TableFactory to retrieve an instance of a table builder. Using this table builder, you can quickly
-specify your table details and run the create without writing a single line of SQL. Example:
+FEAST provides a TableFactory to retrieve an instance of a table builder. Currently, this table builder is limited to
+MySQL and PostgreSQL. Using this table builder, you can quickly specify your table details and run the create without
+writing a single line of SQL. Note, however, that this is designed for use on simple structures and may not work in all
+use cases.
+
+Example table builder usage:
 
 ```php
     public function up() : void
@@ -179,32 +185,40 @@ The `create` method will create the table, `drop` will drop the table, and `drop
 
 There are many other methods available to the Table instance returned by the Table factory for defining columns.
 
-1. int
-2. tinyInt
-3. smallInt
-4. mediumInt
-5. bigInt
-6. float
-7. double
-8. decimal
-9. varChar
-10. char
-11. tinyText
-12. text
-13. mediumText
-14. longText
-15. tinyBlob
-16. blob
-17. mediumBlob
-18. longBlob
-19. date
-20. datetime
-21. timestamp
-22. time
-23. json
-24. column - Column is used if you need a column type that does not fit into the other rules.
+1. `int`
+2. `tinyInt`
+3. `smallInt`
+4. `mediumInt`
+5. `bigInt`
+6. `float`
+7. `double`
+8. `decimal`
+9. `varChar`
+10. `char`
+11. `tinyText`
+12. `text`
+13. `mediumText`
+14. `longText`
+15. `tinyBlob`
+16. `blob|bytea` - (for MySQL and PostgreSQL respectively)
+17. `mediumBlob`
+18. `longBlob`
+19. `date`
+20. `datetime`
+21. `timestamp`
+22. `time`
+23. `json`
+24. `serial` - (throws an exception if used on a MySQL table)
+25. `boolean` - (alias to tinyint(1) for MySQL table)
+26. `column` - Column is used if you need a column type that does not fit into the other rules.
 
-In addition, the `rawQuery` method can be used in a migration to run a specific query.
+For the MySQL database engine, the following methods also exist for the Table builder
+
+1. `dbEngine` - Specifies the database engine.
+2. `characterSet` - Specifies the character set for the table.
+3. `collation` - Specifies the collation for the table.
+
+In addition, the `rawQuery` method can be used in a migration to run a specific query or a more complex CREATE.
 
 #### Adding indexes
 
@@ -215,16 +229,48 @@ parameters.
 2. `name` - String or null. If null, a generic name is dynamically created.
 3. `autoIncrement` - True if you wish for this to be an autoincrement column.
 
-An easier way to create an auto incrementing primary key is with the `autoIncrement` method. This method will create an
-int column with the passed in name and optional length. 
+In MySQL, an easier way to create an auto incrementing primary key is with the `autoIncrement` method. This method will
+create an
+int column with the passed in name and optional length.
+
+In PostgreSQL, an easier way to create an auto incrementing primary key is to call the `serial` method rather than an
+integer when creating the table.
+For example:
+
+```php
+TableFactory::getTable('videos')
+            ->serial('id');
+```
+
+#### Adding unique indexes
+
+FEAST can add a unique index at the same time as creating by using the `uniqueIndex` method. This method takes the
+following parameters.
+
+1. `columns` - This can be a string for a single column, or an array of strings for multiple.
+2. `name` - String or null. If null, a generic name is dynamically created.
+
+#### Adding foreign key constraints
+
+FEAST can add a foreign key at the same time as creating the table by using the `foreignKey` method. This method takes
+the following parameters.
+
+1. `columns` - This can be a string for a single column, or an array of strings for multiple.
+2. `referencesTable` - The table to reference.
+3. `referencesColumns` - This can be a string for a single column, or an array of strings for multiple.
+4. `onDelete` - Defaults to `RESTRICT`
+5. `onUpdate` - Defaults to `RESTRICT`
+6. `name` - String or null. If null, a generic name is dynamically created.
 
 #### Adding primary key
 
-FEAST can add a primary key to specified column with the `primary` method. The `primary` method takes only one parameter:
-`columnName`. Note that the column specified within this parameter must exist. Also, `primary` method can be called only 
+FEAST can add a primary key to specified column with the `primary` method. The `primary` method takes only one
+parameter:
+`columnName`. Note that the column specified within this parameter must exist. Also, `primary` method can be called only
 once per table. Otherwise, an exception will be thrown.
 
-The `autoIncrement` method already calls the `primary` method, so the `primary` method should not be called when 
+The `autoIncrement` method and `serial` method both already call the `primary` method, so the `primary` method should
+not be called when
 creating an auto incrementing column with the `autoIncrement` method.
 
 #### Altering tables
@@ -237,10 +283,11 @@ To quickly run all migrations that have not ran up, simply run
 `php famine feast:migration:run-all` in your terminal. For more detailed or advanced usage,
 see [feast:migration](cli.md#feastmigration) in the CLI docs.
 
-If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the cache
-will automatically re-generate after migrations are ran.
+If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the
+cache will automatically re-generate after migrations are ran.
 
-### List Migrations 
+### List Migrations
+
 You can quickly get a list of all migrations as well as their status by running `php famine feast:migration:list`
 
 [Back to Top](#working-with-databases)

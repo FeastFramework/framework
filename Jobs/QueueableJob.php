@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Jobs;
 
+use Exception;
 use Feast\Date;
 use Feast\Exception\InvalidDateException;
 use Feast\Interfaces\JobInterface;
@@ -43,7 +44,7 @@ abstract class QueueableJob implements JobInterface
      * @param ?JobMapper $jobMapper
      * @return Job
      * @throws InvalidDateException
-     * @throws \Exception
+     * @throws Exception
      */
     public function store(JobMapper $jobMapper = null): Job
     {
@@ -132,7 +133,7 @@ abstract class QueueableJob implements JobInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function generateUuid(): string
     {

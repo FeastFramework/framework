@@ -35,7 +35,7 @@ class SelectTest extends TestCase
             'testing',
             'test'
         );
-        $this->assertTrue($select instanceof Select);
+        $this->assertInstanceOf(Select::class,$select);
     }
 
     public function testSetDefault(): void

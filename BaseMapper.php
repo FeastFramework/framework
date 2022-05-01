@@ -39,6 +39,8 @@ abstract class BaseMapper
     public const TABLE_NAME = null;
     protected const PRIMARY_KEY = null;
     protected const OBJECT_NAME = null;
+    /** @var string|null SEQUENCE_NAME */
+    protected const SEQUENCE_NAME = null;
     public const CONNECTION = 'default';
     public const NOT_NULL = 'not_null';
     protected DatabaseInterface $connection;
@@ -81,6 +83,7 @@ abstract class BaseMapper
                         (string)$val
                     ),
                     'int' => (int)$val,
+                    'bool' => $this->getBoolValue($val),
                     default => utf8_encode((string)$val)
                 };
             }
@@ -89,6 +92,11 @@ abstract class BaseMapper
         $return->makeOriginalModel();
 
         return $return;
+    }
+
+    protected function getBoolValue(string|int|bool $value): ?bool
+    {
+        return ($value === 'false') ? false : (bool)$value;
     }
 
     protected function getQueryBase(): Query
@@ -118,7 +126,6 @@ abstract class BaseMapper
      * @return BaseModel|null
      * @throws ServerFailureException
      * @throws ServiceContainer\NotFoundException
-     * @noinspection PhpUnusedParameterInspection
      */
     public function findByPrimaryKey(int|string $value, bool $validate = false): ?BaseModel
     {
@@ -281,9 +288,11 @@ abstract class BaseMapper
         } else {
             $insert = $this->connection->insert((string)static::TABLE_NAME, $recordArray);
             $insert->execute();
-            $lastInsert = $this->connection->lastInsertId();
-            $recordPrimaryKey = ctype_digit($lastInsert) && $lastInsert !== '0' ? (int)$lastInsert : $lastInsert;
-            $record->{$primaryKey} = $recordPrimaryKey;
+            $lastInsert = $this->connection->lastInsertId((string)static::SEQUENCE_NAME);
+            if (!empty($record->{$primaryKey})) {
+                $recordPrimaryKey = ctype_digit($lastInsert) && $lastInsert !== '0' ? (int)$lastInsert : $lastInsert;
+                $record->{$primaryKey} = $recordPrimaryKey;
+            }
             $this->onSave($record);
         }
         $record->makeOriginalModel();

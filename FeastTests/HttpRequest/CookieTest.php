@@ -41,7 +41,7 @@ class CookieTest extends TestCase
     public function testCreate(): void
     {
         $cookie = $this->getCookie();
-        $this->assertTrue($cookie instanceof Cookie);
+        $this->assertInstanceOf(Cookie::class,$cookie);
     }
 
     public function testGetData(): void
