@@ -70,6 +70,9 @@ up with the following principles always in mind.
 The current release of FEAST requires PHP 8.0 and (if you wish to use the Curl service classes) PHP 8.0-curl. In
 addition, PHP 8.0-bcmath is recommended.
 
+FEAST currently works with the MySQL and PostgreSQL database management systems as well as with SQLite for simple
+queries.
+
 The release plan for FEAST can be found [here](release-schedule.md).
 
 ## Getting started

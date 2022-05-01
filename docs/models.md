@@ -155,7 +155,7 @@ down should undo whatever is done in the up call.
 FEAST provides a TableFactory to retrieve an instance of a table builder. Currently, this table builder is limited to
 MySQL and PostgreSQL. Using this table builder, you can quickly specify your table details and run the create without
 writing a single line of SQL. Note, however, that this is designed for use on simple structures and may not work in all
-use cases. 
+use cases.
 
 Example table builder usage:
 
@@ -185,32 +185,38 @@ The `create` method will create the table, `drop` will drop the table, and `drop
 
 There are many other methods available to the Table instance returned by the Table factory for defining columns.
 
-1. int
-2. tinyInt
-3. smallInt
-4. mediumInt
-5. bigInt
-6. float
-7. double
-8. decimal
-9. varChar
-10. char
-11. tinyText
-12. text
-13. mediumText
-14. longText
-15. tinyBlob
-16. blob|bytea (for MySQL and PostgreSQL respectively)
-17. mediumBlob
-18. longBlob
-19. date
-20. datetime
-21. timestamp
-22. time
-23. json
-24. serial (throws an exception if used on a MySQL table)
-25. boolean (alias to tinyint(1) for MySQL table)
-26. column - Column is used if you need a column type that does not fit into the other rules.
+1. `int`
+2. `tinyInt`
+3. `smallInt`
+4. `mediumInt`
+5. `bigInt`
+6. `float`
+7. `double`
+8. `decimal`
+9. `varChar`
+10. `char`
+11. `tinyText`
+12. `text`
+13. `mediumText`
+14. `longText`
+15. `tinyBlob`
+16. `blob|bytea` - (for MySQL and PostgreSQL respectively)
+17. `mediumBlob`
+18. `longBlob`
+19. `date`
+20. `datetime`
+21. `timestamp`
+22. `time`
+23. `json`
+24. `serial` - (throws an exception if used on a MySQL table)
+25. `boolean` - (alias to tinyint(1) for MySQL table)
+26. `column` - Column is used if you need a column type that does not fit into the other rules.
+
+For the MySQL database engine, the following methods also exist for the Table builder
+
+1. `dbEngine` - Specifies the database engine.
+2. `characterSet` - Specifies the character set for the table.
+3. `collation` - Specifies the collation for the table.
 
 In addition, the `rawQuery` method can be used in a migration to run a specific query or a more complex CREATE.
 
@@ -251,7 +257,7 @@ the following parameters.
 
 1. `columns` - This can be a string for a single column, or an array of strings for multiple.
 2. `referencesTable` - The table to reference.
-3. `referencesColumns` - This can be a string for a single column, or an array of strings for multiple.  
+3. `referencesColumns` - This can be a string for a single column, or an array of strings for multiple.
 4. `onDelete` - Defaults to `RESTRICT`
 5. `onUpdate` - Defaults to `RESTRICT`
 6. `name` - String or null. If null, a generic name is dynamically created.
