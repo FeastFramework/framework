@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Database\Column\Postgres;
 
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class BigInt extends Integer
 {
@@ -32,14 +32,16 @@ class BigInt extends Integer
      * @param string $name
      * @param bool $nullable
      * @param int|null $default
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
     public function __construct(
         string $name,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ) {
-        parent::__construct($name, $nullable, $default);
+        parent::__construct($name, $nullable, $default, $comment);
     }
-    
+
 }

@@ -78,7 +78,7 @@ class Textarea extends Text
         }
         $output .= '>';
         if ($this->default || $this->value) {
-            $output .= ($this->value ? $this->value : $this->default);
+            $output .= ($this->value ?: $this->default);
         }
         $output .= '</textarea>';
         if ($this->showLabel($showLabel, $this->label, Label::LABEL_POSITION_LAST)) {

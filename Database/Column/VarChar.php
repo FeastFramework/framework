@@ -33,11 +33,12 @@ class VarChar extends Char
      * @param positive-int $length
      * @param bool $nullable
      * @param string|null $default
+     * @param string|null $comment
      * @throws ServerFailureException
      */
-    public function __construct(string $name, int $length = 255, bool $nullable = false, ?string $default = null)
+    public function __construct(string $name, int $length = 255, bool $nullable = false, ?string $default = null, ?string $comment = null)
     {
-        parent::__construct($name, $length, $default,$nullable);
+        parent::__construct($name, $length, $default,$nullable, $comment);
     }
 
 }

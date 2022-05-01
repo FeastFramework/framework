@@ -27,6 +27,7 @@ use Feast\Database\Column\Column;
 use Feast\Database\Column\Postgres\Integer;
 use Feast\Database\Column\Postgres\SmallInt;
 use Feast\Database\Column\Postgres\Text;
+use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidArgumentException;
 use Feast\Exception\ServerFailureException;
 
@@ -61,9 +62,14 @@ class PostgresTable extends Table
         $return = 'CREATE TABLE IF NOT EXISTS ' . $this->name . '(';
         $columns = [];
         $bindings = [];
+        $comments = [];
         /** @var Column $column */
         foreach ($this->columns as $column) {
             $columns[] = $this->getColumnForDdl($column, $bindings);
+            $comment = $column->getComment();
+            if ( $comment !== null ) {
+                $comments[$column->getName()] = $comment;
+            }
         }
         if (isset($this->primaryKeyName)) {
             $columns[] = 'PRIMARY KEY (' . $this->primaryKeyName . ')';
@@ -74,8 +80,29 @@ class PostgresTable extends Table
 
         $return .= implode(',' . "\n", $columns) . ');';
         $return .= $this->addIndexesForDdl();
+        $return .= $this->addCommentsForDdl($comments, $bindings);
 
         return new Ddl($return, $bindings);
+    }
+
+    /**
+     * @param array<string,string> $comments
+     * @param array $bindings
+     * @return string
+     */
+    protected function addCommentsForDdl(array $comments, array &$bindings): string
+    {
+        $return = [];
+        foreach($comments as $column => $comment) {
+            $return[] = 'comment on column ' . $this->name . '.' . $column . ' is ?;';
+            $bindings[] = $comment;
+        }
+        
+        if ( !empty($return) ) {
+            return "\n" . implode("\n", $return);
+        }
+        
+        return '';
     }
 
     protected function addIndexesForDdl(): string
@@ -150,7 +177,9 @@ class PostgresTable extends Table
      * @param bool $nullable - ignored for postgres
      * @param int|null $default
      * @param positive-int $length - ignored for postgres
+     * @param string|null $comment
      * @return static
+     * @throws InvalidArgumentException
      * @throws ServerFailureException
      */
     public function int(
@@ -158,12 +187,13 @@ class PostgresTable extends Table
         bool $unsigned = false,
         bool $nullable = false,
         ?int $default = null,
-        int $length = 11
+        int $length = 11,
+        ?string $comment = null
     ): static {
         if ($unsigned) {
             throw new InvalidArgumentException('Postgres does not support unsigned integers');
         }
-        $this->columns[] = new Integer($name, $nullable, $default);
+        $this->columns[] = new Integer($name, $nullable, $default, $comment);
 
         return $this;
     }
@@ -176,6 +206,7 @@ class PostgresTable extends Table
      * @param positive-int $length - ignored for postgres
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -184,9 +215,10 @@ class PostgresTable extends Table
         bool $unsigned = false,
         int $length = 4,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
-        return $this->smallInt($name, $unsigned, $length, $nullable, $default);
+        return $this->smallInt($name, $unsigned, $length, $nullable, $default, $comment);
     }
 
     /**
@@ -197,6 +229,7 @@ class PostgresTable extends Table
      * @param positive-int $length - ignored for postgres
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
@@ -205,9 +238,10 @@ class PostgresTable extends Table
         bool $unsigned = false,
         int $length = 4,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
-        return $this->bigInt($name, $unsigned, $length, $nullable, $default);
+        return $this->bigInt($name, $unsigned, $length, $nullable, $default, $comment);
     }
 
     /**
@@ -218,7 +252,9 @@ class PostgresTable extends Table
      * @param positive-int $length - ignored for postgres
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
+     * @throws InvalidArgumentException
      * @throws ServerFailureException
      */
     public function smallInt(
@@ -226,12 +262,13 @@ class PostgresTable extends Table
         bool $unsigned = false,
         int $length = 6,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
         if ($unsigned) {
             throw new InvalidArgumentException('Postgres does not support unsigned integers');
         }
-        $this->columns[] = new SmallInt($name, $nullable, $default);
+        $this->columns[] = new SmallInt($name, $nullable, $default, $comment);
 
         return $this;
     }
@@ -244,7 +281,9 @@ class PostgresTable extends Table
      * @param positive-int $length - ignored for postgres
      * @param bool $nullable
      * @param int|null $default
+     * @param string|null $comment
      * @return static
+     * @throws InvalidArgumentException
      * @throws ServerFailureException
      */
     public function bigInt(
@@ -252,12 +291,13 @@ class PostgresTable extends Table
         bool $unsigned = false,
         int $length = 20,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ): static {
         if ($unsigned) {
             throw new InvalidArgumentException('Postgres does not support unsigned integers');
         }
-        $this->columns[] = new BigInt($name, $nullable, $default);
+        $this->columns[] = new BigInt($name, $nullable, $default, $comment);
 
         return $this;
     }
@@ -268,13 +308,14 @@ class PostgresTable extends Table
      * @param string $name
      * @param int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function blob(string $name, int $length = 65535, bool $nullable = false): static
+    public function blob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
-        return $this->bytea($name, $nullable);
+        return $this->bytea($name, $nullable, $comment);
     }
 
     /**
@@ -283,13 +324,18 @@ class PostgresTable extends Table
      * @param string $name
      * @param int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function mediumBlob(string $name, int $length = 65535, bool $nullable = false): static
-    {
+    public function mediumBlob(
+        string $name,
+        int $length = 65535,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
-        return $this->bytea($name, $nullable);
+        return $this->bytea($name, $nullable, $comment);
     }
 
     /**
@@ -298,13 +344,14 @@ class PostgresTable extends Table
      * @param string $name
      * @param int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function longBlob(string $name, int $length = 65535, bool $nullable = false): static
+    public function longBlob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
-        return $this->bytea($name, $nullable);
+        return $this->bytea($name, $nullable, $comment);
     }
 
     /**
@@ -313,13 +360,14 @@ class PostgresTable extends Table
      * @param string $name
      * @param int $length
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function tinyBlob(string $name, int $length = 65535, bool $nullable = false): static
+    public function tinyBlob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
-        return $this->bytea($name, $nullable);
+        return $this->bytea($name, $nullable, $comment);
     }
 
     /**
@@ -328,13 +376,18 @@ class PostgresTable extends Table
      * @param string $name
      * @param string|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function dateTime(string $name, ?string $default = null, bool $nullable = false): static
-    {
+    public function dateTime(
+        string $name,
+        ?string $default = null,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
         trigger_error('Using timestamp for datetime', E_USER_NOTICE);
-        return $this->timestamp($name, $default, $nullable);
+        return $this->timestamp($name, $default, $nullable, $comment);
     }
 
     /**
@@ -342,12 +395,13 @@ class PostgresTable extends Table
      *
      * @param string $name
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function bytea(string $name, bool $nullable = false): static
+    public function bytea(string $name, bool $nullable = false, ?string $comment = null): static
     {
-        $this->columns[] = new Bytea($name, $nullable);
+        $this->columns[] = new Bytea($name, $nullable, $comment);
 
         return $this;
     }
@@ -356,12 +410,14 @@ class PostgresTable extends Table
      * Add serial column and mark as primary key.
      *
      * @param string $column
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function serial(string $column): static
+    public function serial(string $column, ?string $comment = null): static
     {
-        $this->column($column, 'serial');
+        $this->column($column, 'serial', comment: $comment);
         $this->primary($column);
         $this->primaryKeyAutoIncrement = true;
 
@@ -373,12 +429,14 @@ class PostgresTable extends Table
      *
      * @param string $column
      * @param positive-int $length
+     * @param string|null $comment
      * @return static
      * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function autoIncrement(string $column, int $length = 11): static
+    public function autoIncrement(string $column, int $length = 11, ?string $comment = null): static
     {
-        return $this->serial($column);
+        return $this->serial($column, $comment);
     }
 
     /**
@@ -387,12 +445,14 @@ class PostgresTable extends Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function tinyText(string $name, int $length = 255, bool $nullable = false): static
+    public function tinyText(string $name, int $length = 255, bool $nullable = false, ?string $default = null, ?string $comment = null): static
     {
-        return $this->text($name, $length, $nullable);
+        return $this->text($name, $length, $nullable, $default, $comment);
     }
 
     /**
@@ -401,12 +461,14 @@ class PostgresTable extends Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function mediumText(string $name, int $length = 255, bool $nullable = false): static
+    public function mediumText(string $name, int $length = 255, bool $nullable = false, ?string $default = null, ?string $comment = null): static
     {
-        return $this->text($name, $length, $nullable);
+        return $this->text($name, $length, $nullable, $default, $comment);
     }
 
     /**
@@ -415,12 +477,14 @@ class PostgresTable extends Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function longText(string $name, int $length = 255, bool $nullable = false): static
+    public function longText(string $name, int $length = 255, bool $nullable = false, ?string $default = null, ?string $comment = null): static
     {
-        return $this->text($name, $length, $nullable);
+        return $this->text($name, $length, $nullable, $default, $comment);
     }
 
     /**
@@ -429,12 +493,17 @@ class PostgresTable extends Table
      * @param string $name
      * @param bool|null $default
      * @param bool $nullable
+     * @param string|null $comment
      * @return $this
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function boolean(string $name, ?bool $default = null, bool $nullable = false): static
-    {
-        $this->columns[] = new Boolean($name, $nullable, $default);
+    public function boolean(
+        string $name,
+        ?bool $default = null,
+        bool $nullable = false,
+        ?string $comment = null
+    ): static {
+        $this->columns[] = new Boolean($name, $nullable, $default, $comment);
 
         return $this;
     }
@@ -445,12 +514,19 @@ class PostgresTable extends Table
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
+     * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
-    public function text(string $name, int $length = 65535, bool $nullable = false): static
-    {
-        $this->columns[] = new Text($name, $nullable);
+    public function text(
+        string $name,
+        int $length = 65535,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
+        $this->columns[] = new Text($name, $nullable, $default, $comment);
 
         return $this;
     }
@@ -463,18 +539,20 @@ class PostgresTable extends Table
      * @param positive-int $length
      * @param bool $nullable
      * @param string|null $default
+     * @param string|null $comment
      * @return static
-     * @throws ServerFailureException
+     * @throws DatabaseException
      */
     public function double(
         string $name,
         bool $unsigned = true,
         int $length = 20,
         bool $nullable = false,
-        ?string $default = null
+        ?string $default = null,
+        ?string $comment = null
     ): static {
         trigger_error('Using float for double', E_USER_NOTICE);
-        $this->float($name, $unsigned, $length, $nullable, $default);
+        $this->float($name, $unsigned, $length, $nullable, $default, $comment);
         return $this;
     }
 }

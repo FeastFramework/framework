@@ -16,7 +16,12 @@
  * limitations under the License.
  */
 
-/* @var $this \Feast\View */
+/* @var $this View */
+
+use Feast\Interfaces\ConfigInterface;
+use Feast\Interfaces\ProfilerInterface;
+use Feast\View;
+
 echo $this->getDtd();
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -31,11 +36,11 @@ echo $this->getDtd();
 include($content); ?>
 <?= $this->getPostScripts(); ?>
 <?php
-if (\di(\Feast\Interfaces\ConfigInterface::class)->getSetting('profiler')): ?>
+if (\di(ConfigInterface::class)->getSetting('profiler')): ?>
     <p style="font-size:12px;">
-        Total memory: <?= di(\Feast\Interfaces\ProfilerInterface::class)->getReadableMemoryUsage(); ?><br/>
-        Peak memory: <?= di(\Feast\Interfaces\ProfilerInterface::class)->getReadablePeakMemoryUsage(); ?><br/>
-        Page executed in <?= di(\Feast\Interfaces\ProfilerInterface::class)->getTotalTime(); ?> seconds.
+        Total memory: <?= di(ProfilerInterface::class)->getReadableMemoryUsage(); ?><br/>
+        Peak memory: <?= di(ProfilerInterface::class)->getReadablePeakMemoryUsage(); ?><br/>
+        Page executed in <?= di(ProfilerInterface::class)->getTotalTime(); ?> seconds.
     </p>
 <?php
 endif; ?>

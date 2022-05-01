@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 use Feast\Autoloader;
 use Feast\Main;
+use Feast\ServiceContainer\ServiceContainer;
 
 chdir(__DIR__);
 if (file_exists('vendor/autoload.php')) {
@@ -39,7 +40,7 @@ $autoLoader->register();
 $autoLoader->addPathMapping('Psr', ['/Feast/Psr']);
 const RUN_AS = Main::RUN_AS_CLI;
 require_once(APPLICATION_ROOT . 'container.php');
-/** @var \Feast\ServiceContainer\ServiceContainer $container */
+/** @var ServiceContainer $container */
 $container->add(Autoloader::class, $autoLoader);
 
 // Turn on all error reporting and turn ON display errors

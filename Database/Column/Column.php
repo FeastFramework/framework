@@ -44,7 +44,8 @@ class Column
         protected bool $unsigned = false,
         protected ?int $decimal = null,
         protected bool $nullable = false,
-        protected string|int|float|null|bool $default = null
+        protected string|int|float|null|bool $default = null,
+        protected ?string $comment = null
     ) {
         /** @psalm-suppress TypeDoesNotContainType - even though the docblock says positive-int, nothing forces it to be positive. */
         if ($length !== null && $length <= 0) {
@@ -58,6 +59,11 @@ class Column
     public function isNullable(): bool
     {
         return $this->nullable;
+    }
+    
+    public function getComment(): ?string
+    {
+        return $this->comment;
     }
 
     /**
@@ -107,6 +113,9 @@ class Column
      */
     public function getDefault(): string|null
     {
+        if ( $this->type === 'bool' && $this->default !== null ) {
+            return $this->default === true ? 'true' : 'false';
+        }
         return $this->default !== null ? (string)$this->default : null;
     }
 

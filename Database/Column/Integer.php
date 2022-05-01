@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Database\Column;
 
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class Integer extends Column
 {
@@ -34,17 +34,19 @@ class Integer extends Column
      * @param bool $unsigned
      * @param bool $nullable
      * @param int|null $default
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
     public function __construct(
         string $name,
         int $length = 11,
         bool $unsigned = false,
         bool $nullable = false,
-        ?int $default = null
+        ?int $default = null,
+        ?string $comment = null
     ) {
         $this->nullable = $nullable;
-        parent::__construct($name, $length, (string)static::TYPE, $unsigned, nullable: $nullable, default: $default);
+        parent::__construct($name, $length, (string)static::TYPE, $unsigned, nullable: $nullable, default: $default, comment: $comment);
     }
 
     /**

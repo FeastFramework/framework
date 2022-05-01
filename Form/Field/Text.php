@@ -48,7 +48,7 @@ class Text extends Field
         $output = $this->showLabel($showLabel, $this->label, Label::LABEL_POSITION_FIRST) ? $label : '';
         $output .= '<input type="' . $this->type . '" name="' . $this->name . '"';
         if ($this->default || $this->value) {
-            $output .= ' value="' . ($this->value ? $this->value : $this->default) . '"';
+            $output .= ' value="' . ($this->value ?: $this->default) . '"';
         }
         $output .= $this->buildMetaData();
         /**

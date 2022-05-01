@@ -249,7 +249,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         if (str_ends_with($path, 'index')) {
             $path = substr($path, 0, -5);
         }
-        if (str_ends_with($path, '/',)) {
+        if (str_ends_with($path, '/')) {
             $path = substr($path, 0, -1);
         }
         return $path;

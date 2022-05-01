@@ -173,7 +173,7 @@ class View extends stdClass implements ServiceContainerItemInterface
         $allScripts = '';
         /** @var string $script */
         foreach ($this->preScripts as $script) {
-            $filename = substr($script, 0, 4) === 'http' ? $script : '/js/' . $script;
+            $filename = str_starts_with($script, 'http') ? $script : '/js/' . $script;
             $allScripts .= '<script type="text/javascript" src="' . $filename . '"></script>' . PHP_EOL;
         }
         /** @var string $script */
@@ -236,7 +236,7 @@ class View extends stdClass implements ServiceContainerItemInterface
         $allScripts = '';
         /** @var string $script */
         foreach ($this->postScripts as $script) {
-            $filename = substr($script, 0, 4) == 'http' ? $script : '/js/' . $script;
+            $filename = str_starts_with($script, 'http') ? $script : '/js/' . $script;
             $allScripts .= '<script type="text/javascript" src="' . $filename . '"></script>' . PHP_EOL;
         }
         /** @var string $script */
@@ -350,7 +350,7 @@ class View extends stdClass implements ServiceContainerItemInterface
      */
     public function getTitle(bool $html = true): string
     {
-        if ($html == true) {
+        if ($html) {
             return '<title>' . $this->title . '</title>' . PHP_EOL;
         }
 
