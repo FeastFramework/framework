@@ -295,11 +295,26 @@ class PostgresTable extends Table
         ?string $comment = null
     ): static {
         if ($unsigned) {
-            throw new InvalidArgumentException('Postgres does not support unsigned integers');
+            throw new InvalidArgumentException('Postgres does not support unsigned integers.');
         }
         $this->columns[] = new BigInt($name, $nullable, $default, $comment);
 
         return $this;
+    }
+
+    public function collation(string $collation): static
+    {
+        throw new DatabaseException('Postgres does not support table level collation.');
+    }
+
+    public function characterSet(string $characterSet): static
+    {
+        throw new DatabaseException('Postgres does not support table level character set.');
+    }
+
+    public function dbEngine(string $dbEngine): static
+    {
+        throw new DatabaseException('Postgres does not support the database engine functionality.');
     }
 
     /**

@@ -66,8 +66,28 @@ class MySQLTable extends Table
         $columns = $this->addForeignKeysForDdl($columns);
 
         $return .= implode(',' . "\n", $columns) . ')';
+        $return .= $this->addTableInfo();
 
         return new Ddl($return, $bindings);
+    }
+    
+    protected function addTableInfo(): string
+    {
+        $return = '';
+        if ( $this->characterSet !== null ) {
+            $return .= ' CHARACTER SET ' . $this->characterSet;
+        }
+
+        if ( $this->collation !== null ) {
+            $return .= ' COLLATE ' . $this->collation;
+        }
+
+        if ( $this->dbEngine !== null ) {
+            $return .= ' ENGINE ' . $this->dbEngine;
+        }
+        
+        return $return;
+
     }
 
     /**
