@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Database\Column;
 
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class Decimal extends Column
 {
@@ -35,7 +35,8 @@ class Decimal extends Column
      * @param bool $nullable
      * @param bool $unsigned
      * @param string|null $default
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
     public function __construct(
         string $name,
@@ -43,7 +44,8 @@ class Decimal extends Column
         int $decimal = 0,
         bool $nullable = false,
         bool $unsigned = false,
-        ?string $default = null
+        ?string $default = null,
+        ?string $comment = null
     ) {
         parent::__construct(
             $name,
@@ -52,9 +54,9 @@ class Decimal extends Column
             $unsigned,
             $decimal,
             $nullable,
-            $default
+            $default,
+            $comment
         );
     }
-
 
 }

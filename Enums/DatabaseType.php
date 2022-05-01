@@ -24,5 +24,5 @@ enum DatabaseType: string
 {
     case MYSQL = 'mysql';
     case SQLITE = 'sqlite';
-
+    case POSTGRES = 'postgres';
 }

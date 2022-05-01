@@ -27,9 +27,6 @@ declare(strict_types=1);
 use Feast\Autoloader;
 use Feast\Interfaces\RouterInterface;
 
-use Feast\Autoloader;
-use Feast\Interfaces\RouterInterface;
-
 if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
     /** @psalm-suppress MissingFile */
     require_once(__DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');

@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Database\Column;
 
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class MediumText extends Char
 {
@@ -32,11 +32,12 @@ class MediumText extends Char
      * @param string $name
      * @param positive-int $length
      * @param bool $nullable
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
-    public function __construct(string $name, int $length = 16_777_215, bool $nullable = false)
+    public function __construct(string $name, int $length = 16_777_215, bool $nullable = false, ?string $comment = null)
     {
-        parent::__construct($name, $length, nullable: $nullable);
+        parent::__construct($name, $length, nullable: $nullable, comment: $comment);
     }
 
 }

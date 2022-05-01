@@ -60,10 +60,10 @@ class DatabaseFactoryTest extends TestCase
         $databaseFactory = new DatabaseFactory($config);
 
         $connection = $databaseFactory->getConnection();
-        $this->assertTrue($connection instanceof Database);
+        $this->assertInstanceOf(Database::class,$connection);
         // Secondary run for already connected path
         $connection = $databaseFactory->getConnection();
-        $this->assertTrue($connection instanceof Database);
+        $this->assertInstanceOf(Database::class,$connection);
     }
 
     public function testGetConnectionUnknown(): void

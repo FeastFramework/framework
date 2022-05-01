@@ -33,4 +33,9 @@ class MockBaseModel extends BaseModel
     public ?string $theNull = null;
     public ?\stdClass $theThing = null;
     public ?string $passEncrypted = null;
+    public ?bool $theTruth = null;
+    public ?bool $theUnTruth = null;
+    public ?bool $theUnknown = null;
+    public ?bool $theNumericTruth = null;
+    public ?bool $theNumericUnTruth = null;
 }

@@ -87,7 +87,7 @@ class MigrationController extends WriteTemplateController
         $this->printTableHeader();
         $this->printTableBox(true);
         foreach($this->migrationsByName as $migration => $status ) {
-            $this->terminal->message('| ' . str_pad($migration,48,' ') . '|' . ($status ? ' Yes ' : ' ' . $this->terminal->commandText('No') . '  ') . '|');
+            $this->terminal->message('| ' . str_pad($migration,48) . '|' . ($status ? ' Yes ' : ' ' . $this->terminal->commandText('No') . '  ') . '|');
         }
         $this->printTableBox();
     }

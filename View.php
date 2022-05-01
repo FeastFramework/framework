@@ -350,7 +350,7 @@ class View extends stdClass implements ServiceContainerItemInterface
      */
     public function getTitle(bool $html = true): string
     {
-        if ($html == true) {
+        if ($html) {
             return '<title>' . $this->title . '</title>' . PHP_EOL;
         }
 

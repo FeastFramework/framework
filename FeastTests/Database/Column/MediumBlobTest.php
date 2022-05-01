@@ -29,7 +29,7 @@ class MediumBlobTest extends TestCase
     public function testCreate(): void
     {
         $column = new MediumBlob('test');
-        $this->assertTrue($column instanceof MediumBlob);
+        $this->assertInstanceOf(MediumBlob::class,$column);
     }
 
     public function testGetLength(): void

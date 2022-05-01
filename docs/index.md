@@ -72,6 +72,9 @@ addition, PHP 8.1-bcmath is recommended.
 
 The v1.x line of FEAST requires >=PHP 8.0. The same recommendations above apply
 
+FEAST currently works with the MySQL and PostgreSQL database management systems as well as with SQLite for simple
+queries.
+
 The release plan for FEAST can be found [here](release-schedule.md).
 
 ## Getting started
@@ -111,6 +114,8 @@ The release plan for FEAST can be found [here](release-schedule.md).
 [Services](services.md)
 
 [Forms](forms.md)
+
+[Sessions](sessions.md)
 
 ## Scheduled and Queued Jobs
 

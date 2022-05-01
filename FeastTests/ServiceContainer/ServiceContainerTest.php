@@ -33,7 +33,7 @@ class ServiceContainerTest extends TestCase
         /** @var ServiceContainer $serviceContainer */
         $serviceContainer = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $item = $serviceContainer->get(ServiceContainer::class);
-        $this->assertTrue($item instanceof ServiceContainer);
+        $this->assertInstanceOf(ServiceContainer::class,$item);
     }
 
     public function testGetInvalid(): void

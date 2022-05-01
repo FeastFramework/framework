@@ -29,7 +29,7 @@ class TextareaTest extends TestCase
     public function testCreate(): void
     {
         $text = $this->getTextAreaObject();
-        $this->assertTrue($text instanceof Textarea);
+        $this->assertInstanceOf(Textarea::class,$text);
     }
 
     public function testSetValue(): void

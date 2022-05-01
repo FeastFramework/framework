@@ -41,7 +41,7 @@ class ServiceTest extends TestCase
         $container->add(ConfigInterface::class, $config);
         $service = $this->getMockForAbstractClass(Service::class);
 
-        $this->assertTrue($service->getHttpRequestObject() instanceof Curl);
+        $this->assertInstanceOf(Curl::class,$service->getHttpRequestObject());
     }
 
     public function testValidServiceClassSimple(): void
@@ -56,7 +56,7 @@ class ServiceTest extends TestCase
         $container->add(ConfigInterface::class, $config);
         $service = $this->getMockForAbstractClass(Service::class);
 
-        $this->assertTrue($service->getHttpRequestObject() instanceof Simple);
+        $this->assertInstanceOf(Simple::class,$service->getHttpRequestObject());
     }
 
     public function testWithInvalidServiceClass(): void

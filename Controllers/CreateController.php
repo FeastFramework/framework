@@ -341,7 +341,7 @@ class CreateController extends WriteTemplateController
         if ($compoundPrimary) {
             $this->terminal->message('Cannot generate mapper - Compound primary key');
         } elseif (!empty($primaryKey) && !empty($primaryKeyType)) {
-            $this->writeTemplateFile(
+            $created = $this->writeTemplateFile(
                              'Mapper',
                              'Mapper',
                              $overwrite,
@@ -350,11 +350,30 @@ class CreateController extends WriteTemplateController
                 table:       $table,
                 connection:  $connection,
                 primaryKey:  $primaryKey,
-                primaryType: $primaryKeyType
+                primaryType: $primaryKeyType,
+                sequence: (string)$tableInfo->sequence
             );
-            $this->terminal->message('Mapper class created');
+            if ( $created ) {
+                $this->terminal->message('Mapper class created');
+            } else {
+                $this->terminal->message('Mapper class already exists - not created.');
+            }
         } else {
-            $this->terminal->message('Cannot generate mapper - no primary key specified');
+            $created = $this->writeTemplateFile(
+                             'NoKeyMapper',
+                             'Mapper',
+                             $overwrite,
+                             $class,
+                             'Mapper',
+                table:       $table,
+                connection:  $connection,
+                sequence: (string)$tableInfo->sequence
+            );
+            if ( $created ) {
+                $this->terminal->message('Mapper class created. Save method must be manually created due to no primary key.');
+            } else {
+                $this->terminal->message('Mapper class already exists - not created.');
+            }
         }
     }
 
@@ -368,14 +387,19 @@ class CreateController extends WriteTemplateController
         string $table = '',
         string $connection = 'default',
         string $primaryKey = '',
-        string $primaryType = ''
-    ): void {
+        string $primaryType = '',
+        string $sequence = ''
+    ): bool {
         $file = $this->getTemplateFilePath($templateFile);
         $template = file_get_contents($file);
         if (!file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR)) {
             mkdir(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR);
         }
-        if ($overwrite || !file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR . $class . '.php')) {
+        if ($overwrite || !file_exists(APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR . $class . $classExtra . '.php')) {
+            $extraMapperInfo = $connection !== 'default' ? '    public const CONNECTION = \'' . $connection . '\';' . "\n" : '';
+            if ( $sequence != '' ) {
+                $extraMapperInfo .= '    public const SEQUENCE_NAME = \'' . $sequence . '\';' . "\n";
+            } 
             file_put_contents(
                 APPLICATION_ROOT . $path . DIRECTORY_SEPARATOR . $class . $classExtra . '.php',
                 str_replace(
@@ -396,7 +420,7 @@ class CreateController extends WriteTemplateController
                         $class,
                         $classExtra,
                         $fields,
-                        $connection !== 'default' ? '    public const CONNECTION = \'' . $connection . '\';' . "\n" : '',
+                        $extraMapperInfo,
                         $primaryKey,
                         $table,
                         $primaryType
@@ -405,7 +429,9 @@ class CreateController extends WriteTemplateController
                     trim($template) . "\n"
                 )
             );
+            return true;
         }
+        return false;
     }
 
     protected function buildControllerDirectoryIfNotExists(string $path): void
@@ -539,7 +565,7 @@ class CreateController extends WriteTemplateController
         $pathParent .= DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR;
 
         $path = $pathParent . ucfirst($controller);
-        if (file_exists($path) == false) {
+        if (!file_exists($path)) {
             mkdir($path, 0755, true);
             $this->terminal->message('Directory ' . $path . ' Created');
         }

@@ -156,8 +156,8 @@ class JsonTest extends TestCase
         $result->otherTimestamp->setTimezone('America/New_York');
         $this->assertEquals('20210415', $result->timestamp->getFormattedDate('Ymd'));
         $this->assertEquals('20210405', $result->otherTimestamp->getFormattedDate('Ymd'));
-        $this->assertTrue($result->secondItem instanceof \Mocks\SecondItem);
-        $this->assertTrue($result->aClass instanceof stdClass);
+        $this->assertInstanceOf(\Mocks\SecondItem::class,$result->secondItem);
+        $this->assertInstanceOf(stdClass::class,$result->aClass);
         $this->assertEquals('ItWorks', $result->aClass->test);
     }
 

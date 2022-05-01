@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace Database\Table;
 
 use Feast\Database\DatabaseFactory;
+use Feast\Database\Table\MySQLTable;
+use Feast\Database\Table\PostgresTable;
 use Feast\Database\Table\TableFactory;
 use Feast\Enums\DatabaseType;
 use Feast\Exception\DatabaseException;
@@ -32,7 +34,7 @@ use PHPUnit\Framework\TestCase;
 class TableFactoryTest extends TestCase
 {
 
-    public function testGetTable(): void
+    public function testGetTableMySQL(): void
     {
         $dbfInterface = $this->createStub(DatabaseFactory::class);
         $dbInterface = $this->createStub(DatabaseInterface::class);
@@ -42,9 +44,22 @@ class TableFactoryTest extends TestCase
         $serviceContainer = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $serviceContainer->add(DatabaseFactoryInterface::class, $dbfInterface);
 
-        TableFactory::getTable('test');
-        // If we get here everything ran correctly.
-        $this->assertTrue(true);
+        $table = TableFactory::getTable('test');
+        $this->assertInstanceOf(MySQLTable::class, $table);
+    }
+
+    public function testGetTablePostgres(): void
+    {
+        $dbfInterface = $this->createStub(DatabaseFactory::class);
+        $dbInterface = $this->createStub(DatabaseInterface::class);
+        $dbInterface->method('getDatabaseType')->willReturn(DatabaseType::POSTGRES);
+        $dbfInterface->method('getConnection')->willReturn($dbInterface);
+        /** @var ServiceContainer $serviceContainer */
+        $serviceContainer = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $serviceContainer->add(DatabaseFactoryInterface::class, $dbfInterface);
+
+        $table = TableFactory::getTable('test');
+        $this->assertInstanceOf(PostgresTable::class, $table);
     }
 
     public function testGetTableUnrecognized(): void

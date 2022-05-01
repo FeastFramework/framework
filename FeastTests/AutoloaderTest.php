@@ -27,7 +27,7 @@ class AutoloaderTest extends TestCase
     {
         $autoloader = new Autoloader();
         $autoloader->register();
-        $this->assertTrue($autoloader instanceof Autoloader);
+        $this->assertInstanceOf(Autoloader::class,$autoloader);
         unset($autoloader);
     }
 
@@ -35,6 +35,6 @@ class AutoloaderTest extends TestCase
     {
         $autoloader = new Autoloader();
         $autoloader->loadClass('NonExistent');
-        $this->assertTrue($autoloader instanceof Autoloader);
+        $this->assertInstanceOf(Autoloader::class,$autoloader);
     }
 }

@@ -36,7 +36,7 @@ class MainTest extends TestCase
     public function testConstruct(): void
     {
         $main = $this->getMain(Main::RUN_AS_WEBAPP);
-        $this->assertTrue($main instanceof Main);
+        $this->assertInstanceOf(Main::class,$main);
     }
 
     public function testMainWebApp404(): void

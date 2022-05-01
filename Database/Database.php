@@ -247,11 +247,13 @@ class Database implements DatabaseInterface
     /**
      * Get last insert id as string.
      *
+     * @param string|null $name
      * @return string
      */
-    public function lastInsertId(): string
+    public function lastInsertId(?string $name = null): string
     {
-        return $this->connection->lastInsertId();
+        $name = $name !== '' ? $name : null;
+        return $this->connection->lastInsertId($name);
     }
 
     /**
@@ -293,9 +295,9 @@ class Database implements DatabaseInterface
     {
         $query = $this->describe($table);
         try {
-            $query->execute();
+            $result = $query->execute();
 
-            return true;
+            return $result->fetch() ? true : false;
         } catch (Exception) {
             return false;
         }
@@ -352,7 +354,6 @@ class Database implements DatabaseInterface
      * @param string $hostname
      * @param int $port
      * @return string
-     * @throws ServerFailureException
      */
     private function getConnectionString(string $database, string $hostname = 'localhost', int $port = 3306): string
     {
@@ -360,7 +361,9 @@ class Database implements DatabaseInterface
             DatabaseType::MYSQL =>
             sprintf('mysql:host=%s;port=%s;dbname=%s', $hostname, $port, $database),
             DatabaseType::SQLITE =>
-            sprintf('sqlite:%s', $database)
+            sprintf('sqlite:%s', $database),
+            DatabaseType::POSTGRES =>
+            sprintf('pgsql:host=%s;port=%s;dbname=%s', $hostname, $port, $database)
         };
     }
 
