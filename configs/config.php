@@ -16,6 +16,9 @@
  * limitations under the License.
  */
 
+use Feast\Enums\DatabaseType;
+use Feast\HttpRequest\Curl;
+
 $environments = [];
 
 $environments['production'] = [
@@ -30,7 +33,7 @@ $environments['production'] = [
         ]
     ],
     'service' => [
-        'class' => \Feast\HttpRequest\Curl::class,
+        'class' => Curl::class,
         //'class' => \Feast\HttpRequest\Simple::class,
         // Switch the above two lines if simple http requests (without curl) are desired.
     ]
@@ -46,7 +49,7 @@ $environments['production : development'] = [
 $environments['development : test'] = [
     'database' => [
         'default' => [
-            'connectionType' => \Feast\Enums\DatabaseType::SQLITE,
+            'connectionType' => DatabaseType::SQLITE,
             'name' => ':memory:'
         ]
     ]

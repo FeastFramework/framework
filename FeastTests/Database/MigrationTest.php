@@ -46,7 +46,7 @@ class MigrationTest extends TestCase
     public function testCreate(): void
     {
         $migration = new MigrationMock();
-        $this->assertTrue($migration instanceof Migration);
+        $this->assertInstanceOf(Migration::class,$migration);
     }
 
     public function testCreateNoConnection(): void

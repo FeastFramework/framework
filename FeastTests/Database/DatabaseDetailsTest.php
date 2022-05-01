@@ -73,6 +73,6 @@ class DatabaseDetailsTest extends TestCase
         $databaseDetails = new DatabaseDetails($dbFactory1);
         $databaseDetails->setDatabaseFactory($dbFactory2);
 
-        $this->assertTrue($databaseDetails instanceof DatabaseDetails);
+        $this->assertInstanceOf(DatabaseDetails::class,$databaseDetails);
     }
 }

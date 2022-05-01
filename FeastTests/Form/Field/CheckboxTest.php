@@ -49,7 +49,7 @@ class CheckboxTest extends TestCase
             '<label for="testing_test_true">test</label><input id="testing_test_true" class="" type="checkbox" name="test" value="true" />',
             $output
         );
-        $this->assertTrue($checkbox instanceof Checkbox);
+        $this->assertInstanceOf(Checkbox::class,$checkbox);
     }
 
     public function testSetValue(): void

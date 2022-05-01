@@ -29,7 +29,7 @@ class TextTest extends TestCase
     public function testCreate(): void
     {
         $column = new Text('test');
-        $this->assertTrue($column instanceof Text);
+        $this->assertInstanceOf(Text::class,$column);
     }
 
     public function testGetLength(): void

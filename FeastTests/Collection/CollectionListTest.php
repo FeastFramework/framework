@@ -32,7 +32,7 @@ class CollectionListTest extends TestCase
     public function testCreateStringValid(): void
     {
         $collection = new CollectionList('string', ['a' => 'test', 'b' => 'testing']);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testRemoveByKey(): void
@@ -343,37 +343,37 @@ class CollectionListTest extends TestCase
     public function testCreateIntValid(): void
     {
         $collection = new CollectionList('int', [1]);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateFloatValid(): void
     {
         $collection = new CollectionList('float', [1.0]);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateIterableValid(): void
     {
         $collection = new CollectionList('iterable', [['test']]);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateArrayValid(): void
     {
         $collection = new CollectionList('array', [['test']]);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateObjectValid(): void
     {
         $collection = new CollectionList('object', [new stdClass()]);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateBoolValid(): void
     {
         $collection = new CollectionList('bool', [true, false]);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateCallableValid(): void
@@ -384,13 +384,13 @@ class CollectionListTest extends TestCase
                           }
                       ]
         );
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateStdClassValid(): void
     {
         $collection = new CollectionList(stdClass::class, [new stdClass()]);
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     public function testCreateMixedValid(): void
@@ -407,7 +407,7 @@ class CollectionListTest extends TestCase
                        []
                    ]
         );
-        $this->assertTrue($collection instanceof CollectionList);
+        $this->assertInstanceOf(CollectionList::class,$collection);
     }
 
     ##### BELOW TESTS ARE ALL THE ARRAY ACCESSOR BASED FUNCTIONS #####

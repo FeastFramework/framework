@@ -20,7 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Database\Column;
 
-use Feast\Exception\ServerFailureException;
+use Feast\Exception\DatabaseException;
 
 class TinyInt extends Integer
 {
@@ -34,10 +34,11 @@ class TinyInt extends Integer
      * @param bool $unsigned
      * @param bool $nullable
      * @param int|null $default
-     * @throws ServerFailureException
+     * @param string|null $comment
+     * @throws DatabaseException
      */
-    public function __construct(string $name, int $length = 3, bool $unsigned = false, bool $nullable = false, ?int $default = null)
+    public function __construct(string $name, int $length = 3, bool $unsigned = false, bool $nullable = false, ?int $default = null, ?string $comment = null)
     {
-        parent::__construct($name, $length, $unsigned, $nullable, $default);
+        parent::__construct($name, $length, $unsigned, $nullable, $default, $comment);
     }
 }

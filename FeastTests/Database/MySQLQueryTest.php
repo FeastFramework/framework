@@ -102,7 +102,7 @@ class MySQLQueryTest extends TestCase
         $query = $this->getValidQuery();
         $query->from('test', ['test'])->groupBy('test');
         $result = $query->execute();
-        $this->assertTrue($result instanceof \PDOStatement);
+        $this->assertInstanceOf(\PDOStatement::class,$result);
     }
 
     public function testExecuteFail(): void
@@ -211,7 +211,7 @@ class MySQLQueryTest extends TestCase
     {
         $query = $this->getValidQuery();
         $result = $query->getDescribedTable('test_describe');
-        $this->assertTrue($result instanceof TableDetails);
+        $this->assertInstanceOf(TableDetails::class,$result);
     }
 
     public function testLeftJoin(): void
@@ -259,14 +259,22 @@ class MySQLQueryTest extends TestCase
     public function testHavingMulti(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->having('test > ?', '1');
-        $this->assertEquals('SELECT test FROM test HAVING (test > ?)', (string)$query);
+        $query->from('test', ['test'])->having('test > ? and test2 > ?', '1','2');
+        $this->assertEquals('SELECT test FROM test HAVING (test > ? and test2 > ?)', (string)$query);
     }
 
     public function testSQLiteQuery(): void
     {
         $query = new SQLiteQuery(new PDOMock('dsnstring'));
-        $this->assertTrue($query instanceof SQLiteQuery && $query instanceof MySQLQuery);
+        $this->assertInstanceOf(SQLiteQuery::class, $query);
+        $this->assertInstanceOf(MySQLQuery::class, $query);
+    }
+
+    public function testGetSequenceValid(): void
+    {
+        $query = $this->getValidQuery();
+        $result = $query->getSequenceForPrimary('test', 'test', false);
+        $this->assertNull($result);
     }
 
 }

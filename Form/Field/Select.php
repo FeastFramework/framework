@@ -119,15 +119,12 @@ class Select extends Field
          * @var Value $val
          */
         foreach ($values as $val) {
-            /** @var Value $valueItem */
-            $valueItem = $val;
             if ($val->value === $value) {
-                $valueItem->selected = true;
+                $val->selected = true;
             } elseif ($overwrite) {
-                $valueItem->selected = false;
+                $val->selected = false;
             }
         }
-        $this->values = $values;
 
         return $this;
     }

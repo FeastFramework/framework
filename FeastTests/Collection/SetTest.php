@@ -32,7 +32,7 @@ class SetTest extends TestCase
     public function testCreateStringValid(): void
     {
         $set = new Set('string', ['test']);
-        $this->assertTrue($set instanceof Set);
+        $this->assertInstanceOf(Set::class,$set);
     }
 
     public function testCreateStringInvalid(): void

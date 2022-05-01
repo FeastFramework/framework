@@ -29,7 +29,7 @@ class TinyTextTest extends TestCase
     public function testCreate(): void
     {
         $column = new TinyText('test');
-        $this->assertTrue($column instanceof TinyText);
+        $this->assertInstanceOf(TinyText::class,$column);
     }
 
 }

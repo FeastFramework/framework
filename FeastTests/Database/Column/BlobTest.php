@@ -29,7 +29,7 @@ class BlobTest extends TestCase
     public function testCreate(): void
     {
         $column = new Blob('test');
-        $this->assertTrue($column instanceof Blob);
+        $this->assertInstanceOf(Blob::class,$column);
     }
 
     public function testGetLength(): void

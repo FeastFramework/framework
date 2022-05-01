@@ -432,10 +432,28 @@ abstract class Query
             if ($location === false) {
                 return $query;
             }
-            $query = substr_replace($query, '\'' . str_replace('?','{question_mark}',(string)$binding) . '\'', $location, 1);
+            $query = substr_replace(
+                $query,
+                '\'' . str_replace('?', '{question_mark}', (string)$binding) . '\'',
+                $location,
+                1
+            );
         }
-        
-        return str_replace('{question_mark}','?',$query);
+
+        return str_replace('{question_mark}', '?', $query);
+    }
+
+    /**
+     * Only implemented in PostgresQuery
+     *
+     * @param string $tableName
+     * @param string|null $primarykey
+     * @param bool $compoundPrimary
+     * @return string|null
+     */
+    public function getSequenceForPrimary(string $tableName, ?string $primarykey, bool $compoundPrimary): ?string
+    {
+        return null;
     }
 
 }
