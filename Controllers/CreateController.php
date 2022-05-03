@@ -264,6 +264,27 @@ class CreateController extends WriteTemplateController
         $this->writeSimpleTemplate($name, 'Service', $file);
     }
 
+    #[Action(usage: '{name}', description: 'Create a feature flag class from the template file.')]
+    #[Param(type: 'string', name: 'name', description: 'Name of Feature Flag to create')]
+    public function featureFlagGet(
+        ?string $name = null
+    ): void {
+        if ($name === null) {
+            $this->help('feast:create:feature-flag');
+            return;
+        }
+        if ($this->validateRulesOrPrintError($name) === false) {
+            return;
+        }
+
+        $folder = APPLICATION_ROOT . 'FeatureFlags';
+        $file = $folder . DIRECTORY_SEPARATOR . ucfirst($name) . '.php';
+        if ( !is_dir($folder) ) {
+            mkdir($folder,0755);
+        }
+        $this->writeSimpleTemplate($name, 'FeatureFlag', $file);
+    }
+
     /**
      * Write a class from a template file.
      *

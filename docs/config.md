@@ -1,6 +1,7 @@
 [Back to Index](index.md)
 
 # Configuring FEAST
+
 FEAST contains an `.appenv` file that contains the name of your environment. This value will
 match to one of the environments in the `configs/config.php` file. Note that if using
 inherited environments, only the child name is included. Example: `production : dev` would be
@@ -10,11 +11,15 @@ recorded as just `dev`. Inheritance is covered below.
 
 [Built-in Configuration Directives](#built-in-configuration-directives)
 
+[Feature Flags](#feature-flags)
+
 [Caching the Config](#caching-the-config)
+
 ## Basic FEAST configuration
 
 FEAST uses two different files for configuration. These files are similar but serve slightly different purposes. The
-first is `configs/config.php`. This file contains all your shared configuration, and the top level keys are the different
+first is `configs/config.php`. This file contains all your shared configuration, and the top level keys are the
+different
 environments.
 
 You may make any config key/values your application needs.
@@ -160,12 +165,13 @@ $environments['staging'] = [
 ];
 ```
 
-Note that the final configuration stored is ONLY the one matching your 
+Note that the final configuration stored is ONLY the one matching your
 current environment.
 
 [Back to Top](#configuring-feast)
 
 ## Built-in Configuration Directives
+
 FEAST has several built in configuration directives that change the behavior
 of the framework.
 
@@ -242,8 +248,64 @@ $config = [
 ```
 
 [Back to Top](#configuring-feast)
+
+## Feature Flags
+
+The config item `featureflags` is a special item. This config takes an array of `key` => `value` mappings of feature
+flags.
+
+The base class can be used if simple `on` or `off` functionality is needed, or you may extend this class. There is a cli
+action for creating these helper classes. See the docs [here](cli.md#feastcreatefeature-flag).
+
+### Sample configuration
+
+```php
+<?php
+$environments = [];
+
+$environments['production'] =
+    [
+        'featureflags' => [
+            'test' => new \Feast\Config\FeatureFlag(true),
+            'otherTest' => new \Feast\Config\FeatureFlag(false)
+        ]
+    ]
+];
+
+$environments['production : dev'] =
+    [
+        'featureflags' => [
+            'test' => new \Feast\Config\FeatureFlag(false),
+            'otherTest' => new \Feast\Config\FeatureFlag(true)
+        ]
+    ]
+];
+
+return $environments;
+
+```
+
+You can set the same configuration item at different levels to change the value.
+
+### Retrieving feature flag configurations
+
+You can retrieve a [`CollectionList`](collections.md#collection-list) of all FeatureFlags by calling the
+method `getFeatureFlags` or can retrieve a single item by calling the method `getFeatureFlag` and passing in the name of
+the flag you wish to retrieve.
+
+If an item matching the chosen flag does not exist, a default one will be returned with the value for enabled
+being the second parameter to `getFeatureFlag` (defaults to `false`).
+
+### Checking if enabled
+
+The method `isEnabled` on `FeatureFlag` objects will return true if enabled, or false if disabled and can be overridden
+in the child class.
+
+[Back to Top](#configuring-feast)
+
 ## Caching the Config
-To speed up your requests, you may cache your configuration 
+
+To speed up your requests, you may cache your configuration
 by running `php famine feast:cache:config-generate`. To clear
 the cache, run `php famine feast:cache:config-clear`.
 

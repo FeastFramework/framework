@@ -36,6 +36,15 @@ class TemplateController extends CliController
         );
     }
 
+    #[Action(description: 'Copy "FeatureFlag" template to bin/templates folder.')]
+    public function installFeatureFlagGet(): void
+    {
+        $this->installFile('FeatureFlag.php.txt');
+        $this->terminal->message(
+            'File ' . $this->terminal->commandText('FeatureFlag.php.txt') . ' has been copied to bin/templates.'
+        );
+    }
+
     #[Action(description: 'Copy "CliAction" template to bin/templates folder.')]
     public function installCliActionGet(): void
     {
@@ -180,6 +189,7 @@ class TemplateController extends CliController
         $this->installQueueableJobGet();
         $this->installServiceGet();
         $this->installValidatorGet();
+        $this->installFeatureFlagGet();
     }
 
     protected function installFile(string $file): void

@@ -20,6 +20,9 @@ declare(strict_types=1);
 
 namespace Feast\Interfaces;
 
+use Feast\Collection\Collection;
+use Feast\Config\FeatureFlag;
+use Feast\Exception\ServerFailureException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 
 /**
@@ -54,4 +57,22 @@ interface ConfigInterface extends ServiceContainerItemInterface
      * @return mixed
      */
     public function getSetting(string $key, mixed $default = null): mixed;
+
+    /**
+     * Get a collection of all feature flags.
+     *
+     * @return Collection
+     * @throws ServerFailureException
+     */
+    public function getFeatureFlags(): Collection;
+
+    /**
+     * Get a feature flag by name. If the default value is passed in, a generic flag will be returned with the chosen value.
+     *
+     * @param string $flag
+     * @param bool $defaultFlagValue
+     * @return FeatureFlag
+     * @throws ServerFailureException
+     */
+    public function getFeatureFlag(string $flag, bool $defaultFlagValue = false): FeatureFlag;
 }
