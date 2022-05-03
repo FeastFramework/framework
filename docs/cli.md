@@ -170,6 +170,16 @@ php famine feast:create:service {name}
 Create a Service class at `/Services/{name}`. The name must be a valid PHP classname. Service classes allow working with
 HTTP requests in a simple, object-oriented manner. See [Services](services.md) for more information.
 
+### feast:create:feature-flag
+
+```
+php famine feast:create:feature-flag {name}
+```
+
+Create a FeatureFlag class at `/FeatureFlags/{name}`. The name must be a valid PHP classname. Feature flags allow
+enabling or disabling functionality quickly and easily. See [Feature Flags](config.md#feature-flags) for more
+information.
+
 [Back to Top](#the-feast-cli)
 
 ## feast:migration
@@ -222,6 +232,7 @@ See [Working with Migrations](models.md#working-with-migrations) for more inform
 ```
 php famine feast:migration:list
 ```
+
 Print a list of all migrations and whether they have been ran.
 
 [Back to Top](#the-feast-cli)
