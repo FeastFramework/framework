@@ -98,6 +98,61 @@ class CreateControllerTest extends TestCase
         $this->assertStringContainsString('Service file NewService.php created.', trim($output));
     }
 
+    public function testFeatureFlagGetNoName(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:feature-flag'])
+        );
+        $controller->featureFlagGet();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringEndsWith('Name of Feature Flag to create', trim($output));
+    }
+
+    public function testFeatureFlagGetBadName(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:feature-flag'])
+        );
+        $controller->featureFlagGet('1Test');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringStartsWith('1Test is not a valid class name', trim($output));
+    }
+
+    public function testFeatureFlagGetAlreadyExists(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:feature-flag'])
+        );
+        $controller->featureFlagGet('successFlag');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('SuccessFlag.php already exists.', trim($output));
+    }
+
+    public function testFeatureFlagGetCreated(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CreateController(
+            di(null, ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:create:feature-flag'])
+        );
+        $controller->featureFlagGet('NewFlag');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('FeatureFlag file NewFlag.php created.', trim($output));
+    }
     public function testFormGetNoName(): void
     {
         $config = $this->createStub(Config::class);

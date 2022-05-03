@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace FeatureFlags;
+
+use Feast\Config\FeatureFlag;
+use Feast\Interfaces\FeatureFlagInterface;
+
+class {name} extends FeatureFlag implements FeatureFlagInterface
+{
+
+    public function __construct(bool $isEnabled)
+    {
+        parent::__construct($isEnabled);
+    }
+    
+    public function isEnabled(): bool
+    {
+        return $this->isEnabled;
+    }
+
+}

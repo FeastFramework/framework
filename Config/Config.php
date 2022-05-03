@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast\Config;
 
 use BackedEnum;
+use Feast\Collection\CollectionList;
 use Feast\Exception\ConfigException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
@@ -105,6 +106,42 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
         }
 
         return $currentConfigItem;
+    }
+
+    /**
+     * Get a collection of all feature flags.
+     *
+     * @return CollectionList
+     * @throws ServerFailureException
+     */
+    public function getFeatureFlags(): CollectionList
+    {
+        $setting = $this->getSetting('featureflags', new stdClass());
+        if ($setting instanceof stdClass === false) {
+            throw new ServerFailureException('Feature Flags must be an array in your configuration.');
+        }
+        
+        /** @var array<FeatureFlag> $settingsArray */
+        $settingsArray = (array)$setting;
+        return new CollectionList(FeatureFlag::class, $settingsArray);
+    }
+
+    /**
+     * Get a feature flag by name. If the default value is passed in, a generic flag will be returned with the chosen value.
+     *
+     * @param string $flag
+     * @param bool $defaultFlagValue
+     * @return FeatureFlag
+     * @throws ServerFailureException
+     */
+    public function getFeatureFlag(string $flag, bool $defaultFlagValue = false): FeatureFlag
+    {
+        $flags = $this->getFeatureFlags();
+        $flag = $flags->get($flag) ?? null;
+        if ($flag instanceof FeatureFlag) {
+            return $flag;
+        }
+        return new FeatureFlag($defaultFlagValue);
     }
 
     /**
@@ -270,7 +307,9 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
              * @var string|int|bool|stdClass $val
              */
             foreach ($config->{$parentEnvironment} as $key => $val) {
-                $config->$environmentName->$key = $val instanceof stdClass ? $this->cloneObjectOrArrayAsObject($val) : $val;
+                $config->$environmentName->$key = $val instanceof stdClass ? $this->cloneObjectOrArrayAsObject(
+                    $val
+                ) : $val;
             }
         }
     }
