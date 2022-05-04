@@ -218,6 +218,87 @@ class MainTest extends TestCase
         $this->assertEquals('Something went wrong! If you are the administrator, check the error logs for more info.<br><br>', $output);
     }
 
+    public function testMainWebAppExceptionNotAvailableInEnv(): void
+    {
+        $main = $this->getMain(Main::RUN_AS_WEBAPP);
+        /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
+        $router = di(RouterInterface::class);
+        $router->method('getControllerClass')->willReturn('FeastTestController');
+        $router->method('getControllerName')->willReturn('feast-test');
+        $router->method('getControllerFullyQualifiedName')->willReturn(
+            \Modules\Test\Controllers\FeastTestController::class
+        );
+
+        $router->method('getAction')->willReturn('exceptionAction');
+        $router->method('getActionName')->willReturn('denied-path-for-env');
+        $router->method('getActionMethodName')->willReturn('deniedPathForEnvGet');
+        $router->method('getModuleName')->willReturn('Test');
+        $this->expectException(\Feast\Exception\Error404Exception::class);
+        $this->expectExceptionMessage('Controller FeastTestController is not available!');
+        $main->main();
+    }
+
+    public function testMainWebAppExceptionIsAvailableInEnv(): void
+    {
+        $main = $this->getMain(Main::RUN_AS_WEBAPP);
+        /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
+        $router = di(RouterInterface::class);
+        $router->method('getControllerClass')->willReturn('FeastTestController');
+        $router->method('getControllerName')->willReturn('feast-test');
+        $router->method('getControllerFullyQualifiedName')->willReturn(
+            \Modules\Test\Controllers\FeastTestController::class
+        );
+
+        $router->method('getAction')->willReturn('exceptionAction');
+        $router->method('getActionName')->willReturn('allowed-path-for-env');
+        $router->method('getActionMethodName')->willReturn('allowedPathForEnvGet');
+        $router->method('getModuleName')->willReturn('Test');
+        $main->main();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Success!', $output);
+    }
+
+    public function testMainWebAppExceptionNotAvailableInProduction(): void
+    {
+        $main = $this->getMain(Main::RUN_AS_WEBAPP);
+        /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
+        $router = di(RouterInterface::class);
+        $router->method('getControllerClass')->willReturn('FeastTestController');
+        $router->method('getControllerName')->willReturn('feast-test');
+        $router->method('getControllerFullyQualifiedName')->willReturn(
+            \Modules\Test\Controllers\FeastTestController::class
+        );
+
+        $router->method('getAction')->willReturn('exceptionAction');
+        $router->method('getActionName')->willReturn('denied-path-for-prod');
+        $router->method('getActionMethodName')->willReturn('deniedPathForProdGet');
+        $router->method('getModuleName')->willReturn('Test');
+        $main->main();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Success!', $output);
+        $main->main();
+    }
+
+    public function testMainWebAppExceptionIsAvailableInProduction(): void
+    {
+        $main = $this->getMain(Main::RUN_AS_WEBAPP);
+        /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
+        $router = di(RouterInterface::class);
+        $router->method('getControllerClass')->willReturn('FeastTestController');
+        $router->method('getControllerName')->willReturn('feast-test');
+        $router->method('getControllerFullyQualifiedName')->willReturn(
+            \Modules\Test\Controllers\FeastTestController::class
+        );
+
+        $router->method('getAction')->willReturn('exceptionAction');
+        $router->method('getActionName')->willReturn('allowed-path-for-prod');
+        $router->method('getActionMethodName')->willReturn('allowedPathForProdGet');
+        $router->method('getModuleName')->willReturn('Test');
+        $this->expectException(\Feast\Exception\Error404Exception::class);
+        $this->expectExceptionMessage('Controller FeastTestController is not available!');
+        $main->main();
+    }
+
     public function testMainWebAppNormalWithModel(): void
     {
         $main = $this->getMain(Main::RUN_AS_WEBAPP);
@@ -242,6 +323,7 @@ class MainTest extends TestCase
     {
         $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $config = $this->createStub(Config::class);
+        $config->method('getEnvironmentName')->willReturn('dev');
         if ($with404) {
             $config->method('getSetting')->willReturnMap(
                 [

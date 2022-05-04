@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace Feast;
 
 use Exception;
+use Feast\Attributes\AccessControl;
+use Feast\Attributes\Path;
 use Feast\Enums\ResponseCode;
 use Feast\Exception\Error404Exception;
 use Feast\Exception\ServerFailureException;
@@ -152,7 +154,7 @@ class Main implements MainInterface
                 }
             }
 
-            $this->runRequest($router, $request, $response, $view);
+            $this->runRequest($router, $request, $response, $config, $view);
         } catch (Error404Exception $exception) {
             if ($this->runAs === self::RUN_AS_WEBAPP) {
                 $this->handle404Exception($config, $exception);
@@ -173,7 +175,8 @@ class Main implements MainInterface
     protected function runControllerLoop(
         RouterInterface $router,
         RequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface $response,
+        ConfigInterface $config
     ): void {
         do {
             $router->forward(false);
@@ -184,7 +187,7 @@ class Main implements MainInterface
             $moduleName = $router->getModuleName();
             $this->routePath = $moduleName != 'Default' ? '/Modules/' . $moduleName . '/' : '';
 
-            $this->checkForControllerAndAction($controllerClass, $controllerName, $actionName);
+            $this->checkForControllerAndAction($controllerClass, $controllerName, $actionName, $config);
             /* @var $controller ControllerInterface */
             $arguments = $this->buildDynamicParameters($controllerClass, '__construct', $request, false);
             /** @var HttpController $controller */
@@ -211,7 +214,9 @@ class Main implements MainInterface
      * @param ControllerInterface $controller
      * @param string $actionName
      * @param RequestInterface $request
+     * @throws NotFoundException
      * @throws ReflectionException
+     * @throws ServerFailureException
      */
     protected function runAction(ControllerInterface $controller, string $actionName, RequestInterface $request): void
     {
@@ -227,7 +232,9 @@ class Main implements MainInterface
      * @param RequestInterface $request
      * @param bool $buildUnknown
      * @return array
+     * @throws NotFoundException
      * @throws ReflectionException
+     * @throws ServerFailureException
      */
     protected function buildDynamicParameters(
         ControllerInterface|Plugin|string $controller,
@@ -254,6 +261,9 @@ class Main implements MainInterface
      * @param RequestInterface $request
      * @param bool $buildUnknown
      * @return array
+     * @throws NotFoundException
+     * @throws ReflectionException
+     * @throws ServerFailureException
      */
     protected function buildArguments(array $arguments, RequestInterface $request, bool $buildUnknown = true): array
     {
@@ -276,7 +286,7 @@ class Main implements MainInterface
     }
 
     /**
-     * @throws ReflectionException|NotFoundException
+     * @throws ReflectionException|NotFoundException|ServerFailureException
      */
     protected function buildArgument(
         RequestInterface $request,
@@ -505,9 +515,10 @@ class Main implements MainInterface
         RouterInterface $router,
         RequestInterface $request,
         ResponseInterface $response,
+        ConfigInterface $config,
         View $view
     ): void {
-        $this->runControllerLoop($router, $request, $response);
+        $this->runControllerLoop($router, $request, $response, $config);
 
         // Run Plugins
         $this->runPlugins('postDispatch', $router, $request);
@@ -522,7 +533,8 @@ class Main implements MainInterface
     protected function checkForControllerAndAction(
         string $controllerClass,
         string $controllerName,
-        string $actionName
+        string $actionName,
+        ConfigInterface $config
     ): void {
         if (!class_exists($controllerClass)) {
             throw new Error404Exception('Controller ' . $controllerName . ' does not exist!');
@@ -530,6 +542,17 @@ class Main implements MainInterface
         if (!method_exists($controllerClass, $actionName)) {
             throw new Error404Exception('Action ' . $actionName . ' does not exist!');
         }
+        $method = new \ReflectionMethod($controllerClass,$actionName);
+
+        $attributes = $method->getAttributes(AccessControl::class);
+        foreach($attributes as $attribute) {
+            /** @var AccessControl $path */
+            $path = $attribute->newInstance();
+            if ($path->isEnabled($config->getEnvironmentName()) === false) {
+                throw new Error404Exception('Controller ' . $controllerName . ' is not available!');
+            }
+        }
+        
     }
 
 }
