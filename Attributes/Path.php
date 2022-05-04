@@ -35,6 +35,7 @@ class Path
 
     /**
      * Path constructor.
+     *
      * @param string $path
      * @param string $name
      * @param int $method

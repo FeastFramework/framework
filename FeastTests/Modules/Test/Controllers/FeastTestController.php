@@ -20,8 +20,10 @@ declare(strict_types=1);
 
 namespace Modules\Test\Controllers;
 
+use Feast\Attributes\AccessControl;
 use Feast\Attributes\Action;
 use Feast\Attributes\Param;
+use Feast\Attributes\Path;
 use Feast\Date;
 use Feast\HttpController;
 use Mocks\MockBaseMapper;
@@ -42,6 +44,34 @@ class FeastTestController extends HttpController
     #[Action(usage: 'name [service-name]', description: 'Create a service class from the template file.')]
     #[Param(type: 'string', name: 'name', description: 'Name of service to create')]
     public function serviceGet(
+        ?string $name = null
+    ): void {
+        echo 'Success!';
+    }
+
+    #[AccessControl(disabledEnvironments: ['dev'])]
+    public function deniedPathForEnvGet(
+        ?string $name = null
+    ): void {
+        echo 'Success!';
+    }
+
+    #[AccessControl(onlyEnvironments: ['dev'])]
+    public function allowedPathForEnvGet(
+        ?string $name = null
+    ): void {
+        echo 'Success!';
+    }
+
+    #[AccessControl(disabledEnvironments: ['production'])]
+    public function DeniedPathForProdGet(
+        ?string $name = null
+    ): void {
+        echo 'Success!';
+    }
+
+    #[AccessControl(onlyEnvironments: ['production'])]
+    public function AllowedPathForProdGet(
         ?string $name = null
     ): void {
         echo 'Success!';

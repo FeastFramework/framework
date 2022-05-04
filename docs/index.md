@@ -83,6 +83,8 @@ The release plan for FEAST can be found [here](release-schedule.md).
 
 [Routing](routing.md)
 
+[Access Control via Environment](access-control.md)
+
 [Your First Controller](first-controller.md)
 
 ## Getting moving
