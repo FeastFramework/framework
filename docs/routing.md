@@ -44,7 +44,7 @@ by `/user/jeremy/password`
 FEAST makes use of the [Attributes](https://www.php.net/manual/en/language.attributes.overview.php)
 feature of PHP 8.0 for custom route generation. Similar to annotations in docblocks in older versions of PHP, Attributes
 allow for a "comment" that can be evaluated by reflection. See `\Feast\Attributes\Path` for the attribute and below for
-an example
+an example:
 
 ```php
 <?php
