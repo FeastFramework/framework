@@ -25,8 +25,9 @@ your responsibility to override the `BaseMapper` version of `findByPrimaryKey` t
 #### JSON Objects as Parameters
 
 Often times, a user will want to pass an entire JSON object into a single parameter on a request. FEAST contains an
-attribute that can be used to avoid having to manually instantiate the object and instead will parse the JSON data onto
-that class. Of course, it is recommended that you perform validation before doing anything with this object.
+parameter level attribute `[#JsonParam]` that can be used to avoid having to manually instantiate the object and instead
+will parse the JSON data onto that class. Of course, it is recommended that you perform validation before doing anything
+with this object.
 
 Example request:
 
@@ -59,6 +60,9 @@ Example controller action
         $person->save();
     }
 ```
+
+Note that if the `#[JsonParam]` attribute is missing, it will not perform this unwrapping, and instead will pass in null
+for the argument's value
 
 ### init
 
