@@ -22,12 +22,13 @@ namespace Modules\Test\Controllers;
 
 use Feast\Attributes\AccessControl;
 use Feast\Attributes\Action;
+use Feast\Attributes\JsonParam;
 use Feast\Attributes\Param;
-use Feast\Attributes\Path;
 use Feast\Date;
 use Feast\HttpController;
 use Mocks\MockBaseMapper;
 use Mocks\MockBaseModel;
+use Mocks\TestJsonItem;
 
 class FeastTestController extends HttpController
 {
@@ -89,6 +90,13 @@ class FeastTestController extends HttpController
         string ...$extra
     ): void {
         echo 'Model Success!';
+    }
+
+    public function jsonPost(
+        #[JsonParam]
+        ?TestJsonItem $name = null
+    ): void {
+        echo 'Success!';
     }
 
     public function testAction(): void

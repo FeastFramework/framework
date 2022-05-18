@@ -170,7 +170,7 @@ class MainTest extends TestCase
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals('Success!', $output);
     }
-    
+
 
     public function testMainWebAppJson(): void
     {
@@ -196,6 +196,34 @@ class MainTest extends TestCase
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals('Success!', $output);
         unset($_SERVER['REQUEST_URI']);
+    }
+
+    public function testMainWebAppJsonRequest(): void
+    {
+        $main = $this->getMain(Main::RUN_AS_WEBAPP);
+        $_SERVER['REQUEST_URI'] = '/test';
+        $_SERVER['CONTENT_TYPE'] = 'application/json';
+        /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
+        $router = di(RouterInterface::class);
+        $router->method('getControllerClass')->willReturn('FeastTestController');
+        $router->method('getControllerName')->willReturn('feast-test');
+        $router->method('getControllerFullyQualifiedName')->willReturn(
+            \Modules\Test\Controllers\FeastTestController::class
+        );
+
+        $router->method('getAction')->willReturn('serviceAction');
+        $router->method('getActionName')->willReturn('service');
+        $router->method('getActionMethodName')->willReturn('jsonPost');
+        $router->method('getModuleName')->willReturn('Test');
+
+        /** @var \PHPUnit\Framework\MockObject\Stub&ResponseInterface $response */
+        $response = di(ResponseInterface::class);
+        $response->method('isJson')->willReturn(true);
+        $main->main();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Success!', $output);
+        unset($_SERVER['REQUEST_URI']);
+        unset($_SERVER['CONTENT_TYPE']);
     }
 
     public function testMainWebAppException(): void
