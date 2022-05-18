@@ -40,6 +40,7 @@ class BaseMapperTest extends TestCase
 
         $mockDbFactory->method('getConnection')->willReturn($this->mockDatabase);
         $this->mockDatabase->method('getConnection')->willReturn($this->mockConnection);
+        $this->mockDatabase->method('lastInsertId')->willReturn('1');
         $container->add(\Feast\Interfaces\DatabaseFactoryInterface::class, $mockDbFactory);
         $mockDbDetails = $this->createStub(\Feast\Interfaces\DatabaseDetailsInterface::class);
         $mockDbDetails->method('getDataTypesForTable')->willReturn(
@@ -367,7 +368,7 @@ class BaseMapperTest extends TestCase
         $item->theThing->test = 'test';
         $this->baseMapper->save($item);
         $this->assertInstanceOf(MockBaseModel::class,$item);
-        $this->assertEquals('', $item->id);
+        $this->assertEquals('1', $item->id);
     }
 
     public function testDeleteByField(): void
