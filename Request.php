@@ -63,9 +63,9 @@ class Request implements ServiceContainerItemInterface, RequestInterface
      * Set argument {name} to {value}.
      *
      * @param string $name
-     * @param string|null|array $value
+     * @param string|array|float|bool|int|null $value
      */
-    public function setArgument(string $name, string|null|array $value): void
+    public function setArgument(string $name, string|null|array|float|bool|int $value): void
     {
         if ($value === null) {
             unset($this->arguments->{$name});
@@ -118,10 +118,12 @@ class Request implements ServiceContainerItemInterface, RequestInterface
     public function getArgumentBool(string $name, ?bool $default = null): bool|null
     {
         if (isset($this->arguments->{$name})) {
-            /** @var string $argument */
+            /** @var string|int|bool|float $argument */
             $argument = $this->arguments->{$name};
-
-            return $this->convertArgumentToBool($argument);
+            if (is_bool($argument)) {
+                return $argument;
+            }
+            return $this->convertArgumentToBool((string)$argument);
         }
 
         return $default;
@@ -138,10 +140,14 @@ class Request implements ServiceContainerItemInterface, RequestInterface
     public function getArgumentInt(string $name, ?int $default = null): int|null
     {
         if (isset($this->arguments->{$name})) {
-            /** @var string $argument */
+            /** @var string|int|bool|float $argument */
             $argument = $this->arguments->{$name};
 
-            return $this->convertArgumentToInt($argument);
+            if (is_int($argument)) {
+                return $argument;
+            }
+
+            return $this->convertArgumentToInt((string)$argument);
         }
 
         return $default;
@@ -158,10 +164,13 @@ class Request implements ServiceContainerItemInterface, RequestInterface
     public function getArgumentFloat(string $name, ?float $default = null): float|null
     {
         if (isset($this->arguments->{$name})) {
-            /** @var string $argument */
+            /** @var string|int|bool|float $argument */
             $argument = $this->arguments->{$name};
+            if (is_float($argument)) {
+                return $argument;
+            }
 
-            return $this->convertArgumentToFloat($argument);
+            return $this->convertArgumentToFloat((string)$argument);
         }
 
         return $default;
