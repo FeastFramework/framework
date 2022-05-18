@@ -22,6 +22,7 @@ namespace Feast;
 
 use Exception;
 use Feast\Attributes\AccessControl;
+use Feast\Attributes\JsonParam;
 use Feast\Attributes\Path;
 use Feast\Enums\ResponseCode;
 use Feast\Exception\Error404Exception;
@@ -105,6 +106,17 @@ class Main implements MainInterface
         $router->assignArguments($_GET);
         $router->assignArguments($_POST);
         $router->assignArguments($_FILES);
+        if ($this->isJsonRequest()) {
+            /** @var array $data */
+            $data = json_decode(file_get_contents('php://input'), true) ?? [];
+            $router->assignArguments($data);
+        }
+    }
+    
+    protected function isJsonRequest(): bool
+    {
+        return isset($_SERVER['CONTENT_TYPE'])
+            && stripos((string)$_SERVER['CONTENT_TYPE'], 'application/json') !== false;
     }
 
     protected function buildInitialArguments(RouterInterface $router): void
@@ -161,7 +173,7 @@ class Main implements MainInterface
             } else {
                 throw $exception;
             }
-        } catch (Exception | ServerFailureException $exception) {
+        } catch (Exception|ServerFailureException $exception) {
             $this->handleExceptions($exception, $response, $config);
         }
     }
@@ -301,8 +313,11 @@ class Main implements MainInterface
             /** @var string|int|float|bool|null|object $default */
             $default = $argument->isOptional() && $argument->isDefaultValueAvailable() ? $argument->getDefaultValue(
             ) : null;
+            $isJsonItem = !empty($argument->getAttributes(JsonParam::class));
 
-            if (is_subclass_of($argumentType, BaseModel::class)) {
+            if ($isJsonItem && class_exists($argumentType)) {
+                $return[] = Json::unmarshal(json_encode($request->getAllArguments()), $argumentType);
+            } elseif (is_subclass_of($argumentType, BaseModel::class)) {
                 $this->buildBaseModelArgument($argumentType, $request, $argument, $return);
             } elseif (is_subclass_of($argumentType, BaseMapper::class)) {
                 $mapper = new $argumentType();
@@ -542,17 +557,16 @@ class Main implements MainInterface
         if (!method_exists($controllerClass, $actionName)) {
             throw new Error404Exception('Action ' . $actionName . ' does not exist!');
         }
-        $method = new \ReflectionMethod($controllerClass,$actionName);
+        $method = new \ReflectionMethod($controllerClass, $actionName);
 
         $attributes = $method->getAttributes(AccessControl::class);
-        foreach($attributes as $attribute) {
+        foreach ($attributes as $attribute) {
             /** @var AccessControl $path */
             $path = $attribute->newInstance();
             if ($path->isEnabled($config->getEnvironmentName()) === false) {
                 throw new Error404Exception('Controller ' . $controllerName . ' is not available!');
             }
         }
-        
     }
 
 }

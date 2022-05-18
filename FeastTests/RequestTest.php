@@ -58,6 +58,13 @@ class RequestTest extends TestCase
         $this->assertEquals(7, $request->getArgumentInt('agile', 7));
     }
 
+    public function testGetArgumentIntActualInt(): void
+    {
+        $request = new Request();
+        $request->setArgument('test', 4);
+        $this->assertEquals(4, $request->getArgumentInt('test'));
+    }
+
     public function testGetArgumentIntInvalid(): void
     {
         $request = new Request();
@@ -75,6 +82,13 @@ class RequestTest extends TestCase
         $this->assertEquals(7.3, $request->getArgumentFloat('agile', 7.3));
     }
 
+    public function testGetArgumentFloatActualFloat(): void
+    {
+        $request = new Request();
+        $request->setArgument('test', 5.4);
+        $this->assertEquals(5.4, $request->getArgumentFloat('test'));
+    }
+
     public function testGetArgumentFloatInvalid(): void
     {
         $request = new Request();
@@ -90,6 +104,13 @@ class RequestTest extends TestCase
         $this->assertTrue($request->getArgumentBool('test'));
         $this->assertNull($request->getArgumentBool('feast'));
         $this->assertFalse($request->getArgumentBool('agile', false));
+    }
+
+    public function testGetArgumentBoolActualBool(): void
+    {
+        $request = new Request();
+        $request->setArgument('test', true);
+        $this->assertTrue($request->getArgumentBool('test'));
     }
 
     public function testGetArgumentDate(): void

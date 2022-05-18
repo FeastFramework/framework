@@ -16,6 +16,50 @@ Any arguments to the controller method are passed in via dependency injection or
 string is analyzed and values are formatted to be passed in. Additionally, form input is also analyzed for requests that
 pass in a body.
 
+#### Models as Parameters
+
+FEAST can auto inject a model by primary key into a controller action. Simply pass in the primary key on your request
+and declare the type on the method. This will call the `findByPrimaryKey` method with `validate` set to true. __It is
+your responsibility to override the `BaseMapper` version of `findByPrimaryKey` to actually perform validation logic.__
+
+#### JSON Objects as Parameters
+
+Often times, a user will want to pass an entire JSON object into a single parameter on a request. FEAST contains an
+attribute that can be used to avoid having to manually instantiate the object and instead will parse the JSON data onto
+that class. Of course, it is recommended that you perform validation before doing anything with this object.
+
+Example request:
+
+```json
+{
+    "firstName": "Jeremy",
+    "frameworkOfChoice": "FEAST Framework"
+}
+```
+
+Example object:
+
+```php
+<?php
+
+class Person
+{
+    public string $firstName;
+    public string $frameworkOfChoice;
+}
+```
+
+Example controller action
+
+```php
+    public function indexPost(
+        #[JsonParam]
+        Person $person = null,
+    ): void {
+        $person->save();
+    }
+```
+
 ### init
 
 The `init` method can do any initialization needed for your controller and returns either `true` if the request should
@@ -111,14 +155,16 @@ be allowed to continue, or `false` if the request should be denied for any reaso
 controller is initialized, a ServerFailureException is thrown.
 
 ### Passing in Arguments
+
 The CliController actions can have two types of arguments passed in. Standard and flag.
 
 Flag arguments are passed in the format of `--name=value`. The designated name must match the parameter name.
 
-Standard arguments are passed in the same order they appear in the command line after the flag arguments. All cli methods
-should show their arguments with `php famine help`.
+Standard arguments are passed in the same order they appear in the command line after the flag arguments. All cli
+methods should show their arguments with `php famine help`.
 
 ### The Terminal Object
+
 The Terminal object (at `$this->terminal`) contains 3 methods to print text to the terminal (with color formatting)
 and 3 to fetch the text without printing. In addition there are three methods for collecting user input (besides via
 arguments).

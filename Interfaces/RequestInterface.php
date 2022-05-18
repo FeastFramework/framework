@@ -37,9 +37,9 @@ interface RequestInterface extends ServiceContainerItemInterface
      * Set argument {name} to {value}.
      *
      * @param string $name
-     * @param string|null|array $value
+     * @param string|bool|int|float|null|array $value
      */
-    public function setArgument(string $name, null|string|array $value): void;
+    public function setArgument(string $name, null|string|bool|int|float|array $value): void;
 
     /**
      * Get argument value as string.
