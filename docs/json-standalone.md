@@ -15,15 +15,18 @@ For those cases, the authors of FEAST created a dynamic JSON marshaller.
 ### The marshaller
 
 `\Feast\Json\Json` is a class containing two static methods; one for marshalling and one for unmarshalling. The marshal
-method takes an object. The unmarshal method takes two parameters.
+method takes two parameters.
+
+1. `object` - the object to be marshalled into a json string.
+2. `propertyTypesFlag` - int or null.
+   See https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers for values.
+
+The unmarshal method takes three parameters.
 
 1. `data` - a json string
 2. `objectOrClass` - either a class name or a pre-instantiated object.
-
-### Limitations
-
-Any object being serialized to must either allow an empty constructor call, or must be passed in to the unmarshal call
-as an object. This includes any nested objects.
+3. `skipConstructor` - skip constructor call and instantiate object through reflection. This will also apply to any
+   nested objects.
 
 ### The Attribute
 
@@ -39,7 +42,7 @@ transformations on JSON data. It has four optional properties.
 4. `included` - Defaults to true. If set to false, Json strings created with the `Json::marshal` function will not
    include the property.
 5. `omitEmpty` - Defaults to false. If set to true, Json strings created with the `Json::marshal` function will not
-      include the property if the value is null or empty string (`''`).
+   include the property if the value is null or empty string (`''`).
 
 [Back to Top](#working-with-json-and-objects)
 

@@ -42,14 +42,15 @@ class Json
      * The field names are kept as is, unless a Feast\Attributes\JsonItem attribute decorates the property.
      *
      * @param object $object
+     * @param int|null $propertyTypesFlag (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      * @return string
      * @throws ReflectionException
      * @see \Feast\Attributes\JsonItem
      */
-    public static function marshal(object $object): string
+    public static function marshal(object $object, ?int $propertyTypesFlag = null): string
     {
         $return = new stdClass();
-        $paramInfo = self::getClassParamInfo($object::class);
+        $paramInfo = self::getClassParamInfo($object::class, $propertyTypesFlag);
         /**
          * @var string $oldName
          * @var array{name:string|null,type:string|null,dateFormat:string,included:bool,omitEmpty:bool} $newInfo
@@ -63,8 +64,8 @@ class Json
             $reflected = new ReflectionProperty($object, $oldName);
             if ($reflected->isInitialized($object)) {
                 /** @var scalar|object|array|null $oldItem */
-                $oldItem = $object->{$oldName};
-                if ( $newInfo['omitEmpty'] && ($oldItem === null || $oldItem === '')) {
+                $oldItem = $reflected->getValue($object);
+                if ($newInfo['omitEmpty'] && ($oldItem === null || $oldItem === '')) {
                     continue;
                 } elseif (is_array($oldItem) || $oldItem instanceof stdClass) {
                     $return->{$newName} = self::marshalArray((array)$oldItem);
@@ -94,21 +95,18 @@ class Json
      *
      * @param string $data
      * @param class-string|object $objectOrClass
+     * @param bool $skipConstructor
      * @return object
-     * @throws Exception\ServerFailureException|ReflectionException|JsonException
+     * @throws Exception\InvalidDateException
+     * @throws JsonException
+     * @throws ReflectionException
+     * @throws ServerFailureException
      * @see \Feast\Attributes\JsonItem
      */
-    public static function unmarshal(string $data, string|object $objectOrClass): object
+    public static function unmarshal(string $data, string|object $objectOrClass, bool $skipConstructor = false): object
     {
         if (is_string($objectOrClass)) {
-            try {
-                /** @psalm-suppress MixedMethodCall */
-                $object = new $objectOrClass();
-            } catch (ArgumentCountError) {
-                throw new ServerFailureException(
-                    'Attempted to unmarshal into a class without a no-argument capable constructor'
-                );
-            }
+            $object = self::getObjectFromClassString($objectOrClass, $skipConstructor);
         } else {
             $object = $objectOrClass;
         }
@@ -132,7 +130,8 @@ class Json
                 (string)$paramInfo[$newPropertyName]['type'],
                 (string)$paramInfo[$newPropertyName]['dateFormat'],
                 $propertyValue,
-                $object
+                $object,
+                $skipConstructor
             );
         }
 
@@ -167,15 +166,18 @@ class Json
 
     /**
      * @param class-string $class
+     * @param int|null $getPropertyTypeFlag - (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      * @return array<array{name:string|null,type:string|null,dateFormat:string|null,included:bool,omitEmpty:bool}>
      * @throws ReflectionException
      */
     protected static function getClassParamInfo(
-        string $class
+        string $class,
+        ?int $getPropertyTypeFlag = null
     ): array {
         $return = [];
         $classInfo = new ReflectionClass($class);
-        foreach ($classInfo->getProperties() as $property) {
+        /** @psalm-suppress PossiblyNullArgument - incorrect, PHP 8.0 and above, null is valid */
+        foreach ($classInfo->getProperties($getPropertyTypeFlag) as $property) {
             $name = $property->getName();
             $type = null;
             $dateFormat = Date::ATOM;
@@ -216,7 +218,6 @@ class Json
         string $propertySubtype,
         array $jsonData
     ): void {
-        $newProperty = $property->getName();
         $item = [];
 
         if (class_exists($propertySubtype, true)) {
@@ -233,7 +234,7 @@ class Json
         } else {
             $item = $jsonData;
         }
-        $object->{$newProperty} = $item;
+        $property->setValue($object, $item);
     }
 
     /**
@@ -242,6 +243,7 @@ class Json
      * @param ReflectionProperty $property
      * @param object $object
      * @throws Exception\ServerFailureException|ReflectionException
+     * @throws JsonException
      */
     protected static function unmarshalSet(
         string $propertySubtype,
@@ -252,10 +254,13 @@ class Json
         if (class_exists($propertySubtype, true)) {
             $jsonData = self::unmarshalTempArray($jsonData, $propertySubtype);
         }
-        $object->{$property->getName()} = new Set(
-                          $propertySubtype,
-                          $jsonData,
-            preValidated: true
+        $property->setValue(
+            $object,
+            new Set(
+                              $propertySubtype,
+                              $jsonData,
+                preValidated: true
+            )
         );
     }
 
@@ -265,6 +270,7 @@ class Json
      * @param ReflectionProperty $property
      * @param object $object
      * @throws Exception\ServerFailureException|ReflectionException
+     * @throws JsonException
      */
     protected static function unmarshalCollection(
         string $propertySubtype,
@@ -275,10 +281,13 @@ class Json
         if (class_exists($propertySubtype, true)) {
             $jsonData = self::unmarshalTempArray($jsonData, $propertySubtype);
         }
-        $object->{$property->getName()} = new CollectionList(
-                          $propertySubtype,
-                          $jsonData,
-            preValidated: true
+        $property->setValue(
+            $object,
+            new CollectionList(
+                              $propertySubtype,
+                              $jsonData,
+                preValidated: true
+            )
         );
     }
 
@@ -288,7 +297,7 @@ class Json
      * @return array<string|int|bool|float|object|array>
      * @throws Exception\ServerFailureException
      * @throws ReflectionException
-     * @noinspection PhpDocSignatureInspection
+     * @throws JsonException
      */
     protected static function unmarshalTempArray(array $jsonData, string $propertySubtype): array
     {
@@ -319,19 +328,20 @@ class Json
         object $object,
         array $jsonData
     ): void {
-        $newProperty = $property->getName();
-        $object->{$newProperty} = (object)json_decode(json_encode($jsonData));
+        $property->setValue($object, (object)json_decode(json_encode($jsonData)));
     }
 
     /**
      * Unmarshal a property onto the object.
      *
      * @param ReflectionProperty $property
-     * @param class-string|string $propertySubtype
+     * @param string $propertySubtype
      * @param string $propertyDateFormat
      * @param scalar|array $propertyValue
      * @param object $object
+     * @param bool $skipConstructor
      * @throws Exception\InvalidDateException
+     * @throws JsonException
      * @throws ReflectionException
      * @throws ServerFailureException
      */
@@ -340,7 +350,8 @@ class Json
         string $propertySubtype,
         string $propertyDateFormat,
         mixed $propertyValue,
-        object $object
+        object $object,
+        bool $skipConstructor
     ): void {
         $propertyType = (string)$property->getType();
 
@@ -370,16 +381,45 @@ class Json
                 $object
             );
         } elseif (is_a($propertyType, Date::class, true) && is_scalar($propertyValue)) {
-            $object->{$property->getName()} = Date::createFromFormat($propertyDateFormat, (string)$propertyValue);
+            $property->setValue($object, Date::createFromFormat($propertyDateFormat, (string)$propertyValue));
         } elseif (is_a($propertyType, DateTime::class, true) && is_scalar($propertyValue)) {
-            $object->{$property->getName()} = DateTime::createFromFormat($propertyDateFormat, (string)$propertyValue);
+            $property->setValue($object, DateTime::createFromFormat($propertyDateFormat, (string)$propertyValue));
         } elseif (class_exists($propertyType, true)) {
-            $object->{$property->getName()} = self::unmarshal(
-                json_encode($propertyValue),
-                $propertyType
+            $property->setValue(
+                $object,
+                self::unmarshal(
+                    json_encode($propertyValue),
+                    $propertyType,
+                    $skipConstructor
+                )
             );
         } else {
-            $object->{$property->getName()} = $propertyValue;
+            $property->setValue($object, $propertyValue);
         }
+    }
+
+    /**
+     * @param class-string $className
+     * @param bool $skipConstructor
+     * @return object
+     * @throws ReflectionException
+     * @throws ServerFailureException
+     */
+    protected static function getObjectFromClassString(string $className, bool $skipConstructor): object
+    {
+        if ($skipConstructor === false) {
+            try {
+                /** @psalm-suppress MixedMethodCall */
+                $object = new $className();
+            } catch (ArgumentCountError) {
+                throw new ServerFailureException(
+                    'Attempted to unmarshal into a class without a no-argument capable constructor'
+                );
+            }
+        } else {
+            $class = new ReflectionClass($className);
+            $object = $class->newInstanceWithoutConstructor();
+        }
+        return $object;
     }
 }

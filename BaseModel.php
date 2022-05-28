@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast;
 
 use Feast\Enums\ResponseCode;
+use Feast\Attributes\JsonItem;
 use Feast\Exception\InvalidOptionException;
 use Feast\Exception\NotFoundException;
 
@@ -31,6 +32,7 @@ use Feast\Exception\NotFoundException;
 abstract class BaseModel
 {
     protected const MAPPER_NAME = null;
+    #[JsonItem(included: false)]
     protected ?BaseModel $originalModel = null;
 
     /**
@@ -118,9 +120,10 @@ abstract class BaseModel
     /**
      * Save the current model.
      *
+     * @param bool $forceUpdate
      * @throws NotFoundException
      */
-    public function save(): void
+    public function save(bool $forceUpdate = false): void
     {
         /** @var ?class-string<BaseMapper> $mapperName */
         $mapperName = static::MAPPER_NAME;
@@ -129,6 +132,6 @@ abstract class BaseModel
         }
         $mapper = new $mapperName();
 
-        $mapper->save($this);
+        $mapper->save($this, $forceUpdate);
     }
 }

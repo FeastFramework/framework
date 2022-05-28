@@ -93,14 +93,14 @@ class JsonTest extends TestCase
         $item->secondItem = $secondItem;
 
         $item->thirdItems = new \Feast\Collection\CollectionList(
-            'string', [
+                         'string', [
             'test' => 'theTest',
             'test2' => 'theTest2'
         ], preValidated: true
         );
 
         $item->thirdSet = new \Feast\Collection\Set(
-            'string', [
+                         'string', [
             'theTest',
             'theTest2'
         ], preValidated: true
@@ -130,6 +130,12 @@ class JsonTest extends TestCase
         Json::unmarshal('{"test":"test"}', \Mocks\BadJsonItem::class);
     }
 
+    public function testUnmarshalSkipConstructor(): void
+    {
+        $item = Json::unmarshal('{"last_name":"test"}', \Mocks\BadJsonItem::class, true);
+        $this->assertEquals('test', $item->lastName);
+    }
+
     public function testUnmarshalWithObject(): void
     {
         $item = new \Mocks\BadJsonItem('ShouldNotExplode');
@@ -156,8 +162,8 @@ class JsonTest extends TestCase
         $result->otherTimestamp->setTimezone('America/New_York');
         $this->assertEquals('20210415', $result->timestamp->getFormattedDate('Ymd'));
         $this->assertEquals('20210405', $result->otherTimestamp->getFormattedDate('Ymd'));
-        $this->assertInstanceOf(\Mocks\SecondItem::class,$result->secondItem);
-        $this->assertInstanceOf(stdClass::class,$result->aClass);
+        $this->assertInstanceOf(\Mocks\SecondItem::class, $result->secondItem);
+        $this->assertInstanceOf(stdClass::class, $result->aClass);
         $this->assertEquals('ItWorks', $result->aClass->test);
     }
 

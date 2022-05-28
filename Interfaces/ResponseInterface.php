@@ -51,6 +51,7 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * @param View $view
      * @param RouterInterface $router
      * @param string $routePath
+     * @throws \JsonException|\ReflectionException
      */
     public function sendResponse(View $view, RouterInterface $router, string $routePath): void;
 
@@ -87,6 +88,7 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * Mark the Response as a JSON response and send the passed in object.
      *
      * @param object $response
+     * @param int|null $jsonResponsePropertyTypes (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      */
-    public function setJsonWithResponseObject(object $response): void;
+    public function setJsonWithResponseObject(object $response, ?int $jsonResponsePropertyTypes = null): void;
 }

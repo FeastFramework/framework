@@ -8,18 +8,21 @@ For those cases, FEAST includes a dynamic JSON marshaller.
 
 ## The Components
 
-### The marshaller
+### The marshaller and unmarshaller functions
 
 `\Feast\Json` is a class containing two static methods; one for marshalling and one for unmarshalling. The marshal
-method takes an object. The unmarshal method takes two parameters.
+method takes two parameters.
+
+1. `object` - the object to be marshalled into a json string.
+2. `propertyTypesFlag` - int or null.
+   See https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers for values.
+
+The unmarshal method takes three parameters.
 
 1. `data` - a json string
 2. `objectOrClass` - either a class name or a pre-instantiated object.
-
-### Limitations
-
-Any object being serialized to must either allow an empty constructor call, or must be passed in to the unmarshal call
-as an object. This includes any nested objects.
+3. `skipConstructor` - skip constructor call and instantiate object through reflection. This will also apply to any
+   nested objects.
 
 ### The Attribute
 
