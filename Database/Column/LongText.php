@@ -30,12 +30,12 @@ class LongText extends Char
      * Create LongText column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @throws DatabaseException
      */
-    public function __construct(string $name, int $length = 4_294_967_295, bool $nullable = false, ?string $comment = null)
+    public function __construct(string $name, ?int $length = null, bool $nullable = false, ?string $comment = null)
     {
         parent::__construct($name, $length, nullable: $nullable, comment: $comment);
     }
