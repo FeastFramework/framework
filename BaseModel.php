@@ -120,9 +120,10 @@ abstract class BaseModel
     /**
      * Save the current model.
      *
+     * @param bool $forceUpdate
      * @throws NotFoundException
      */
-    public function save(): void
+    public function save(bool $forceUpdate = false): void
     {
         /** @var ?class-string<BaseMapper> $mapperName */
         $mapperName = static::MAPPER_NAME;
@@ -131,6 +132,6 @@ abstract class BaseModel
         }
         $mapper = new $mapperName();
 
-        $mapper->save($this);
+        $mapper->save($this, $forceUpdate);
     }
 }
