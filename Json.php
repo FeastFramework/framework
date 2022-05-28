@@ -166,6 +166,7 @@ class Json
 
     /**
      * @param class-string $class
+     * @param int|null $getPropertyTypeFlag - (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      * @return array<array{name:string|null,type:string|null,dateFormat:string|null,included:bool,omitEmpty:bool}>
      * @throws ReflectionException
      */
@@ -404,7 +405,7 @@ class Json
      * @throws ReflectionException
      * @throws ServerFailureException
      */
-    protected static function getObjectFromClassString(string $className, bool $skipConstructor,): object
+    protected static function getObjectFromClassString(string $className, bool $skipConstructor): object
     {
         if ($skipConstructor === false) {
             try {
