@@ -321,13 +321,13 @@ class PostgresTable extends Table
      * Add new blob column. Fallback to bytea for PostgreSQL
      *
      * @param string $name
-     * @param int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function blob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
+    public function blob(string $name, ?int $length = null, bool $nullable = false, ?string $comment = null): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
         return $this->bytea($name, $nullable, $comment);
@@ -337,7 +337,7 @@ class PostgresTable extends Table
      * Add new mediumblob column. Fallback to bytea for PostgreSQL
      *
      * @param string $name
-     * @param int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return $this
@@ -345,7 +345,7 @@ class PostgresTable extends Table
      */
     public function mediumBlob(
         string $name,
-        int $length = 65535,
+        ?int $length = null,
         bool $nullable = false,
         ?string $comment = null
     ): static {
@@ -357,13 +357,13 @@ class PostgresTable extends Table
      * Add new longblob column. Fallback to bytea for PostgreSQL
      *
      * @param string $name
-     * @param int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function longBlob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
+    public function longBlob(string $name, ?int $length = null, bool $nullable = false, ?string $comment = null): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
         return $this->bytea($name, $nullable, $comment);
@@ -373,13 +373,13 @@ class PostgresTable extends Table
      * Add new tinyblob column. Fallback to bytea for PostgreSQL
      *
      * @param string $name
-     * @param int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return $this
      * @throws ServerFailureException
      */
-    public function tinyBlob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
+    public function tinyBlob(string $name, ?int $length = null, bool $nullable = false, ?string $comment = null): static
     {
         trigger_error('Using bytea with no length for blob', E_USER_NOTICE);
         return $this->bytea($name, $nullable, $comment);
@@ -458,14 +458,14 @@ class PostgresTable extends Table
      * Add new TinyText column. Falls back to text column in PostgreSQL.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $default
      * @param string|null $comment
      * @return static
      * @throws DatabaseException
      */
-    public function tinyText(string $name, int $length = 255, bool $nullable = false, ?string $default = null, ?string $comment = null): static
+    public function tinyText(string $name, ?int $length = null, bool $nullable = false, ?string $default = null, ?string $comment = null): static
     {
         return $this->text($name, $length, $nullable, $default, $comment);
     }
@@ -474,14 +474,14 @@ class PostgresTable extends Table
      * Add new MediumText column. Falls back to text column in PostgreSQL.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $default
      * @param string|null $comment
      * @return static
      * @throws DatabaseException
      */
-    public function mediumText(string $name, int $length = 255, bool $nullable = false, ?string $default = null, ?string $comment = null): static
+    public function mediumText(string $name, ?int $length = null, bool $nullable = false, ?string $default = null, ?string $comment = null): static
     {
         return $this->text($name, $length, $nullable, $default, $comment);
     }
@@ -490,14 +490,14 @@ class PostgresTable extends Table
      * Add new LongText column. Falls back to text column in PostgreSQL.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $default
      * @param string|null $comment
      * @return static
      * @throws DatabaseException
      */
-    public function longText(string $name, int $length = 255, bool $nullable = false, ?string $default = null, ?string $comment = null): static
+    public function longText(string $name, ?int $length = null, bool $nullable = false, ?string $default = null, ?string $comment = null): static
     {
         return $this->text($name, $length, $nullable, $default, $comment);
     }
@@ -527,7 +527,7 @@ class PostgresTable extends Table
      * Add new Text column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $default
      * @param string|null $comment
@@ -536,7 +536,7 @@ class PostgresTable extends Table
      */
     public function text(
         string $name,
-        int $length = 65535,
+        ?int $length = null,
         bool $nullable = false,
         ?string $default = null,
         ?string $comment = null

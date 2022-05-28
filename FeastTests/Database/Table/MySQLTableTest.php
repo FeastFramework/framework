@@ -366,7 +366,7 @@ class MySQLTableTest extends TestCase
         $this->table->collation('latin1_danish_ci')->characterSet('latin1')->dbEngine('MyISAM');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null COMMENT ?,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB(255) not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'INDEX index_test (test),' . "\n" . 'UNIQUE unique_index_Test (Test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest foreign key (test) REFERENCES `noTest`(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT) CHARACTER SET latin1 COLLATE latin1_danish_ci ENGINE MyISAM',
+            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null COMMENT ?,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'INDEX index_test (test),' . "\n" . 'UNIQUE unique_index_Test (Test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest foreign key (test) REFERENCES `noTest`(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT) CHARACTER SET latin1 COLLATE latin1_danish_ci ENGINE MyISAM',
             $ddl->ddl
         );
         $this->assertEquals(['This is a test', '4'], $ddl->bindings);
