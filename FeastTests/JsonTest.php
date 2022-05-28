@@ -130,6 +130,12 @@ class JsonTest extends TestCase
         Json::unmarshal('{"test":"test"}', \Mocks\BadJsonItem::class);
     }
 
+    public function testUnmarshalSkipConstructor(): void
+    {
+        $item = Json::unmarshal('{"last_name":"test"}', \Mocks\BadJsonItem::class, true);
+        $this->assertEquals('test',$item->lastName);
+    }
+
     public function testUnmarshalWithObject(): void
     {
         $item = new \Mocks\BadJsonItem('ShouldNotExplode');

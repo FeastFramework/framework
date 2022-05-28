@@ -92,9 +92,14 @@ abstract class HttpController implements ControllerInterface
         $router->forward();
     }
 
-    public function sendJsonResponse(object $responseObject): void
+    /**
+     * @param object $responseObject
+     * @param int|null $jsonResponsePropertyTypes (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
+     * @return void
+     */
+    public function sendJsonResponse(object $responseObject, ?int $jsonResponsePropertyTypes = null): void
     {
-        $this->response->setJsonWithResponseObject($responseObject);
+        $this->response->setJsonWithResponseObject($responseObject, $jsonResponsePropertyTypes);
     }
 
     /**
