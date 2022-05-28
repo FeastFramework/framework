@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast;
 
 use Feast\Enums\ResponseCode;
+use Feast\Attributes\JsonItem;
 use Feast\Exception\InvalidOptionException;
 use Feast\Exception\NotFoundException;
 
@@ -31,6 +32,7 @@ use Feast\Exception\NotFoundException;
 abstract class BaseModel
 {
     protected const MAPPER_NAME = null;
+    #[JsonItem(included: false)]
     protected ?BaseModel $originalModel = null;
 
     /**

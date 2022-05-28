@@ -30,13 +30,13 @@ class Char extends Column
      * Create Char column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param positive-int|null $length
      * @param string|null $default
      * @param bool $nullable
      * @param string|null $comment
      * @throws DatabaseException
      */
-    public function __construct(string $name, int $length = 255, ?string $default = null, bool $nullable = false, ?string $comment = null)
+    public function __construct(string $name, ?int $length = 255, ?string $default = null, bool $nullable = false, ?string $comment = null)
     {
         parent::__construct($name, $length, (string)static::TYPE, nullable: $nullable, default: $default, comment: $comment);
     }

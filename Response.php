@@ -40,6 +40,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     private ResponseCode $responseCode = ResponseCode::HTTP_CODE_200;
     private bool $isJson = false;
     private object|null $jsonResponse = null;
+    private ?int $jsonResponsePropertyTypes = null;
     private ?string $redirectPath = null;
 
     /**
@@ -74,7 +75,8 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      * @param View $view
      * @param RouterInterface $router
      * @param string $routePath
-     * @throws JsonException|ReflectionException
+     * @throws JsonException
+     * @throws ReflectionException
      */
     public function sendResponse(View $view, RouterInterface $router, string $routePath): void
     {
@@ -86,7 +88,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
         if ($this->isJson()) {
             header('Content-type: application/json');
             if ($this->jsonResponse !== null) {
-                echo Json::marshal($this->jsonResponse);
+                echo Json::marshal($this->jsonResponse, $this->jsonResponsePropertyTypes);
             } else {
                 echo json_encode($view, JSON_THROW_ON_ERROR, 4096);
             }
@@ -148,10 +150,12 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      * Mark the Response as a JSON response and send the passed in object.
      *
      * @param object $response
+     * @param int|null $jsonResponsePropertyTypes (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      */
-    public function setJsonWithResponseObject(object $response): void
+    public function setJsonWithResponseObject(object $response, ?int $jsonResponsePropertyTypes = null): void
     {
         $this->jsonResponse = $response;
+        $this->jsonResponsePropertyTypes = $jsonResponsePropertyTypes;
         $this->setJson();
     }
 
