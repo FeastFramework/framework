@@ -309,7 +309,7 @@ abstract class Table
      * Add new TinyText column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $default
      * @param string|null $comment
@@ -318,7 +318,7 @@ abstract class Table
      */
     public function tinyText(
         string $name,
-        int $length = 255,
+        ?int $length = null,
         bool $nullable = false,
         ?string $default = null,
         ?string $comment = null
@@ -335,7 +335,7 @@ abstract class Table
      * Add new Text column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $default
      * @param string|null $comment
@@ -345,7 +345,7 @@ abstract class Table
      */
     public function text(
         string $name,
-        int $length = 65535,
+        ?int $length = null,
         bool $nullable = false,
         ?string $default = null,
         ?string $comment = null
@@ -362,7 +362,7 @@ abstract class Table
      * Add new MediumText column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return static
@@ -370,7 +370,7 @@ abstract class Table
      */
     public function mediumText(
         string $name,
-        int $length = 16_777_215,
+        ?int $length = null,
         bool $nullable = false,
         ?string $default = null,
         ?string $comment = null
@@ -387,7 +387,7 @@ abstract class Table
      * Add new LongText column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return static
@@ -395,7 +395,7 @@ abstract class Table
      */
     public function longText(
         string $name,
-        int $length = 4_294_967_295,
+        ?int $length = null,
         bool $nullable = false,
         ?string $default = null,
         ?string $comment = null
@@ -412,13 +412,13 @@ abstract class Table
      * Add new TinyBlob column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function tinyBlob(string $name, int $length = 255, bool $nullable = false, ?string $comment = null): static
+    public function tinyBlob(string $name, ?int $length = null, bool $nullable = false, ?string $comment = null): static
     {
         $this->columns[] = new TinyBlob($name, $length, $nullable, $comment);
 
@@ -429,13 +429,13 @@ abstract class Table
      * Add new Blob column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return static
      * @throws ServerFailureException
      */
-    public function blob(string $name, int $length = 65535, bool $nullable = false, ?string $comment = null): static
+    public function blob(string $name, ?int $length = null, bool $nullable = false, ?string $comment = null): static
     {
         $this->columns[] = new Blob($name, $length, $nullable, $comment);
 
@@ -446,7 +446,7 @@ abstract class Table
      * Add new MediumBlob column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return static
@@ -454,7 +454,7 @@ abstract class Table
      */
     public function mediumBlob(
         string $name,
-        int $length = 16_777_215,
+        ?int $length = null,
         bool $nullable = false,
         ?string $comment = null
     ): static {
@@ -467,7 +467,7 @@ abstract class Table
      * Add new LongBlob column.
      *
      * @param string $name
-     * @param positive-int $length
+     * @param null|positive-int $length
      * @param bool $nullable
      * @param string|null $comment
      * @return static
@@ -475,7 +475,7 @@ abstract class Table
      */
     public function longBlob(
         string $name,
-        int $length = 4_294_967_295,
+        ?int $length = null,
         bool $nullable = false,
         ?string $comment = null
     ): static {
@@ -869,7 +869,7 @@ abstract class Table
         $this->characterSet = $characterSet;
         return $this;
     }
-    
+
     public function dbEngine(string $dbEngine): static
     {
         $this->dbEngine = $dbEngine;
@@ -897,7 +897,7 @@ abstract class Table
     protected function getDefaultForTimestamp(Column $column): ?string
     {
         $default = $column->getDefault() ?? '';
-       
+
         if (strtolower($default) === 'current_timestamp') {
             return ' DEFAULT CURRENT_TIMESTAMP';
         }
