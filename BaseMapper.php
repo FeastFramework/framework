@@ -280,6 +280,7 @@ abstract class BaseMapper
         /** @var string|int|null $recordPrimaryKey */
         $recordPrimaryKey = $record->{$primaryKey} ?? null;
         if (!empty($recordPrimaryKey) && (!empty($record->getOriginalModel()) || $forceUpdate)) {
+            unset($recordArray[$primaryKey]);
             $update = $this->connection->update((string)static::TABLE_NAME, $recordArray)->where(
                 $primaryKey . ' = ?',
                 $recordPrimaryKey
