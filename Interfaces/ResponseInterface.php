@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast\Interfaces;
 
 use Exception;
+use Feast\Exception\ResponseException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\View;
 
@@ -35,7 +36,7 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * Set the response code.
      *
      * @param int $responseCode
-     * @throws Exception
+     * @throws ResponseException
      */
     public function setResponseCode(int $responseCode): void;
 
@@ -50,6 +51,7 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * @param View $view
      * @param RouterInterface $router
      * @param string $routePath
+     * @throws \JsonException|\ReflectionException
      */
     public function sendResponse(View $view, RouterInterface $router, string $routePath): void;
 
@@ -72,6 +74,7 @@ interface ResponseInterface extends ServiceContainerItemInterface
      *
      * @param string $path
      * @param int $code
+     * @throws ResponseException
      */
     public function redirect(string $path, int $code = 302): void;
 
