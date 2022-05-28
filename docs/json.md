@@ -17,7 +17,7 @@ method takes two parameters.
 2. `propertyTypesFlag` - int or null.
    See https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers for values.
 
-The unmarshal method takes two parameters.
+The unmarshal method takes three parameters.
 
 1. `data` - a json string
 2. `objectOrClass` - either a class name or a pre-instantiated object.
