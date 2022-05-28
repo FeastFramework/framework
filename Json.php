@@ -106,7 +106,7 @@ class Json
     public static function unmarshal(string $data, string|object $objectOrClass, bool $skipConstructor = false): object
     {
         if (is_string($objectOrClass)) {
-            $object = self::getObjectFromClassString( $objectOrClass, $skipConstructor,);
+            $object = self::getObjectFromClassString($objectOrClass, $skipConstructor);
         } else {
             $object = $objectOrClass;
         }

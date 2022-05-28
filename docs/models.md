@@ -97,10 +97,14 @@ $models = $mapper->findAllByFields(['name' => 'Feast', 'status' => 'active']); /
 
 #### Saving Records
 
-To save a model, simply call either the `save` method on the mapper, passing in the model as an argument or for
+To save a model, call either the `save` method on the mapper, passing in the model as an argument or for
 convenience, simply call the `save()` method on the model. FEAST will automatically perform an insert if it is a new
-model, or an update (passing only the changed fields) if it is not a new model. When the save method is called, the
-primary key is updated on the model for inserts.
+model, or an update (passing only the changed fields) if it is was retrieved from the database.
+
+You can force an update by passing in `true` to the `save` method as the only parameter on the model method, or as the
+second parameter on the mapper method.
+
+When the save method is called, the primary key is updated on the model for inserts.
 
 Example:
 
@@ -114,6 +118,21 @@ $model->save(); // Model saves directly, inserted.
 $model->name = 'NotFeast';
 $mapper = new \Mapper\TestMapper();
 $mapper->save($model); // Model saved indirectly after previous save, updated.
+```
+
+Force update
+
+```php
+<?php
+$model = new \Model\Test();
+$model->id = 1;
+$model->name = 'Feast';
+
+$model->save(true); // Model saves directly, inserted.
+
+$model->name = 'NotFeast';
+$mapper = new \Mapper\TestMapper();
+$mapper->save($model, true); // Model saved indirectly after previous save, updated.
 ```
 
 #### Deleting Records

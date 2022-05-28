@@ -266,9 +266,10 @@ abstract class BaseMapper
      * Save model to database.
      *
      * @param BaseModel $record
+     * @param bool $forceUpdate
      * @throws Exception
      */
-    public function save(BaseModel $record): void
+    public function save(BaseModel $record, bool $forceUpdate = false): void
     {
         $recordArray = $this->getFieldsForSave($record);
         if (count($recordArray) == 0) {
@@ -278,7 +279,7 @@ abstract class BaseMapper
         $primaryKey = static::PRIMARY_KEY;
         /** @var string|int|null $recordPrimaryKey */
         $recordPrimaryKey = $record->{$primaryKey} ?? null;
-        if (!empty($recordPrimaryKey) && !empty($record->getOriginalModel())) {
+        if (!empty($recordPrimaryKey) && (!empty($record->getOriginalModel()) || $forceUpdate)) {
             $update = $this->connection->update((string)static::TABLE_NAME, $recordArray)->where(
                 $primaryKey . ' = ?',
                 $recordPrimaryKey
