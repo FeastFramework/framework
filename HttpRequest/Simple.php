@@ -63,9 +63,13 @@ class Simple extends HttpRequest implements HttpRequestInterface
             $header .= $headerKey . ': ' . $headerVal . "\r\n";
         }
         $context['header'] = $header;
-        /** @var array<string> $http_response_header */
+        $response = file_get_contents($url, false, stream_context_create(['http' => $context]));
+        /** 
+         * @psalm-suppress RedundantCondition
+         * @psalm-suppress TypeDoesNotContainNull - Technically these are correct but to facilitate not using http requests on unit tests, we are allowing for it to be null. 
+         */
         $this->parseResponseHeaders($http_response_header ?? []);
-        $this->response = new Response(file_get_contents($url, false, stream_context_create(['http' => $context])),($this->getResponseCode() ??  ResponseCode::HTTP_CODE_500));
+        $this->response = new Response($response,($this->getResponseCode() ??  ResponseCode::HTTP_CODE_500));
 
         return $this;
     }
