@@ -25,6 +25,7 @@ use Feast\Database\Database;
 use Feast\Database\DatabaseFactory;
 use Feast\Enums\DatabaseType;
 use Feast\Exception\DatabaseException;
+use Feast\Interfaces\LoggerInterface;
 use Feast\ServiceContainer\ServiceContainer;
 use Mocks\PDOMock;
 use PHPUnit\Framework\TestCase;
@@ -56,12 +57,13 @@ class DatabaseFactoryTest extends TestCase
             ]
         );
         $databaseFactory = new DatabaseFactory($config);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
 
-        $connection = $databaseFactory->getConnection();
-        $this->assertInstanceOf(Database::class,$connection);
+        $connection = $databaseFactory->getConnection(logger: $logger);
+        $this->assertInstanceOf(Database::class, $connection);
         // Secondary run for already connected path
-        $connection = $databaseFactory->getConnection();
-        $this->assertInstanceOf(Database::class,$connection);
+        $connection = $databaseFactory->getConnection(logger: $logger);
+        $this->assertInstanceOf(Database::class, $connection);
     }
 
     public function testGetConnectionUnknown(): void
@@ -85,6 +87,7 @@ class DatabaseFactoryTest extends TestCase
         $databaseFactory = new DatabaseFactory($config);
 
         $this->expectException(DatabaseException::class);
-        $databaseFactory->getConnection();
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $databaseFactory->getConnection(logger: $logger);
     }
 }

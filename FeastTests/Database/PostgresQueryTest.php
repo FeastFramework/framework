@@ -28,6 +28,7 @@ use Feast\Database\Query;
 use Feast\Database\TableDetails;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidArgumentException;
+use Feast\Interfaces\LoggerInterface;
 use Mocks\PDOMock;
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +37,8 @@ class PostgresQueryTest extends TestCase
 
     public function getValidQuery(): Query
     {
-        return new PostgresQuery(new PDOMock('dsnstring'));
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        return new PostgresQuery(new PDOMock('dsnstring'), $logger);
     }
 
     public function testFrom(): void

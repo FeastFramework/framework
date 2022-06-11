@@ -29,6 +29,7 @@ use Feast\Database\TableDetails;
 use Feast\Enums\DatabaseType;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidOptionException;
+use Feast\Interfaces\LoggerInterface;
 use Mocks\PDOMock;
 use PHPUnit\Framework\TestCase;
 
@@ -53,7 +54,8 @@ class DatabaseTest extends TestCase
                 \PDO::ATTR_EMULATE_PREPARES => false
             ];
         }
-        return new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        return new Database($details, PDOMock::class, $logger);
     }
 
     public function testInstantiation(): void
@@ -89,7 +91,8 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = 'This Database Doesn\'t Exist';
         $this->expectException(DatabaseException::class);
-        new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        new Database($details, PDOMock::class, $logger);
     }
 
     public function testInstantiationWithUrl(): void
@@ -101,7 +104,8 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->url = 'mysql:host=localhost;port=3306;';
         $details->connectionType = DatabaseType::MYSQL;
-        $database = new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $database = new Database($details, PDOMock::class, $logger);
         $this->assertInstanceOf(Database::class,$database);
     }
 
@@ -114,7 +118,8 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
         $this->expectException(InvalidOptionException::class);
-        new Database($details, \stdClass::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        new Database($details, \stdClass::class, $logger);
     }
 
     public function testInstantiationWithDeprecatedMethodMySQL(): void
@@ -125,7 +130,8 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
-        $database = new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $database = new Database($details, PDOMock::class, $logger);
         $this->assertInstanceOf(Database::class,$database);
     }
 
@@ -137,7 +143,8 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::SQLITE;
-        $database = new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $database = new Database($details, PDOMock::class, $logger);
         $this->assertInstanceOf(Database::class,$database);
     }
 

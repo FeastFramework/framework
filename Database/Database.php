@@ -26,6 +26,7 @@ use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidOptionException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseInterface;
+use Feast\Interfaces\LoggerInterface;
 use PDO;
 use stdClass;
 
@@ -39,16 +40,22 @@ class Database implements DatabaseInterface
     private PDO $connection;
     private string $databaseType;
     private string $queryClass;
+    private LoggerInterface $logger;
 
     /**
      * @param stdClass $connectionDetails
      * @param string $pdoClass
+     * @param LoggerInterface|null $logger
      * @throws DatabaseException
      * @throws InvalidOptionException
      * @throws ServerFailureException
+     * @throws \Feast\ServiceContainer\NotFoundException
      */
-    public function __construct(stdClass $connectionDetails, string $pdoClass)
+    public function __construct(stdClass $connectionDetails, string $pdoClass, ?LoggerInterface $logger)
     {
+        $logger ??= di(LoggerInterface::INTERFACE_NAME);
+        $this->logger = $logger;
+        
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
         $this->databaseType = (string)$connectionDetails->connectionType;
@@ -170,7 +177,7 @@ class Database implements DatabaseInterface
     private function startQuery(): Query
     {
         /** @var Query */
-        return new ($this->queryClass)($this->connection);
+        return new ($this->queryClass)($this->connection, $this->logger);
     }
 
     /**
