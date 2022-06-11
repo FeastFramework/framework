@@ -26,6 +26,7 @@ namespace Database;
 use Feast\Database\Query;
 use Feast\Database\SQLiteQuery;
 use Feast\Exception\DatabaseException;
+use Feast\Interfaces\LoggerInterface;
 use Mocks\PDOMock;
 use PHPUnit\Framework\TestCase;
 
@@ -34,7 +35,8 @@ class SQLiteQueryTest extends TestCase
 
     public function getValidQuery(): Query
     {
-        return new SQLiteQuery(new PDOMock('dsnstring'));
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        return new SQLiteQuery(new PDOMock('dsnstring'), $logger);
     }
 
     public function testFrom(): void

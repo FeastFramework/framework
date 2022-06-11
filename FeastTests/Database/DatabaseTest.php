@@ -29,6 +29,7 @@ use Feast\Database\TableDetails;
 use Feast\Enums\DatabaseType;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidOptionException;
+use Feast\Interfaces\LoggerInterface;
 use Mocks\PDOMock;
 use PHPUnit\Framework\TestCase;
 
@@ -53,7 +54,8 @@ class DatabaseTest extends TestCase
                 \PDO::ATTR_EMULATE_PREPARES => false
             ];
         }
-        return new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        return new Database($details, PDOMock::class, $logger);
     }
 
     public function testInstantiation(): void
@@ -88,8 +90,9 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = 'This Database Doesn\'t Exist';
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $this->expectException(\TypeError::class);
-        new Database($details, PDOMock::class);
+        new Database($details, PDOMock::class, $logger);
     }
 
     public function testInstantiationWithUrl(): void
@@ -102,7 +105,8 @@ class DatabaseTest extends TestCase
         $details->url = 'mysql:host=localhost;port=3306;';
         $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = MySQLQuery::class;
-        $database = new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $database = new Database($details, PDOMock::class, $logger);
         $this->assertInstanceOf(Database::class,$database);
     }
 
@@ -116,7 +120,8 @@ class DatabaseTest extends TestCase
         $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = MySQLQuery::class;
         $this->expectException(InvalidOptionException::class);
-        new Database($details, \stdClass::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        new Database($details, \stdClass::class, $logger);
     }
 
     public function testInstantiationInvalidDbClass(): void
@@ -128,8 +133,9 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = 'completegibberishdefinitelynotaclass';
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $this->expectException(InvalidOptionException::class);
-        new Database($details, \stdClass::class);
+        new Database($details, \stdClass::class, $logger);
     }
 
     public function testInstantiationNonExtendedDbClass(): void
@@ -141,8 +147,9 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
         $details->queryClass = \stdClass::class;
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $this->expectException(InvalidOptionException::class);
-        new Database($details, \stdClass::class);
+        new Database($details, \stdClass::class, $logger);
     }
 
     public function testInstantiationWithRemovedFormerlyDeprecatedMethodMySQL(): void
@@ -154,7 +161,8 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
         $this->expectException(InvalidOptionException::class);
-        $database = new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $database = new Database($details, PDOMock::class, $logger);
     }
 
     public function testInstantiationWithRemovedFormerlyDeprecatedMethodSqLite(): void
@@ -166,7 +174,8 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->connectionType = DatabaseType::SQLITE;
         $this->expectException(InvalidOptionException::class);
-        $database = new Database($details, PDOMock::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $database = new Database($details, PDOMock::class, $logger);
     }
 
     public function testInsert(): void

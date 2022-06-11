@@ -26,6 +26,7 @@ use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\DatabaseFactoryInterface;
 use Feast\Interfaces\DatabaseInterface;
+use Feast\Interfaces\LoggerInterface;
 use Feast\ServiceContainer\ContainerException;
 use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
@@ -51,10 +52,14 @@ class DatabaseFactory implements ServiceContainerItemInterface, DatabaseFactoryI
      * Get or initialize and return the specified connection.
      *
      * @param string $connection
+     * @param LoggerInterface|null $logger
      * @return DatabaseInterface
+     * @throws DatabaseException
+     * @throws NotFoundException
      * @throws ServerFailureException
+     * @throws \Feast\Exception\InvalidOptionException
      */
-    public function getConnection(string $connection = self::DEFAULT_CONNECTION): DatabaseInterface
+    public function getConnection(string $connection = self::DEFAULT_CONNECTION, ?LoggerInterface $logger = null): DatabaseInterface
     {
         if (isset($this->connections->$connection)) {
             /** @var DatabaseInterface */
@@ -65,7 +70,8 @@ class DatabaseFactory implements ServiceContainerItemInterface, DatabaseFactoryI
         /** @var class-string $connectionClass */
         $connectionClass = $this->config->getSetting('pdoClass', PDO::class);
         if ($connectionConfig !== null) {
-            $connectionObject = new Database($connectionConfig, $connectionClass);
+            $logger ??= di(LoggerInterface::INTERFACE_NAME);
+            $connectionObject = new Database($connectionConfig, $connectionClass, $logger);
             $this->connections->$connection = $connectionObject;
 
             return $connectionObject;
