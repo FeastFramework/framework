@@ -24,6 +24,7 @@ use Exception;
 use Feast\Date;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidArgumentException;
+use Feast\Interfaces\LoggerInterface;
 use PDO;
 use PDOStatement;
 use Throwable;
@@ -57,9 +58,12 @@ abstract class Query
     protected array $update = ['table' => '', 'statement' => '', 'bindings' => []];
     /** @var array<array{statement: string, bindings: Date|string|int|bool|float|array|null}> */
     protected array $where = [];
+    protected LoggerInterface $logger;
 
-    public function __construct(protected PDO $database)
+    public function __construct(protected PDO $database, ?LoggerInterface $logger = null)
     {
+        $logger ??= di(LoggerInterface::INTERFACE_NAME);
+        $this->logger = $logger;
     }
 
     /**
@@ -406,6 +410,7 @@ abstract class Query
     {
         $sql = $this->database->prepare((string)$this);
         try {
+            $this->logger->debug('Query: ' . $this->getRawQueryWithParams());
             $result = $sql->execute($this->bindings);
             if ($result === false) {
                 throw new DatabaseException((string)$sql->errorInfo()[2]);
