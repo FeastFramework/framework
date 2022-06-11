@@ -99,6 +99,8 @@ The release plan for FEAST can be found [here](release-schedule.md).
 
 [The FEAST CLI](cli.md)
 
+[The Logger](logger.md)
+
 ## Advanced Features
 
 [Working with Databases](models.md)
