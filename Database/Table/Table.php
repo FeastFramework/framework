@@ -631,7 +631,7 @@ abstract class Table
             $columns = [$columns];
         }
         if ($name === null) {
-            $name = 'index_' . implode('_', $columns);
+            $name = 'index_' . $this->name . '_' . implode('_', $columns);
         }
         $this->indexes[] = [
             'name' => $name,
@@ -655,7 +655,7 @@ abstract class Table
             $columns = [$columns];
         }
         if ($name === null) {
-            $name = 'unique_index_' . implode('_', $columns);
+            $name = 'unique_index_' . $this->name . '_' . implode('_', $columns);
         }
         $this->uniques[] = [
             'name' => $name,
@@ -692,7 +692,7 @@ abstract class Table
             $referencesColumns = [$referencesColumns];
         }
         if ($name === null) {
-            $name = 'fk_' . implode('_', [implode('_', $columns), $referencesTable, implode('_', $referencesColumns)]);
+            $name = 'fk_' . $this->name . '_' . implode('_', [implode('_', $columns), $referencesTable, implode('_', $referencesColumns)]);
         }
         $this->foreignKeys[] = [
             'name' => $name,

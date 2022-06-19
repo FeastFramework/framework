@@ -132,7 +132,7 @@ class PostgresTableTest extends TestCase
     {
         $this->table->index('test');
         $indexes = $this->table->getIndexes();
-        $this->assertEquals('index_test', $indexes[0]['name']);
+        $this->assertEquals('index_Test_test', $indexes[0]['name']);
         $this->assertEquals('test', $indexes[0]['columns'][0]);
     }
 
@@ -140,7 +140,7 @@ class PostgresTableTest extends TestCase
     {
         $this->table->index(['test', 'test2']);
         $indexes = $this->table->getIndexes();
-        $this->assertEquals('index_test_test2', $indexes[0]['name']);
+        $this->assertEquals('index_Test_test_test2', $indexes[0]['name']);
         $this->assertEquals('test', $indexes[0]['columns'][0]);
         $this->assertEquals('test2', $indexes[0]['columns'][1]);
     }
@@ -292,7 +292,7 @@ class PostgresTableTest extends TestCase
         $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_test (test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test ON Test (Test);' . "\n" . 'comment on column Test.Test is ?;',
+            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_Test_test (test),' . "\n" . 'CONSTRAINT fk_Test_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test_Test ON Test (Test);' . "\n" . 'comment on column Test.Test is ?;',
             $ddl->ddl
         );
         $this->assertEquals(['4', 'this is a test'], $ddl->bindings);
@@ -342,7 +342,7 @@ class PostgresTableTest extends TestCase
         $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_test (test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);',
+            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_Test_test (test),' . "\n" . 'CONSTRAINT fk_Test_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);',
             $ddl->ddl
         );
         $this->assertEquals(['4'], $ddl->bindings);
