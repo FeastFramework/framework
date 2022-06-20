@@ -41,6 +41,7 @@ class Database implements DatabaseInterface
     private string $databaseType;
     private string $queryClass;
     private LoggerInterface $logger;
+    private string $escapeCharacter;
 
     /**
      * @param stdClass $connectionDetails
@@ -55,7 +56,7 @@ class Database implements DatabaseInterface
     {
         $logger ??= di(LoggerInterface::INTERFACE_NAME);
         $this->logger = $logger;
-        
+
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
         $this->databaseType = (string)$connectionDetails->connectionType;
@@ -71,6 +72,12 @@ class Database implements DatabaseInterface
             $port = !empty($connectionDetails->port) ? (int)$connectionDetails->port : 3306;
             $database = (string)$connectionDetails->name;
             $connectionString = $this->getConnectionString($database, $hostname, $port);
+        }
+
+        if (isset($connectionDetails->identifierEscapeChar)) {
+            $this->escapeCharacter = (string)$connectionDetails->identifierEscapeChar;
+        } else {
+            $this->setIdentifierEscapeCharacterFromType();
         }
 
         if (!is_a($pdoClass, PDO::class, true)) {
@@ -393,6 +400,36 @@ class Database implements DatabaseInterface
     public function getDatabaseType(): string
     {
         return $this->databaseType;
+    }
+
+    /**
+     * Get the escape character for identifiers.
+     *
+     * @return string
+     */
+    public function getIdentifierEscapeCharacter(): string
+    {
+        return $this->escapeCharacter;
+    }
+
+    private function setIdentifierEscapeCharacterFromType(): void
+    {
+        if ($this->getDatabaseType() === DatabaseType::MYSQL) {
+            $this->escapeCharacter = '`';
+            return;
+        }
+        $this->escapeCharacter = '"';
+    }
+
+    /**
+     * Get escaped identifier.
+     *
+     * @param string $field
+     * @return string
+     */
+    public function getEscapedIdentifier(string $field): string
+    {
+        return $this->getIdentifierEscapeCharacter() . $field . $this->getIdentifierEscapeCharacter();
     }
 
     protected function getConfigOptions(stdClass $connectionDetails): array

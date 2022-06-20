@@ -45,6 +45,7 @@ class PostgresTableTest extends TestCase
     {
         $database = $this->createStub(Database::class);
         $database->method('rawQuery')->willReturn(false);
+        $database->method('getEscapedIdentifier')->willReturnCallback(fn($arg) => '"' . $arg . '"');
         $this->table = new PostgresTable('Test', $database);
     }
 
@@ -292,7 +293,7 @@ class PostgresTableTest extends TestCase
         $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_Test_test (test),' . "\n" . 'CONSTRAINT fk_Test_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test_Test ON Test (Test);' . "\n" . 'comment on column Test.Test is ?;',
+            'CREATE TABLE IF NOT EXISTS "Test"("Test" smallint not null,' . "\n" . '"Test" integer not null DEFAULT ?,' . "\n" . '"Test" bytea not null,' . "\n" . '"test" timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY ("Test"),' . "\n" . 'UNIQUE unique_index_Test_test ("test"),' . "\n" . 'CONSTRAINT fk_Test_test_noTest_notATest FOREIGN KEY ("test") REFERENCES "noTest"("notATest") ON DELETE RESTRICT ON UPDATE RESTRICT);' . "\n" . 'CREATE INDEX IF NOT EXISTS index_Test_Test ON "Test" ("Test");' . "\n" . 'comment on column Test.Test is ?;',
             $ddl->ddl
         );
         $this->assertEquals(['4', 'this is a test'], $ddl->bindings);
@@ -303,7 +304,7 @@ class PostgresTableTest extends TestCase
         $this->table->timestamp('test', 'NOW()');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(test timestamp not null DEFAULT now());',
+            'CREATE TABLE IF NOT EXISTS "Test"("test" timestamp not null DEFAULT now());',
             $ddl->ddl
         );
         $this->assertEquals([], $ddl->bindings);
@@ -314,7 +315,7 @@ class PostgresTableTest extends TestCase
         $this->table->timestamp('test');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(test timestamp not null);',
+            'CREATE TABLE IF NOT EXISTS "Test"("test" timestamp not null);',
             $ddl->ddl
         );
         $this->assertEquals([], $ddl->bindings);
@@ -325,7 +326,7 @@ class PostgresTableTest extends TestCase
         $this->table->timestamp('test', '2022-05-01 18:31:22');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(test timestamp not null DEFAULT ?);',
+            'CREATE TABLE IF NOT EXISTS "Test"("test" timestamp not null DEFAULT ?);',
             $ddl->ddl
         );
         $this->assertEquals(['2022-05-01 18:31:22'], $ddl->bindings);
@@ -342,7 +343,7 @@ class PostgresTableTest extends TestCase
         $this->table->foreignKey('test', 'noTest', 'notATest');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test smallint not null,' . "\n" . 'Test integer not null DEFAULT ?,' . "\n" . 'Test bytea not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'UNIQUE unique_index_Test_test (test),' . "\n" . 'CONSTRAINT fk_Test_test_noTest_notATest FOREIGN KEY (test) REFERENCES "noTest"(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT);',
+            'CREATE TABLE IF NOT EXISTS "Test"("Test" smallint not null,' . "\n" . '"Test" integer not null DEFAULT ?,' . "\n" . '"Test" bytea not null,' . "\n" . '"test" timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY ("Test"),' . "\n" . 'UNIQUE unique_index_Test_test ("test"),' . "\n" . 'CONSTRAINT fk_Test_test_noTest_notATest FOREIGN KEY ("test") REFERENCES "noTest"("notATest") ON DELETE RESTRICT ON UPDATE RESTRICT);',
             $ddl->ddl
         );
         $this->assertEquals(['4'], $ddl->bindings);

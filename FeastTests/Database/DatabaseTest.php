@@ -53,6 +53,7 @@ class DatabaseTest extends TestCase
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
                 \PDO::ATTR_EMULATE_PREPARES => false
             ];
+            $details->identifierEscapeChar = 'x';
         }
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         return new Database($details, PDOMock::class, $logger);
@@ -61,25 +62,55 @@ class DatabaseTest extends TestCase
     public function testInstantiation(): void
     {
         $database = $this->getValidConnection();
-        $this->assertInstanceOf(Database::class,$database);
+        $this->assertInstanceOf(Database::class, $database);
+    }
+
+    public function testEscapeCharacterMySql(): void
+    {
+        $database = $this->getValidConnection();
+        $this->assertEquals('`', $database->getIdentifierEscapeCharacter());
+    }
+
+    public function testEscapeCharacterPostgres(): void
+    {
+        $database = $this->getValidConnection(DatabaseType::POSTGRES);
+        $this->assertEquals('"', $database->getIdentifierEscapeCharacter());
+    }
+
+    public function testEscapedFieldMySql(): void
+    {
+        $database = $this->getValidConnection();
+        $this->assertEquals('`Test`', $database->getEscapedIdentifier('Test'));
+    }
+
+    public function testEscapedFieldPostgres(): void
+    {
+        $database = $this->getValidConnection(DatabaseType::POSTGRES);
+        $this->assertEquals('"Test"', $database->getEscapedIdentifier('Test'));
+    }
+
+    public function testEscapedFieldCustom(): void
+    {
+        $database = $this->getValidConnection(options: true);
+        $this->assertEquals('xTestx', $database->getEscapedIdentifier('Test'));
     }
 
     public function testInstantiationWithConfig(): void
     {
         $database = $this->getValidConnection(options: true);
-        $this->assertInstanceOf(Database::class,$database);
+        $this->assertInstanceOf(Database::class, $database);
     }
 
     public function testInstantiationSqlite(): void
     {
         $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
-        $this->assertInstanceOf(Database::class,$database);
+        $this->assertInstanceOf(Database::class, $database);
     }
 
     public function testInstantiationPostgres(): void
     {
         $database = $this->getValidConnection(DatabaseType::POSTGRES, PostgresQuery::class);
-        $this->assertInstanceOf(Database::class,$database);
+        $this->assertInstanceOf(Database::class, $database);
     }
 
     public function testInstantiationUnknownType(): void
@@ -106,7 +137,7 @@ class DatabaseTest extends TestCase
         $details->connectionType = DatabaseType::MYSQL;
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $database = new Database($details, PDOMock::class, $logger);
-        $this->assertInstanceOf(Database::class,$database);
+        $this->assertInstanceOf(Database::class, $database);
     }
 
     public function testInstantiationUnknownDbClass(): void
@@ -132,7 +163,7 @@ class DatabaseTest extends TestCase
         $details->connectionType = DatabaseType::MYSQL;
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $database = new Database($details, PDOMock::class, $logger);
-        $this->assertInstanceOf(Database::class,$database);
+        $this->assertInstanceOf(Database::class, $database);
     }
 
     public function testInstantiationWithDeprecatedMethodSqLite(): void
@@ -145,28 +176,28 @@ class DatabaseTest extends TestCase
         $details->connectionType = DatabaseType::SQLITE;
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $database = new Database($details, PDOMock::class, $logger);
-        $this->assertInstanceOf(Database::class,$database);
+        $this->assertInstanceOf(Database::class, $database);
     }
 
     public function testInsert(): void
     {
         $database = $this->getValidConnection();
         $query = $database->insert('test', ['test1' => 'test2']);
-        $this->assertInstanceOf(Query::class,$query);
+        $this->assertInstanceOf(Query::class, $query);
     }
 
     public function testSelect(): void
     {
         $database = $this->getValidConnection();
         $query = $database->select('test');
-        $this->assertInstanceOf(Query::class,$query);
+        $this->assertInstanceOf(Query::class, $query);
     }
 
     public function testSelectSqlite(): void
     {
         $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $query = $database->select('test');
-        $this->assertInstanceOf(SQLiteQuery::class,$query);
+        $this->assertInstanceOf(SQLiteQuery::class, $query);
     }
 
     public function testTableExists(): void
@@ -187,7 +218,7 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->update('test');
-        $this->assertInstanceOf(MySQLQuery::class,$query);
+        $this->assertInstanceOf(MySQLQuery::class, $query);
     }
 
     public function testColumnExists(): void
@@ -208,7 +239,7 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->replace('test', ['test' => 'test2']);
-        $this->assertInstanceOf(MySQLQuery::class,$query);
+        $this->assertInstanceOf(MySQLQuery::class, $query);
     }
 
     public function testGetDatabaseTypeMySQL(): void
@@ -239,7 +270,7 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->delete('test');
-        $this->assertInstanceOf(Query::class,$query);
+        $this->assertInstanceOf(Query::class, $query);
     }
 
     public function testLastInsertId(): void
@@ -253,21 +284,21 @@ class DatabaseTest extends TestCase
     {
         $database = $this->getValidConnection();
         $query = $database->describe('test');
-        $this->assertInstanceOf(Query::class,$query);
+        $this->assertInstanceOf(Query::class, $query);
     }
 
     public function testGetDescribedTable(): void
     {
         $database = $this->getValidConnection();
         $result = $database->getDescribedTable('test_schema_no');
-        $this->assertInstanceOf(TableDetails::class,$result);
+        $this->assertInstanceOf(TableDetails::class, $result);
     }
 
     public function testGetConnection(): void
     {
         $database = $this->getValidConnection();
         $connection = $database->getConnection();
-        $this->assertInstanceOf(\PDO::class,$connection);
+        $this->assertInstanceOf(\PDO::class, $connection);
     }
 
     public function testRawQuery(): void

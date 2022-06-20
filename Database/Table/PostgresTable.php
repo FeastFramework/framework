@@ -41,7 +41,11 @@ class PostgresTable extends Table
      */
     public function dropColumn(string $column): void
     {
-        $this->connection->rawQuery('ALTER TABLE ' . $this->name . ' DROP COLUMN ' . $column);
+        $this->connection->rawQuery(
+            'ALTER TABLE ' . $this->connection->getEscapedIdentifier(
+                $this->name
+            ) . ' DROP COLUMN ' . $this->connection->getEscapedIdentifier($column)
+        );
     }
 
     /**
@@ -49,7 +53,7 @@ class PostgresTable extends Table
      */
     public function drop(): void
     {
-        $this->connection->rawQuery('DROP TABLE IF EXISTS ' . $this->name);
+        $this->connection->rawQuery('DROP TABLE IF EXISTS ' . $this->connection->getEscapedIdentifier($this->name));
     }
 
     /**
@@ -59,7 +63,7 @@ class PostgresTable extends Table
      */
     public function getDdl(): Ddl
     {
-        $return = 'CREATE TABLE IF NOT EXISTS ' . $this->name . '(';
+        $return = 'CREATE TABLE IF NOT EXISTS ' . $this->connection->getEscapedIdentifier($this->name) . '(';
         $columns = [];
         $bindings = [];
         $comments = [];
@@ -67,12 +71,12 @@ class PostgresTable extends Table
         foreach ($this->columns as $column) {
             $columns[] = $this->getColumnForDdl($column, $bindings);
             $comment = $column->getComment();
-            if ( $comment !== null ) {
+            if ($comment !== null) {
                 $comments[$column->getName()] = $comment;
             }
         }
         if (isset($this->primaryKeyName)) {
-            $columns[] = 'PRIMARY KEY (' . $this->primaryKeyName . ')';
+            $columns[] = 'PRIMARY KEY (' . $this->connection->getEscapedIdentifier($this->primaryKeyName) . ')';
         }
 
         $columns = $this->addUniqueIndexesForDdl($columns);
@@ -93,15 +97,15 @@ class PostgresTable extends Table
     protected function addCommentsForDdl(array $comments, array &$bindings): string
     {
         $return = [];
-        foreach($comments as $column => $comment) {
+        foreach ($comments as $column => $comment) {
             $return[] = 'comment on column ' . $this->name . '.' . $column . ' is ?;';
             $bindings[] = $comment;
         }
-        
-        if ( !empty($return) ) {
+
+        if (!empty($return)) {
             return "\n" . implode("\n", $return);
         }
-        
+
         return '';
     }
 
@@ -110,9 +114,11 @@ class PostgresTable extends Table
         $columns = [];
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->indexes as $index) {
-            $columns[] = 'CREATE INDEX IF NOT EXISTS ' . $index['name'] . ' ON ' . $this->name . ' (' . implode(
+            $columns[] = 'CREATE INDEX IF NOT EXISTS ' . $index['name'] . ' ON ' . $this->connection->getEscapedIdentifier(
+                    $this->name
+                ) . ' (' . implode(
                     ',',
-                    $index['columns']
+                    $this->getEscapedIdentifiers($index['columns'])
                 ) . ');';
         }
         if (!empty($columns)) {
@@ -131,9 +137,9 @@ class PostgresTable extends Table
         /** @var array{name:string,columns:list<string>, referencesTable:string, referencesColumns:list<string>, onDelete:string, onUpdate:string} $foreignKey */
         foreach ($this->foreignKeys as $foreignKey) {
             $columns[] = 'CONSTRAINT ' . $foreignKey['name'] . ' FOREIGN KEY ('
-                . implode(',', $foreignKey['columns'])
+                . implode(',', $this->getEscapedIdentifiers($foreignKey['columns']))
                 . ') REFERENCES "' . $foreignKey['referencesTable']
-                . '"(' . implode(',', $foreignKey['referencesColumns'])
+                . '"(' . implode(',', $this->getEscapedIdentifiers($foreignKey['referencesColumns']))
                 . ') ON DELETE ' . $foreignKey['onDelete']
                 . ' ON UPDATE ' . $foreignKey['onUpdate'];
         }
@@ -149,7 +155,10 @@ class PostgresTable extends Table
     {
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->uniques as $index) {
-            $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+            $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(
+                    ',',
+                    $this->getEscapedIdentifiers($index['columns'])
+                ) . ')';
         }
 
         return $columns;
@@ -157,7 +166,7 @@ class PostgresTable extends Table
 
     protected function getColumnForDdl(Column $column, array &$bindings): string
     {
-        $string = $column->getName() . ' ' . $column->getType();
+        $string = $this->connection->getEscapedIdentifier($column->getName()) . ' ' . $column->getType();
         $string .= $column->getLength() !== null ? '(' . (string)$column->getLength() : '';
         $string .= $column->getLength() !== null ? (
         $column->getDecimal() !== null ?
@@ -465,8 +474,13 @@ class PostgresTable extends Table
      * @return static
      * @throws DatabaseException
      */
-    public function tinyText(string $name, ?int $length = null, bool $nullable = false, ?string $default = null, ?string $comment = null): static
-    {
+    public function tinyText(
+        string $name,
+        ?int $length = null,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
         return $this->text($name, $length, $nullable, $default, $comment);
     }
 
@@ -481,8 +495,13 @@ class PostgresTable extends Table
      * @return static
      * @throws DatabaseException
      */
-    public function mediumText(string $name, ?int $length = null, bool $nullable = false, ?string $default = null, ?string $comment = null): static
-    {
+    public function mediumText(
+        string $name,
+        ?int $length = null,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
         return $this->text($name, $length, $nullable, $default, $comment);
     }
 
@@ -497,8 +516,13 @@ class PostgresTable extends Table
      * @return static
      * @throws DatabaseException
      */
-    public function longText(string $name, ?int $length = null, bool $nullable = false, ?string $default = null, ?string $comment = null): static
-    {
+    public function longText(
+        string $name,
+        ?int $length = null,
+        bool $nullable = false,
+        ?string $default = null,
+        ?string $comment = null
+    ): static {
         return $this->text($name, $length, $nullable, $default, $comment);
     }
 

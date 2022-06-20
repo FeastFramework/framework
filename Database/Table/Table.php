@@ -692,7 +692,13 @@ abstract class Table
             $referencesColumns = [$referencesColumns];
         }
         if ($name === null) {
-            $name = 'fk_' . $this->name . '_' . implode('_', [implode('_', $columns), $referencesTable, implode('_', $referencesColumns)]);
+            $name = 'fk_' . $this->name . '_' . implode('_',
+                                                        [
+                                                            implode('_', $columns),
+                                                            $referencesTable,
+                                                            implode('_', $referencesColumns)
+                                                        ]
+                );
         }
         $this->foreignKeys[] = [
             'name' => $name,
@@ -906,6 +912,17 @@ abstract class Table
         }
 
         return null;
+    }
+
+    /**
+     * @param array<string> $items
+     * @return array<string>
+     */
+    protected function getEscapedIdentifiers(array $items): array
+    {
+        return array_map(fn($item) => $this->connection->getEscapedIdentifier(
+            $item
+        ), $items);
     }
 
     /**

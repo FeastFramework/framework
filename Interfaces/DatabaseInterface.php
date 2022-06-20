@@ -179,4 +179,18 @@ interface DatabaseInterface
      * @return string
      */
     public function getDatabaseType(): string;
+
+    /**
+     * Get the escape character for identifiers.
+     * @return string
+     */
+    public function getIdentifierEscapeCharacter(): string;
+
+    /**
+     * Get escaped identifier.
+     *
+     * @param string $field
+     * @return string
+     */
+    public function getEscapedIdentifier(string $field): string;
 }
