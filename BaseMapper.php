@@ -131,7 +131,7 @@ abstract class BaseMapper
     {
         return $this->findOneByFields(
             [
-                (string)static::PRIMARY_KEY => $value
+                $this->getEscapedFieldName((string)static::PRIMARY_KEY) => $value
             ]
         );
     }
@@ -262,6 +262,11 @@ abstract class BaseMapper
         return new Set((string)static::OBJECT_NAME, $rows, preValidated: true);
     }
 
+    public function getEscapedFieldName(string $field): string
+    {
+        return $this->connection->getEscapedIdentifier($field);
+    }
+
     /**
      * Save model to database.
      *
@@ -282,7 +287,7 @@ abstract class BaseMapper
         if (!empty($recordPrimaryKey) && (!empty($record->getOriginalModel()) || $forceUpdate)) {
             unset($recordArray[$primaryKey]);
             $update = $this->connection->update((string)static::TABLE_NAME, $recordArray)->where(
-                $primaryKey . ' = ?',
+                $this->getEscapedFieldName($primaryKey) . ' = ?',
                 $recordPrimaryKey
             );
             $update->execute();
@@ -339,7 +344,7 @@ abstract class BaseMapper
             if ($val instanceof stdClass || is_array($val)) {
                 $val = json_encode($val);
             }
-            $return[$field] = $val;
+            $return[$this->getEscapedFieldName($field)] = $val;
         }
         return $return;
     }
@@ -408,7 +413,7 @@ abstract class BaseMapper
         $recordPrimaryKey = $record->$primaryKey ?? null;
         if ($recordPrimaryKey !== null) {
             $update = $this->connection->delete((string)static::TABLE_NAME)->where(
-                $primaryKey . ' = ?',
+                $this->getEscapedFieldName($primaryKey) . ' = ?',
                 $recordPrimaryKey
             );
             $statement = $update->execute();

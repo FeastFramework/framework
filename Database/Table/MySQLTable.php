@@ -32,7 +32,13 @@ class MySQLTable extends Table
      */
     public function dropColumn(string $column): void
     {
-        $this->connection->rawQuery('ALTER TABLE ' . $this->name . ' DROP COLUMN ' . $column);
+        $this->connection->rawQuery(
+            'ALTER TABLE ' . $this->connection->getEscapedIdentifier(
+                $this->name
+            ) . ' DROP COLUMN ' . $this->connection->getEscapedIdentifier(
+                $column
+            )
+        );
     }
 
     /**
@@ -40,7 +46,7 @@ class MySQLTable extends Table
      */
     public function drop(): void
     {
-        $this->connection->rawQuery('DROP TABLE IF EXISTS ' . $this->name);
+        $this->connection->rawQuery('DROP TABLE IF EXISTS ' . $this->connection->getEscapedIdentifier($this->name));
     }
 
     /**
@@ -50,7 +56,7 @@ class MySQLTable extends Table
      */
     public function getDdl(): Ddl
     {
-        $return = 'CREATE TABLE IF NOT EXISTS ' . $this->name . '(';
+        $return = 'CREATE TABLE IF NOT EXISTS ' . $this->connection->getEscapedIdentifier($this->name) . '(';
         $columns = [];
         $bindings = [];
         /** @var Column $column */
@@ -58,7 +64,7 @@ class MySQLTable extends Table
             $columns[] = $this->getColumnForDdl($column, $bindings);
         }
         if (isset($this->primaryKeyName)) {
-            $columns[] = 'PRIMARY KEY (' . $this->primaryKeyName . ')';
+            $columns[] = 'PRIMARY KEY (' . $this->connection->getEscapedIdentifier($this->primaryKeyName) . ')';
         }
 
         $columns = $this->addIndexesForDdl($columns);
@@ -70,24 +76,23 @@ class MySQLTable extends Table
 
         return new Ddl($return, $bindings);
     }
-    
+
     protected function addTableInfo(): string
     {
         $return = '';
-        if ( $this->characterSet !== null ) {
+        if ($this->characterSet !== null) {
             $return .= ' CHARACTER SET ' . $this->characterSet;
         }
 
-        if ( $this->collation !== null ) {
+        if ($this->collation !== null) {
             $return .= ' COLLATE ' . $this->collation;
         }
 
-        if ( $this->dbEngine !== null ) {
+        if ($this->dbEngine !== null) {
             $return .= ' ENGINE ' . $this->dbEngine;
         }
-        
-        return $return;
 
+        return $return;
     }
 
     /**
@@ -100,9 +105,15 @@ class MySQLTable extends Table
         foreach ($this->foreignKeys as $foreignKey) {
             $columns[] = 'CONSTRAINT ' . $foreignKey['name']
                 . ' foreign key ('
-                . implode(',', $foreignKey['columns'])
+                . implode(
+                    ',',
+                    $this->getEscapedIdentifiers($foreignKey['columns'])
+                )
                 . ') REFERENCES `' . $foreignKey['referencesTable']
-                . '`(' . implode(',', $foreignKey['referencesColumns'])
+                . '`(' . implode(
+                    ',',
+                    $this->getEscapedIdentifiers($foreignKey['referencesColumns'])
+                )
                 . ') ON DELETE '
                 . $foreignKey['onDelete']
                 . ' ON UPDATE ' . $foreignKey['onUpdate'];
@@ -119,7 +130,10 @@ class MySQLTable extends Table
     {
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->indexes as $index) {
-            $columns[] = 'INDEX ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+            $columns[] = 'INDEX ' . $index['name'] . ' (' . implode(
+                    ',',
+                    $this->getEscapedIdentifiers($index['columns'])
+                ) . ')';
         }
 
         return $columns;
@@ -133,7 +147,10 @@ class MySQLTable extends Table
     {
         /** @var array{name:string,columns:list<string>} $index */
         foreach ($this->uniques as $index) {
-            $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(',', $index['columns']) . ')';
+            $columns[] = 'UNIQUE ' . $index['name'] . ' (' . implode(
+                    ',',
+                    $this->getEscapedIdentifiers($index['columns'])
+                ) . ')';
         }
 
         return $columns;
@@ -141,7 +158,7 @@ class MySQLTable extends Table
 
     protected function getColumnForDdl(Column $column, array &$bindings): string
     {
-        $string = $column->getName() . ' ' . $column->getType();
+        $string = $this->connection->getEscapedIdentifier($column->getName()) . ' ' . $column->getType();
         $string .= $column->getLength() !== null ? '(' . (string)$column->getLength() : '';
         $string .= $column->getLength() !== null ? (
         $column->getDecimal() !== null ?
@@ -153,11 +170,11 @@ class MySQLTable extends Table
         if ($this->primaryKeyAutoIncrement && $this->primaryKeyName === $column->getName()) {
             $string .= ' AUTO_INCREMENT';
         }
-        if ( $column->getComment() !== null ) {
+        if ($column->getComment() !== null) {
             $string .= ' COMMENT ?';
             $bindings[] = $column->getComment();
         }
         return $string;
     }
-    
+
 }

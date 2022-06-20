@@ -51,6 +51,7 @@ class MySQLTableTest extends TestCase
     {
         $database = $this->createStub(Database::class);
         $database->method('rawQuery')->willReturn(false);
+        $database->method('getEscapedIdentifier')->willReturnCallback(fn($arg) => '`' . $arg . '`');
         $this->table = new MySQLTable('Test', $database);
     }
 
@@ -138,7 +139,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->index('test');
         $indexes = $this->table->getIndexes();
-        $this->assertEquals('index_test', $indexes[0]['name']);
+        $this->assertEquals('index_Test_test', $indexes[0]['name']);
         $this->assertEquals('test', $indexes[0]['columns'][0]);
     }
 
@@ -146,7 +147,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->index(['test', 'test2']);
         $indexes = $this->table->getIndexes();
-        $this->assertEquals('index_test_test2', $indexes[0]['name']);
+        $this->assertEquals('index_Test_test_test2', $indexes[0]['name']);
         $this->assertEquals('test', $indexes[0]['columns'][0]);
         $this->assertEquals('test2', $indexes[0]['columns'][1]);
     }
@@ -155,7 +156,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->uniqueIndex('test');
         $indexes = $this->table->getUniqueIndexes();
-        $this->assertEquals('unique_index_test', $indexes[0]['name']);
+        $this->assertEquals('unique_index_Test_test', $indexes[0]['name']);
         $this->assertEquals('test', $indexes[0]['columns'][0]);
     }
 
@@ -163,7 +164,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->uniqueIndex(['test', 'test2']);
         $indexes = $this->table->getUniqueIndexes();
-        $this->assertEquals('unique_index_test_test2', $indexes[0]['name']);
+        $this->assertEquals('unique_index_Test_test_test2', $indexes[0]['name']);
         $this->assertEquals('test', $indexes[0]['columns'][0]);
         $this->assertEquals('test2', $indexes[0]['columns'][1]);
     }
@@ -172,7 +173,7 @@ class MySQLTableTest extends TestCase
     {
         $this->table->foreignKey('test','noTest','notATest','CASCADE');
         $indexes = $this->table->getForeignKeys();
-        $this->assertEquals('fk_test_noTest_notATest', $indexes[0]['name']);
+        $this->assertEquals('fk_Test_test_noTest_notATest', $indexes[0]['name']);
         $this->assertEquals('test', $indexes[0]['columns'][0]);
         $this->assertEquals('noTest', $indexes[0]['referencesTable']);
         $this->assertEquals('notATest', $indexes[0]['referencesColumns'][0]);
@@ -366,7 +367,7 @@ class MySQLTableTest extends TestCase
         $this->table->collation('latin1_danish_ci')->characterSet('latin1')->dbEngine('MyISAM');
         $ddl = $this->table->getDdl();
         $this->assertEquals(
-            'CREATE TABLE IF NOT EXISTS Test(Test tinyint(4) not null COMMENT ?,' . "\n" . 'Test int(11) not null DEFAULT ?,' . "\n" . 'Test TINYBLOB not null,' . "\n" . 'test timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (Test),' . "\n" . 'INDEX index_test (test),' . "\n" . 'UNIQUE unique_index_Test (Test),' . "\n" . 'CONSTRAINT fk_test_noTest_notATest foreign key (test) REFERENCES `noTest`(notATest) ON DELETE RESTRICT ON UPDATE RESTRICT) CHARACTER SET latin1 COLLATE latin1_danish_ci ENGINE MyISAM',
+            'CREATE TABLE IF NOT EXISTS `Test`(`Test` tinyint(4) not null COMMENT ?,' . "\n" . '`Test` int(11) not null DEFAULT ?,' . "\n" . '`Test` TINYBLOB not null,' . "\n" . '`test` timestamp not null DEFAULT CURRENT_TIMESTAMP,' . "\n" . 'PRIMARY KEY (`Test`),' . "\n" . 'INDEX index_Test_test (`test`),' . "\n" . 'UNIQUE unique_index_Test_Test (`Test`),' . "\n" . 'CONSTRAINT fk_Test_test_noTest_notATest foreign key (`test`) REFERENCES `noTest`(`notATest`) ON DELETE RESTRICT ON UPDATE RESTRICT) CHARACTER SET latin1 COLLATE latin1_danish_ci ENGINE MyISAM',
             $ddl->ddl
         );
         $this->assertEquals(['This is a test', '4'], $ddl->bindings);
