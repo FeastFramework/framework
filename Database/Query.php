@@ -25,13 +25,15 @@ use Feast\Date;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidArgumentException;
 use Feast\Interfaces\LoggerInterface;
+use Feast\Traits\DebugQuery;
 use PDO;
 use PDOStatement;
 use Throwable;
 
 abstract class Query
 {
-
+    use DebugQuery;
+    
     public const DIRECTION_ASC = 'ASC';
     public const DIRECTION_DESC = 'DESC';
     public const JOIN_INNER = 'INNER JOIN';
@@ -431,21 +433,7 @@ abstract class Query
     public function getRawQueryWithParams(): string
     {
         $query = (string)$this;
-        /** @var string|int|float|bool|Date|null $binding */
-        foreach ($this->bindings as $binding) {
-            $location = strpos($query, '?');
-            if ($location === false) {
-                return $query;
-            }
-            $query = substr_replace(
-                $query,
-                '\'' . str_replace('?', '{question_mark}', (string)$binding) . '\'',
-                $location,
-                1
-            );
-        }
-
-        return str_replace('{question_mark}', '?', $query);
+        return $this->debugQuery($query, $this->bindings);
     }
 
     /**

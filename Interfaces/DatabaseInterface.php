@@ -24,6 +24,7 @@ use Exception;
 use Feast\Database\Query;
 use Feast\Database\TableDetails;
 use Feast\Enums\DatabaseType;
+use Feast\Date;
 use PDO;
 
 /**
@@ -168,7 +169,7 @@ interface DatabaseInterface
      * Run a raw query (with optional bindings).
      *
      * @param string $query
-     * @param array $bindings
+     * @param array<string|int|float|bool|Date|null> $bindings
      * @param bool $forceEmulatePrepares
      * @return bool
      */
