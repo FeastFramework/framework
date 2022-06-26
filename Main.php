@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast;
 
 use Exception;
+use Exception\InvalidDateException;
 use Feast\Attributes\AccessControl;
 use Feast\Attributes\JsonParam;
 use Feast\Attributes\Path;
@@ -112,7 +113,7 @@ class Main implements MainInterface
             $router->assignArguments($data);
         }
     }
-    
+
     protected function isJsonRequest(): bool
     {
         return isset($_SERVER['CONTENT_TYPE'])
@@ -313,10 +314,11 @@ class Main implements MainInterface
             /** @var string|int|float|bool|null|object $default */
             $default = $argument->isOptional() && $argument->isDefaultValueAvailable() ? $argument->getDefaultValue(
             ) : null;
-            $isJsonItem = !empty($argument->getAttributes(JsonParam::class));
+            $jsonParam = $argument->getAttributes(JsonParam::class);
+            $isJsonItem = !empty($jsonParam);
 
-            if ($isJsonItem && class_exists($argumentType)) {
-                $return[] = Json::unmarshal(json_encode($request->getAllArguments()), $argumentType);
+            if ($isJsonItem && $this->isValidType($argumentType)) {
+                $return = $this->parseJsonParam($jsonParam[0], $request, $argumentType, $return);
             } elseif (is_subclass_of($argumentType, BaseModel::class)) {
                 $this->buildBaseModelArgument($argumentType, $request, $argument, $return);
             } elseif (is_subclass_of($argumentType, BaseMapper::class)) {
@@ -567,6 +569,49 @@ class Main implements MainInterface
                 throw new Error404Exception('Controller ' . $controllerName . ' is not available!');
             }
         }
+    }
+
+    /**
+     * @param \ReflectionAttribute<\Feast\Attributes\JsonParam> $jsonParam
+     * @param RequestInterface $request
+     * @param class-string|string $argumentType
+     * @param array $return
+     * @return array
+     * @throws \Feast\Exception\InvalidDateException
+     * @throws ReflectionException
+     * @throws ServerFailureException
+     * @throws \JsonException
+     */
+    protected function parseJsonParam(
+        \ReflectionAttribute $jsonParam,
+        RequestInterface $request,
+        string $argumentType,
+        array $return
+    ): array {
+        /** @var JsonParam $jsonParamInstance */
+        $jsonParamInstance = $jsonParam->newInstance();
+        $allArguments = $request->getAllArguments();
+        if ($jsonParamInstance->key === '') {
+            $propertyValue = $allArguments;
+        } else {
+            /** @var \stdClass|scalar|array|null $value */
+            $value = $allArguments->{$jsonParamInstance->key} ?? null;
+            $propertyValue = $value;
+        }
+        if (($propertyValue instanceof \stdClass || is_array($propertyValue)) && class_exists($argumentType)) {
+            $return[] = Json::unmarshal(json_encode($propertyValue), $argumentType);
+        } else {
+            $return[] = $propertyValue;
+        }
+        return $return;
+    }
+
+    protected function isValidType(string $argumentType): bool
+    {
+        if (class_exists($argumentType)) {
+            return true;
+        }
+        return in_array($argumentType, ['array', 'string', 'bool', 'int', 'float', 'false']);
     }
 
 }

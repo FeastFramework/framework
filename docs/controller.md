@@ -62,7 +62,49 @@ Example controller action
 ```
 
 Note that if the `#[JsonParam]` attribute is missing, it will not perform this unwrapping, and instead will pass in null
-for the argument's value
+for the argument's value.
+
+In addition to passing in a single `JsonParam`, you can alternatively pass in a name to `JsonParam`, and the
+corresponding key will be used. For example `#[JsonParam('first')]` will use the key `first` from the JSON request.
+
+Example request:
+
+```json
+{
+    "who": {
+        "firstName": "Jeremy",
+        "frameworkOfChoice": "FEAST Framework"
+    },
+    "key": 1
+}
+```
+
+Example object:
+
+```php
+<?php
+
+class Person
+{
+    public string $firstName;
+    public string $frameworkOfChoice;
+    public int $id;
+}
+```
+
+Example controller action
+
+```php
+    public function indexPost(
+        #[JsonParam('who')]
+        Person $person = null,
+        #[JsonParam('key')]
+        int $key = null
+    ): void {
+        $person->id = $key;
+        $person->save();
+    }
+```
 
 ### init
 
