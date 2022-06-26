@@ -36,7 +36,7 @@ class MainTest extends TestCase
     public function testConstruct(): void
     {
         $main = $this->getMain(Main::RUN_AS_WEBAPP);
-        $this->assertInstanceOf(Main::class,$main);
+        $this->assertInstanceOf(Main::class, $main);
     }
 
     public function testMainWebApp404(): void
@@ -128,7 +128,10 @@ class MainTest extends TestCase
         $router->method('getModuleName')->willReturn('Test');
         $main->main();
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Something went wrong! If you are the administrator, check the error logs for more info.<br><br>', $output);
+        $this->assertEquals(
+            'Something went wrong! If you are the administrator, check the error logs for more info.<br><br>',
+            $output
+        );
     }
 
     public function testMainWebAppNormal(): void
@@ -171,7 +174,6 @@ class MainTest extends TestCase
         $this->assertEquals('Success!', $output);
     }
 
-
     public function testMainWebAppJson(): void
     {
         $main = $this->getMain(Main::RUN_AS_WEBAPP);
@@ -200,7 +202,7 @@ class MainTest extends TestCase
 
     public function testMainWebAppJsonRequest(): void
     {
-        $main = $this->getMain(Main::RUN_AS_WEBAPP);
+        $main = $this->getMain(Main::RUN_AS_WEBAPP, jsonSingleTest: true);
         $_SERVER['REQUEST_URI'] = '/test';
         $_SERVER['CONTENT_TYPE'] = 'application/json';
         /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
@@ -221,7 +223,35 @@ class MainTest extends TestCase
         $response->method('isJson')->willReturn(true);
         $main->main();
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Success!', $output);
+        $this->assertEquals('Jeremy', $output);
+        unset($_SERVER['REQUEST_URI']);
+        unset($_SERVER['CONTENT_TYPE']);
+    }
+
+    public function testMainWebAppJsonRequestMultiple(): void
+    {
+        $main = $this->getMain(Main::RUN_AS_WEBAPP, jsonMultipleTest: true);
+        $_SERVER['REQUEST_URI'] = '/test';
+        $_SERVER['CONTENT_TYPE'] = 'application/json';
+        /** @var \PHPUnit\Framework\MockObject\Stub&RouterInterface $router */
+        $router = di(RouterInterface::class);
+        $router->method('getControllerClass')->willReturn('FeastTestController');
+        $router->method('getControllerName')->willReturn('feast-test');
+        $router->method('getControllerFullyQualifiedName')->willReturn(
+            \Modules\Test\Controllers\FeastTestController::class
+        );
+
+        $router->method('getAction')->willReturn('serviceAction');
+        $router->method('getActionName')->willReturn('service');
+        $router->method('getActionMethodName')->willReturn('jsonMultiplePost');
+        $router->method('getModuleName')->willReturn('Test');
+
+        /** @var \PHPUnit\Framework\MockObject\Stub&ResponseInterface $response */
+        $response = di(ResponseInterface::class);
+        $response->method('isJson')->willReturn(true);
+        $main->main();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('First: FeastSecond: FrameworkThird: Fourth: String Test', $output);
         unset($_SERVER['REQUEST_URI']);
         unset($_SERVER['CONTENT_TYPE']);
     }
@@ -243,7 +273,10 @@ class MainTest extends TestCase
         $router->method('getModuleName')->willReturn('Test');
         $main->main();
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Something went wrong! If you are the administrator, check the error logs for more info.<br><br>', $output);
+        $this->assertEquals(
+            'Something went wrong! If you are the administrator, check the error logs for more info.<br><br>',
+            $output
+        );
     }
 
     public function testMainWebAppExceptionNotAvailableInEnv(): void
@@ -347,8 +380,13 @@ class MainTest extends TestCase
         $this->assertEquals('Model Success!', $output);
     }
 
-    protected function getMain(string $runAs, bool $with404 = false, bool $withThrottle = false): Main
-    {
+    protected function getMain(
+        string $runAs,
+        bool $with404 = false,
+        bool $withThrottle = false,
+        bool $jsonSingleTest = false,
+        bool $jsonMultipleTest = false
+    ): Main {
         $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $config = $this->createStub(Config::class);
         $config->method('getEnvironmentName')->willReturn('dev');
@@ -458,6 +496,25 @@ class MainTest extends TestCase
                 ]
             ]
         );
+        if ($jsonSingleTest) {
+            $user1 = new stdClass();
+            $user1->first_name = 'Jeremy';
+
+            $request->method('getAllArguments')->willReturn($user1);
+        } elseif ($jsonMultipleTest) {
+            $returnedStdClass = new stdClass();
+            $user2 = new stdClass();
+            $user2->first_name = 'Feast';
+
+            $user3 = new stdClass();
+            $user3->first_name = 'Framework';
+
+            $returnedStdClass->first = $user2;
+            $returnedStdClass->second = $user3;
+
+            $returnedStdClass->fourth = 'String Test';
+            $request->method('getAllArguments')->willReturn($returnedStdClass);
+        }
         $request->method('getArgumentArray')->willReturnMap(
             [
                 [
@@ -474,6 +531,7 @@ class MainTest extends TestCase
                 ]
             ]
         );
+
         $container->add(RequestInterface::class, $request);
         $container->add(ResponseInterface::class, $this->createStub(ResponseInterface::class));
         $container->add(

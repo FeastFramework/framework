@@ -96,7 +96,23 @@ class FeastTestController extends HttpController
         #[JsonParam]
         ?TestJsonItem $name = null
     ): void {
-        echo 'Success!';
+        echo $name->firstName ?? '';
+    }
+
+    public function jsonMultiplePost(
+        #[JsonParam('first')]
+        ?TestJsonItem $first = null,
+        #[JsonParam('second')]
+        ?TestJsonItem $second = null,
+        #[JsonParam('third')]
+        ?TestJsonItem $third = null,
+        #[JsonParam('fourth')]
+        ?string $fourth = null
+    ): void {
+        echo 'First: ' . ($first->firstName ?? '');
+        echo 'Second: ' . ($second->firstName ?? '');
+        echo 'Third: ' . ($third->firstName ?? '');
+        echo 'Fourth: ' . ($fourth ?? '');
     }
 
     public function testAction(): void

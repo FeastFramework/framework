@@ -25,5 +25,7 @@ use Attribute;
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class JsonParam
 {
-
+    public function __construct(public string $key = '')
+    {
+    }
 }
