@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast\Database\Table;
 
 use Feast\Database\Column\Column;
+use Feast\Date;
 
 class MySQLTable extends Table
 {
@@ -58,6 +59,7 @@ class MySQLTable extends Table
     {
         $return = 'CREATE TABLE IF NOT EXISTS ' . $this->connection->getEscapedIdentifier($this->name) . '(';
         $columns = [];
+        /** @var array<string|int|float|bool|Date|null> $bindings */
         $bindings = [];
         /** @var Column $column */
         foreach ($this->columns as $column) {
@@ -156,6 +158,11 @@ class MySQLTable extends Table
         return $columns;
     }
 
+    /**
+     * @param Column $column
+     * @param array<string|int|float|bool|Date|null> $bindings
+     * @return string
+     */
     protected function getColumnForDdl(Column $column, array &$bindings): string
     {
         $string = $this->connection->getEscapedIdentifier($column->getName()) . ' ' . $column->getType();

@@ -20,8 +20,14 @@ declare(strict_types=1);
 
 namespace Feast\Database\Table;
 
+use Feast\Date;
+
 class Ddl
 {
+    /**
+     * @param string $ddl
+     * @param array<string|int|float|bool|Date|null> $bindings
+     */
     public function __construct(public string $ddl, public array $bindings)
     {
     }
