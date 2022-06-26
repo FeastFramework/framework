@@ -37,6 +37,7 @@ use Feast\Database\Column\TinyBlob;
 use Feast\Database\Column\TinyInt;
 use Feast\Database\Column\TinyText;
 use Feast\Database\Column\VarChar;
+use Feast\Date;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseInterface;
@@ -882,6 +883,11 @@ abstract class Table
         return $this;
     }
 
+    /**
+     * @param Column $column
+     * @param array<string|int|float|bool|Date|null> $bindings
+     * @return string
+     */
     protected function getDefaultAsBindingOrText(Column $column, array &$bindings): string
     {
         $default = $column->getDefault();

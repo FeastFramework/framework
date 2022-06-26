@@ -27,6 +27,7 @@ use Feast\Database\Column\Column;
 use Feast\Database\Column\Postgres\Integer;
 use Feast\Database\Column\Postgres\SmallInt;
 use Feast\Database\Column\Postgres\Text;
+use Feast\Date;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidArgumentException;
 use Feast\Exception\ServerFailureException;
@@ -65,6 +66,7 @@ class PostgresTable extends Table
     {
         $return = 'CREATE TABLE IF NOT EXISTS ' . $this->connection->getEscapedIdentifier($this->name) . '(';
         $columns = [];
+        /** @var array<string|int|float|bool|Date|null> $bindings */
         $bindings = [];
         $comments = [];
         /** @var Column $column */
@@ -91,7 +93,7 @@ class PostgresTable extends Table
 
     /**
      * @param array<string,string> $comments
-     * @param array $bindings
+     * @param array<string|int|float|bool|Date|null> $bindings
      * @return string
      */
     protected function addCommentsForDdl(array $comments, array &$bindings): string
@@ -164,6 +166,11 @@ class PostgresTable extends Table
         return $columns;
     }
 
+    /**
+     * @param Column $column
+     * @param array<string|int|float|bool|Date|null> $bindings
+     * @return string
+     */
     protected function getColumnForDdl(Column $column, array &$bindings): string
     {
         $string = $this->connection->getEscapedIdentifier($column->getName()) . ' ' . $column->getType();

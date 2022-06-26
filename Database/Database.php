@@ -21,12 +21,14 @@ declare(strict_types=1);
 namespace Feast\Database;
 
 use Exception;
+use Feast\Date;
 use Feast\Enums\DatabaseType;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\InvalidOptionException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\DatabaseInterface;
 use Feast\Interfaces\LoggerInterface;
+use Feast\Traits\DebugQuery;
 use PDO;
 use stdClass;
 
@@ -37,6 +39,8 @@ use stdClass;
  */
 class Database implements DatabaseInterface
 {
+    use DebugQuery;
+
     private PDO $connection;
     private DatabaseType $databaseType;
     private string $queryClass;
@@ -342,12 +346,13 @@ class Database implements DatabaseInterface
      * Run a raw query (with optional bindings).
      *
      * @param string $query
-     * @param array $bindings
+     * @param array<string|int|float|bool|Date|null> $bindings
      * @param bool $forceEmulatePrepares
      * @return bool
      */
     public function rawQuery(string $query, array $bindings = [], bool $forceEmulatePrepares = false): bool
     {
+        $this->logger->debug('Raw Query: ' . $this->debugQuery($query, $bindings));
         $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $oldEmulatePrepares = (int)$this->connection->getAttribute(PDO::ATTR_EMULATE_PREPARES);
         if ($forceEmulatePrepares) {
