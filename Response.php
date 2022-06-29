@@ -43,6 +43,8 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     private object|null $jsonResponse = null;
     private ?int $jsonResponsePropertyTypes = null;
     private ?string $redirectPath = null;
+    /** @var array<string,string> */
+    private array $responseHeaders = [];
 
     /**
      * @throws ContainerException|NotFoundException
@@ -86,6 +88,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     public function sendResponse(View $view, RouterInterface $router, string $routePath): void
     {
         $this->sendResponseCode();
+        $this->sendHeaders();
         if ($this->getRedirectPath()) {
             header('Location:' . (string)$this->getRedirectPath());
             return;
@@ -163,6 +166,25 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
         $this->jsonResponse = $response;
         $this->jsonResponsePropertyTypes = $jsonResponsePropertyTypes;
         $this->setJson();
+    }
+
+    /**
+     * Set an HTTP header. Overrides previous version set.
+     * 
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
+    public function setHeader(string $key,string $value): void
+    {
+        $this->responseHeaders[$key] = $value;
+    }
+    
+    protected function sendHeaders(): void
+    {
+        foreach($this->responseHeaders as $key => $value) {
+            header($key . ': ' . $value);
+        }
     }
 
 }
