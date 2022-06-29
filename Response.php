@@ -164,19 +164,19 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
 
     /**
      * Set an HTTP header. Overrides previous version set.
-     * 
+     *
      * @param string $key
      * @param string $value
      * @return void
      */
-    public function setHeader(string $key,string $value): void
+    public function setHeader(string $key, string $value): void
     {
         $this->responseHeaders[$key] = $value;
     }
-    
+
     protected function sendHeaders(): void
     {
-        foreach($this->responseHeaders as $key => $value) {
+        foreach ($this->responseHeaders as $key => $value) {
             header($key . ': ' . $value);
         }
     }

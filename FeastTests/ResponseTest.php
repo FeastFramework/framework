@@ -23,10 +23,10 @@ use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase
 {
-    
+
     public function setUp(): void
     {
-        di(null,\Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
     }
 
     public function testResponseCode(): void
@@ -150,7 +150,7 @@ class ResponseTest extends TestCase
     {
         $this->assertFalse(ResponseCode::isValidResponseCode(2000));
     }
-    
+
     public function testSetHeader(): void
     {
         $response = new Response();
