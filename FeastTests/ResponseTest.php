@@ -150,4 +150,17 @@ class ResponseTest extends TestCase
     {
         $this->assertFalse(ResponseCode::isValidResponseCode(2000));
     }
+    
+    public function testSetHeader(): void
+    {
+        $response = new Response();
+        $response->setHeader('Content-type', 'application/xml');
+        $response->sendResponse(
+            $this->createStub(\Feast\View::class),
+            $this->createStub(\Feast\Interfaces\RouterInterface::class),
+            ''
+        );
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Content-type: application/xml', $output);
+    }
 }
