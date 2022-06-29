@@ -220,6 +220,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
                 if (!isset($configItem[$lastKey]) || !is_array($configItem[$lastKey])) {
                     $configItem[$lastKey] = [];
                 }
+                /** @psalm-suppress ArgumentTypeCoercion - False positive as PHP casting to object from array is stdClass */
                 $configItem[$lastKey] = $this->configMergeRecursive((object)$configItem[$lastKey], $val);
             } else {
                 $configItem[$lastKey] = $val;
