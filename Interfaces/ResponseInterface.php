@@ -100,6 +100,6 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * @param string $value
      * @return void
      */
-    public function setHeader(string $key,string $value): void;
+    public function setHeader(string $key, string $value): void;
 
 }
