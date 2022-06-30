@@ -197,12 +197,11 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
         $baselineConfig = $this->objectToArray($currentEnvironment);
 
         /**
-         * @var string $keyBase
+         * @var string|int|float $keyBase
          * @var string|int|bool|float|array $val
          */
         foreach ($parentEnvironment as $keyBase => $val) {
-            /** @var array<int,string> $keyList */
-            $key = explode('.', $keyBase);
+            $key = is_string($keyBase) ? explode('.', $keyBase) : [(string)$keyBase];
             $lastKey = array_pop($key);
 
             // Config item is assigned via reference for nesting buildout.
