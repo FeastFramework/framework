@@ -120,7 +120,7 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
         if ($setting instanceof stdClass === false) {
             throw new ServerFailureException('Feature Flags must be an array in your configuration.');
         }
-        
+
         /** @var array<FeatureFlag> $settingsArray */
         $settingsArray = (array)$setting;
         return new CollectionList(FeatureFlag::class, $settingsArray);
