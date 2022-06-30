@@ -338,8 +338,8 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
          * @var string $key
          * @var scalar|array|stdClass|BackedEnum $val
          */
-        foreach($settings as $key => $val) {
-            if ( is_array($val) || $val instanceof stdClass ) {
+        foreach ($settings as $key => $val) {
+            if (is_array($val) || $val instanceof stdClass) {
                 $return->$key = $this->cloneObjectOrArrayAsObject($val);
             } else {
                 $return->$key = $val;
@@ -357,8 +357,8 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
          * @var string $key
          * @var scalar|array|stdClass|BackedEnum $val
          */
-        foreach($settings as $key => $val) {
-            if ( is_array($val) || $val instanceof stdClass ) {
+        foreach ($settings as $key => $val) {
+            if (is_array($val) || $val instanceof stdClass) {
                 $return[$key] = $this->objectToArray($val);
             } else {
                 $return[$key] = $val;
