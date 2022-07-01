@@ -519,7 +519,12 @@ class Main implements MainInterface
             return;
         }
         if ($this->runAs === self::RUN_AS_WEBAPP) {
-            /** @psalm-suppress MissingFile */
+            if ( $exception instanceof ServerFailureException ) {
+                $response->setResponseCode($exception->getResponseCode() ?? ResponseCode::HTTP_CODE_500);
+            } else {
+                $response->setResponseCode(ResponseCode::HTTP_CODE_500);
+            }
+            $response->sendResponseCode();            /** @psalm-suppress MissingFile */
             include(APPLICATION_ROOT . 'Views' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . 'server-failure.phtml');
         }
         $this->logger->exceptionHandler($exception, true);
