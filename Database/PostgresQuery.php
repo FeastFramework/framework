@@ -180,4 +180,12 @@ AND    i.indisprimary'
                 default => 'string'
             };
     }
+
+    protected function filterBinding(string|int|bool|Date|float|null $binding): string|int|bool|Date|float|null
+    {
+        if ( is_bool($binding) ) {
+            return $binding ? 'true' : 'false';
+        }
+        return $binding;
+    }
 }

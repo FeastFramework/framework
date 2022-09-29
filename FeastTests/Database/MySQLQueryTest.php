@@ -87,8 +87,15 @@ class MySQLQueryTest extends TestCase
     public function testWhere(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->where('test = ?', ['test']);
-        $this->assertEquals('SELECT test FROM test WHERE (test = ?)', $query->__toString());
+        $query->from('test', ['test'])->where('test = ? and active = ?', ['test', true]);
+        $this->assertEquals('SELECT test FROM test WHERE (test = ? and active = ?)', $query->__toString());
+    }
+
+    public function testWhereBool(): void
+    {
+        $query = $this->getValidQuery();
+        $query->from('test', ['test'])->where('active = ?', true);
+        $this->assertEquals('SELECT test FROM test WHERE (active = ?)', $query->__toString());
     }
 
     public function testWhereNonArray(): void
@@ -250,11 +257,18 @@ class MySQLQueryTest extends TestCase
         $this->assertEquals('SELECT test FROM test HAVING (test > ?)', $query->__toString());
     }
 
+    public function testHavingBool(): void
+    {
+        $query = $this->getValidQuery();
+        $query->from('test', ['test'])->having('test = ?', true);
+        $this->assertEquals('SELECT test FROM test HAVING (test = ?)', $query->__toString());
+    }
+
     public function testHavingMulti(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->having('test > ?', ['1']);
-        $this->assertEquals('SELECT test FROM test HAVING (test > ?)', $query->__toString());
+        $query->from('test', ['test'])->having('test > ? and active = ?', ['1', true]);
+        $this->assertEquals('SELECT test FROM test HAVING (test > ? and active = ?)', $query->__toString());
     }
 
     public function testSQLiteQuery(): void

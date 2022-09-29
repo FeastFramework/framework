@@ -79,6 +79,16 @@ abstract class Query
      */
     public function where(string $statement, Date|string|int|bool|float|array|null $bindings = null): static
     {
+        if ( is_bool($bindings) ) {
+            $bindings = $bindings ? 'true' : 'false';
+        } elseif (is_array($bindings) ) {
+            $newBinding = [];
+            /** @var Date|string|int|bool|float|null $binding */
+            foreach ($bindings as $binding) {
+                $newBinding[] = $this->filterBinding($binding);
+            }
+            $bindings = $newBinding;
+        }
         $this->where[] = ['statement' => $statement, 'bindings' => $bindings];
 
         return $this;
@@ -95,6 +105,16 @@ abstract class Query
      */
     public function having(string $statement, Date|string|int|bool|float|array|null $bindings = null): static
     {
+        if ( is_bool($bindings) ) {
+            $bindings = $bindings ? 'true' : 'false';
+        } elseif (is_array($bindings) ) {
+            $newBinding = [];
+            /** @var Date|string|int|bool|float|null $binding */
+            foreach ($bindings as $binding) {
+                $newBinding[] = $this->filterBinding($binding);
+            }
+            $bindings = $newBinding;
+        }
         $this->having[] = ['statement' => $statement, 'bindings' => $bindings];
 
         return $this;
@@ -178,7 +198,7 @@ abstract class Query
          */
         foreach ($boundParameters as $key => $val) {
             $fields[] = $key;
-            $bindings[] = $val;
+            $bindings[] = $this->filterBinding($val);
         }
         $this->insert = ['table' => $table, 'fields' => $fields, 'bindings' => $bindings];
 
@@ -351,7 +371,7 @@ abstract class Query
          */
         foreach ($parameters as $key => $val) {
             $statement .= $key . ' = ?, ';
-            $bindings[] = $val;
+            $bindings[] = $this->filterBinding($val);
         }
         $statement = substr($statement, 0, -2);
         $this->update = ['table' => $table, 'statement' => $statement, 'bindings' => $bindings];
@@ -447,6 +467,11 @@ abstract class Query
     public function getSequenceForPrimary(string $tableName, ?string $primarykey, bool $compoundPrimary): ?string
     {
         return null;
+    }
+    
+    protected function filterBinding(string|int|bool|Date|float|null $binding): string|int|bool|Date|float|null
+    {
+        return $binding;
     }
 
 }
