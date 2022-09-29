@@ -33,7 +33,7 @@ use Throwable;
 abstract class Query
 {
     use DebugQuery;
-    
+
     public const DIRECTION_ASC = 'ASC';
     public const DIRECTION_DESC = 'DESC';
     public const JOIN_INNER = 'INNER JOIN';
@@ -74,12 +74,18 @@ abstract class Query
      * Bindings can be a scalar or Feast\Date and are variadic for multiple bindings.
      *
      * @param string $statement
-     * @param Date|string|int|bool|float|null $bindings
+     * @param Date|string|int|bool|float|null ...$bindings
      * @return static
      */
     public function where(string $statement, Date|string|int|bool|float|null ...$bindings): static
     {
-        $this->where[] = ['statement' => $statement, 'bindings' => $bindings];
+        $newBinding = [];
+        /** @var Date|string|int|bool|float|null $binding */
+        foreach ($bindings as $binding) {
+            $newBinding[] = $this->filterBinding($binding);
+        }
+       
+        $this->where[] = ['statement' => $statement, 'bindings' => $newBinding];
 
         return $this;
     }
@@ -90,12 +96,18 @@ abstract class Query
      * Bindings can be a scalar or Feast\Date and are variadic for multiple bindings.
      *
      * @param string $statement
-     * @param Date|string|int|bool|float|null $bindings
+     * @param Date|string|int|bool|float|null ...$bindings
      * @return static
      */
     public function having(string $statement, Date|string|int|bool|float|null ...$bindings): static
     {
-        $this->having[] = ['statement' => $statement, 'bindings' => $bindings];
+        $newBinding = [];
+        /** @var Date|string|int|bool|float|null $binding */
+        foreach ($bindings as $binding) {
+            $newBinding[] = $this->filterBinding($binding);
+        }
+
+        $this->having[] = ['statement' => $statement, 'bindings' => $newBinding];
 
         return $this;
     }
@@ -178,7 +190,7 @@ abstract class Query
          */
         foreach ($boundParameters as $key => $val) {
             $fields[] = $key;
-            $bindings[] = $val;
+            $bindings[] = $this->filterBinding($val);
         }
         $this->insert = ['table' => $table, 'fields' => $fields, 'bindings' => $bindings];
 
@@ -351,7 +363,7 @@ abstract class Query
          */
         foreach ($parameters as $key => $val) {
             $statement .= $key . ' = ?, ';
-            $bindings[] = $val;
+            $bindings[] = $this->filterBinding($val);
         }
         $statement = substr($statement, 0, -2);
         $this->update = ['table' => $table, 'statement' => $statement, 'bindings' => $bindings];
@@ -447,6 +459,11 @@ abstract class Query
     public function getSequenceForPrimary(string $tableName, ?string $primarykey, bool $compoundPrimary): ?string
     {
         return null;
+    }
+
+    protected function filterBinding(string|int|bool|Date|float|null $binding): string|int|bool|Date|float|null
+    {
+        return $binding;
     }
 
 }

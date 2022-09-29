@@ -87,9 +87,19 @@ class MySQLQueryTest extends TestCase
     public function testWhereMulti(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->where('test = ? and feast = ?', 'test', 'framework');
-        $this->assertEquals('SELECT test FROM test WHERE (test = ? and feast = ?)', (string)$query);
-        $this->assertEquals('SELECT test FROM test WHERE (test = \'test\' and feast = \'framework\')', $query->getRawQueryWithParams());
+        $query->from('test', ['test'])->where('test = ? and feast = ? and active = ?', 'test', 'framework', true);
+        $this->assertEquals('SELECT test FROM test WHERE (test = ? and feast = ? and active = ?)', (string)$query);
+        $this->assertEquals(
+            'SELECT test FROM test WHERE (test = \'test\' and feast = \'framework\' and active = \'1\')',
+            $query->getRawQueryWithParams()
+        );
+    }
+    
+    public function testWhereBool(): void
+    {
+        $query = $this->getValidQuery();
+        $query->from('test', ['test'])->where('active = ?', true);
+        $this->assertEquals('SELECT test FROM test WHERE (active = ?)', $query->__toString());
     }
 
     public function testWhereSingle(): void
@@ -258,11 +268,18 @@ class MySQLQueryTest extends TestCase
         $this->assertEquals('SELECT test FROM test HAVING (test > ?)', (string)$query);
     }
 
+    public function testHavingBool(): void
+    {
+        $query = $this->getValidQuery();
+        $query->from('test', ['test'])->having('test = ?', true);
+        $this->assertEquals('SELECT test FROM test HAVING (test = ?)', $query->__toString());
+    }
+
     public function testHavingMulti(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->having('test > ? and test2 > ?', '1','2');
-        $this->assertEquals('SELECT test FROM test HAVING (test > ? and test2 > ?)', (string)$query);
+        $query->from('test', ['test'])->having('test > ? and test2 > ? and active = ?', '1','2', true);
+        $this->assertEquals('SELECT test FROM test HAVING (test > ? and test2 > ? and active = ?)', (string)$query);
     }
 
     public function testSQLiteQuery(): void
