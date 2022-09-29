@@ -51,7 +51,7 @@ class MySQLQuery extends Query
          */
         foreach ($boundParameters as $key => $val) {
             $fields[] = $key;
-            $bindings[] = $val;
+            $bindings[] = $this->filterBinding($val);
         }
         $this->insert = ['table' => $table, 'fields' => $fields, 'bindings' => $bindings];
 

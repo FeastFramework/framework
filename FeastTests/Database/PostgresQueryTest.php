@@ -175,8 +175,9 @@ class PostgresQueryTest extends TestCase
     public function testInsert(): void
     {
         $query = $this->getValidQuery();
-        $query->insert('test', ['testing' => 'test2']);
-        $this->assertEquals('INSERT INTO test (testing) VALUES (?)', $query->__toString());
+        $query->insert('test', ['testing' => 'test2', 'boolTrue' => true, 'boolFalse' => false]);
+        $this->assertEquals('INSERT INTO test (testing, boolTrue, boolFalse) VALUES (?, ?, ?)', $query->__toString());
+        $this->assertEquals('INSERT INTO test (testing, boolTrue, boolFalse) VALUES (\'test2\', \'true\', \'false\')', $query->getRawQueryWithParams());
     }
 
     public function testInnerJoinUsing(): void
