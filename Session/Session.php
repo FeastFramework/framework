@@ -48,7 +48,6 @@ class Session implements ServiceContainerItemInterface
      * @param ConfigInterface $config
      * @throws ContainerException
      * @throws NotFoundException
-     * @throws ResponseException
      */
     public function __construct(ConfigInterface $config)
     {
