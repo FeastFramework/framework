@@ -108,5 +108,10 @@ class Session implements ServiceContainerItemInterface
         }
         unset($_SESSION[$namespace]);
     }
+    
+    public function isEnabled(): bool
+    {
+        return $this->sessionEnabled;
+    }
 
 }

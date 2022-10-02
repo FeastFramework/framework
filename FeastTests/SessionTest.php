@@ -173,4 +173,28 @@ class SessionTest extends TestCase
         $this->expectException(\Feast\Exception\SessionNotStartedException::class);
         $session->destroyNamespace('test');
     }
+    
+    public function testIsEnabled(): void
+    {
+        \Feast\Session\MockSession::reset();
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $container->add(
+            \Feast\Interfaces\RouterInterface::class,
+            $this->createStub(\Feast\Interfaces\RouterInterface::class)
+        );
+        $_SESSION['Feast'] = new stdClass();
+        $_SESSION['Feast']->ipAddress = '127.0.0.1';
+        $config = $this->createStub(\Feast\Interfaces\ConfigInterface::class);
+        $config->method('getSetting')->willReturnMap(
+            [
+                [
+                    'session.enabled',
+                    true,
+                    false
+                ]
+            ]
+        );
+        $session = new Session($config);
+        $this->assertFalse($session->isEnabled());
+    }
 }

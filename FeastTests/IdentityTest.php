@@ -36,6 +36,7 @@ class IdentityTest extends TestCase
         $testUser->user = 'testUser';
         $namespace->identity = $testUser;
 
+        $session->method('isEnabled')->willReturn(true);
         $session->method('getNamespace')->willReturn($namespace);
         $config = $this->createStub(ConfigInterface::class);
         $config->method('getSetting')->willReturn('test');
@@ -43,6 +44,19 @@ class IdentityTest extends TestCase
         $identity = new Identity($config, $session);
         $user = $identity->getUser();
         $this->assertEquals('testUser', $user->user);
+    }
+
+    public function testGetUserSessionDisabled(): void
+    {
+        di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $session = $this->createStub(Session::class);
+
+        $session->method('isEnabled')->willReturn(false);
+        $config = $this->createStub(ConfigInterface::class);
+
+        $identity = new Identity($config, $session);
+        $user = $identity->getUser();
+        $this->assertNull($user);
     }
 
     public function testSaveUser(): void
