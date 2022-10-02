@@ -238,6 +238,8 @@ $config = [
                               // The permissions for creating the log directory if it doesn't exist. This MUST be octal.
     ],
     'session' => [
+        'enabled' => true // Enable sessions. This is the default value.
+        'enabled' => false // Disable sessions. Calls to Session::getNamespace and Session::destroyNamespace will throw a SessionNotStarted exception.
         'name' => 'Feast_Session',
                               // The name of the session cookie
         'timeout' => 0,       // Session timeout (0 for window close)
