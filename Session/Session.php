@@ -20,9 +20,12 @@ declare(strict_types=1);
 
 namespace Feast\Session;
 
+use Feast\Exception\ResponseException;
+use Feast\Exception\SessionNotStartedException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\ResponseInterface;
-use Feast\ServiceContainer;
+use Feast\ServiceContainer\ContainerException;
+use Feast\ServiceContainer\NotFoundException;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\Traits\DependencyInjected;
 use stdClass;
@@ -35,18 +38,26 @@ class Session implements ServiceContainerItemInterface
 {
     use DependencyInjected;
 
+    private bool $sessionEnabled = true;
+
     /**
      * Initial creation of Feast_Session.
      *
      * If Strict IP setting is enabled, the session is destroyed if the IP doesn't match.
      *
      * @param ConfigInterface $config
-     * @throws ServiceContainer\ContainerException
-     * @throws ServiceContainer\NotFoundException
+     * @throws ContainerException
+     * @throws NotFoundException
      */
     public function __construct(ConfigInterface $config)
     {
         $this->checkInjected();
+        /** @var bool $isEnabled */
+        $isEnabled = $config->getSetting('session.enabled', true);
+        if ($isEnabled === false) {
+            $this->sessionEnabled = false;
+            return;
+        }
         session_name((string)$config->getSetting('session.name', 'Feast_Session'));
         session_set_cookie_params((int)$config->getSetting('session.timeout', 0));
         session_start();
@@ -69,9 +80,13 @@ class Session implements ServiceContainerItemInterface
      *
      * @param string $namespace
      * @return stdClass
+     * @throws SessionNotStartedException
      */
     public function getNamespace(string $namespace): stdClass
     {
+        if ($this->sessionEnabled === false) {
+            throw new SessionNotStartedException('Session not started',);
+        }
         if (!isset($_SESSION[$namespace]) || $_SESSION[$namespace] instanceof stdClass === false) {
             $_SESSION[$namespace] = new stdClass();
         }
@@ -83,9 +98,13 @@ class Session implements ServiceContainerItemInterface
      * Destroy a namespace in the session.
      *
      * @param string $namespace
+     * @throws SessionNotStartedException
      */
     public function destroyNamespace(string $namespace): void
     {
+        if ($this->sessionEnabled === false) {
+            throw new SessionNotStartedException('Session not started',);
+        }
         unset($_SESSION[$namespace]);
     }
 

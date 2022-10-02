@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Feast\Session;
 
 use Feast\BaseModel;
+use Feast\Exception\SessionNotStartedException;
 use Feast\Interfaces\ConfigInterface;
 use Feast\ServiceContainer\ContainerException;
 use Feast\ServiceContainer\NotFoundException;
@@ -38,7 +39,7 @@ class Identity implements ServiceContainerItemInterface
     protected stdClass $me;
 
     /**
-     * @throws ContainerException|NotFoundException
+     * @throws ContainerException|NotFoundException|\Feast\Exception\SessionNotStartedException
      */
     public function __construct(protected ConfigInterface $config, protected Session $session)
     {
@@ -47,7 +48,7 @@ class Identity implements ServiceContainerItemInterface
     }
 
     /**
-     * Get the identify of a user.
+     * Get the identity of a user.
      *
      * @return BaseModel|null
      */
@@ -68,6 +69,8 @@ class Identity implements ServiceContainerItemInterface
 
     /**
      * Destroy the Feast_Login namespace.
+     *
+     * @throws SessionNotStartedException
      */
     public function destroyUser(): void
     {
