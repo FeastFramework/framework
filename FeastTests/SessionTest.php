@@ -44,7 +44,32 @@ class SessionTest extends TestCase
             ]
         );
         $session = new Session($config);
-        $this->assertInstanceOf(stdClass::class,$session->getNamespace('test'));
+        $this->assertInstanceOf(stdClass::class, $session->getNamespace('test'));
+    }
+
+    public function testGetNamespaceDisabled(): void
+    {
+        \Feast\Session\MockSession::reset();
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $container->add(
+            \Feast\Interfaces\RouterInterface::class,
+            $this->createStub(\Feast\Interfaces\RouterInterface::class)
+        );
+        $_SESSION['Feast'] = new stdClass();
+        $_SESSION['Feast']->ipAddress = '127.0.0.1';
+        $config = $this->createStub(\Feast\Interfaces\ConfigInterface::class);
+        $config->method('getSetting')->willReturnMap(
+            [
+                [
+                    'session.enabled',
+                    true,
+                    false
+                ]
+            ]
+        );
+        $session = new Session($config);
+        $this->expectException(\Feast\Exception\SessionNotStartedException::class);
+        $session->getNamespace('test');
     }
 
     public function testConstructGoodIp(): void
@@ -69,7 +94,7 @@ class SessionTest extends TestCase
         );
         $session = new Session($config);
 
-        $this->assertInstanceOf(Session::class,$session);
+        $this->assertInstanceOf(Session::class, $session);
     }
 
     public function testConstructBadIp(): void
@@ -94,7 +119,7 @@ class SessionTest extends TestCase
         );
         $session = new Session($config);
 
-        $this->assertInstanceOf(Session::class,$session);
+        $this->assertInstanceOf(Session::class, $session);
         $this->assertTrue(!isset($_SESSION['Feast']));
     }
 
@@ -122,5 +147,30 @@ class SessionTest extends TestCase
         $session->getNamespace('test');
         $session->destroyNamespace('test');
         $this->assertTrue(!isset($_SESSION['test']));
+    }
+
+    public function testDestroyNamespaceDisabled(): void
+    {
+        \Feast\Session\MockSession::reset();
+        $container = di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        $container->add(
+            \Feast\Interfaces\RouterInterface::class,
+            $this->createStub(\Feast\Interfaces\RouterInterface::class)
+        );
+        $_SESSION['Feast'] = new stdClass();
+        $_SESSION['Feast']->ipAddress = '127.0.0.1';
+        $config = $this->createStub(\Feast\Interfaces\ConfigInterface::class);
+        $config->method('getSetting')->willReturnMap(
+            [
+                [
+                    'session.enabled',
+                    true,
+                    false
+                ]
+            ]
+        );
+        $session = new Session($config);
+        $this->expectException(\Feast\Exception\SessionNotStartedException::class);
+        $session->destroyNamespace('test');
     }
 }
