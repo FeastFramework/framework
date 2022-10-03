@@ -44,7 +44,11 @@ class Identity implements ServiceContainerItemInterface
     public function __construct(protected ConfigInterface $config, protected Session $session)
     {
         $this->checkInjected();
-        $this->me = $session->getNamespace('Feast_Login');
+        if ( $session->isEnabled() ) {
+            $this->me = $session->getNamespace('Feast_Login');
+        } else {
+            $this->me = new stdClass();
+        }
     }
 
     /**
