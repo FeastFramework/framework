@@ -182,8 +182,6 @@ class SessionTest extends TestCase
             \Feast\Interfaces\RouterInterface::class,
             $this->createStub(\Feast\Interfaces\RouterInterface::class)
         );
-        $_SESSION['Feast'] = new stdClass();
-        $_SESSION['Feast']->ipAddress = '127.0.0.1';
         $config = $this->createStub(\Feast\Interfaces\ConfigInterface::class);
         $config->method('getSetting')->willReturnMap(
             [
