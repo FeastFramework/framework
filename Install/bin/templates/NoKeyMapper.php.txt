@@ -41,9 +41,10 @@ class {name}{classExtra} extends BaseMapper
      * Save model to database.
      *
      * @param BaseModel $record
+     * @param bool $forceUpdate
      * @throws DatabaseException
      */
-    public function save(BaseModel $record): void
+    public function save(BaseModel $record, bool $forceUpdate = false): void
     {
         // @todo: Create save method
         throw new DatabaseException('Save method not yet implemented for ' . static::class);
