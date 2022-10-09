@@ -71,6 +71,20 @@ class CacheControllerTest extends TestCase
         $this->assertEquals('Database info cache cleared!', trim($output));
     }
 
+    public function testClearAllGet(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CacheController(
+            di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:cache:clear-all'])
+        );
+        $controller->clearAllGet();
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Config cache cleared!' . "\n" . 'Router cache cleared!' . "\n" . 'Database info cache cleared!', trim($output));
+    }
+
     public function testRouterGenerateGet(): void
     {
         $config = $this->createStub(Config::class);
@@ -111,5 +125,19 @@ class CacheControllerTest extends TestCase
         $controller->dbinfoGenerateGet($this->createStub(DatabaseDetailsInterface::class));
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals('Database info cached!', trim($output));
+    }
+
+    public function testCacheAllGet(): void
+    {
+        $config = $this->createStub(Config::class);
+        $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
+        $controller = new CacheController(
+            di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER),
+            $config,
+            new CliArguments(['famine', 'feast:cache:cache-all'])
+        );
+        $controller->cacheAllGet($this->createStub(DatabaseDetailsInterface::class),$this->createStub(RouterInterface::class));
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals('Config cached!' . "\n" . 'Router cached!' . "\n" . 'Database info cached!', trim($output));
     }
 }

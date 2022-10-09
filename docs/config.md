@@ -230,6 +230,7 @@ $config = [
         '/usr/sbin/sendmail -oi -t -f ',
                               // The path for Sendmail on the server. SMTP support coming soon.
     'log' => [
+        'path' => APPLICATION_ROOT . 'storage/logs'; // Path where the log file is stored.
         'level' => \Feast\Enums\LogLevel::Error,
                               // One of the loglevel constants. This specifies the default loglevel.
         'permissions.file' => 0666,
@@ -246,6 +247,7 @@ $config = [
         'strictIp' => true,   // Destroy session if the session IP does not match the current IP
         'strictIp' => false,  // Do not destroy session if the session IP does not match the current IP
     ],
+    'storage.path' => APPLICATION_ROOT . 'storage'; // Path for local file storage.
 ];
 ```
 

@@ -38,7 +38,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
 
     use DependencyInjected;
 
-    protected const LOG_DIR = APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
+    private string $logPath;
     protected LogLevelCode $logLevel;
 
     /**
@@ -50,6 +50,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         $this->logLevel = $this->getLevelFromString(
             (string)$this->config->getSetting('log.level', LogLevel::ERROR)
         );
+        $this->logPath = $config->getLogPath();
         $this->makeLogDirIfNotExists();
     }
 
@@ -210,7 +211,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         if ($level < $this->logLevel->value) {
             return;
         }
-        $fileName = self::LOG_DIR . 'feast.log';
+        $fileName = $this->logPath . 'feast.log';
         if (!file_exists($fileName)) {
             touch($fileName);
             chmod($fileName, (int)$this->config->getSetting('log.permissions.file', 0666));
@@ -224,9 +225,9 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
 
     protected function makeLogDirIfNotExists(): void
     {
-        if (!is_dir(self::LOG_DIR)) {
+        if (!is_dir($this->logPath)) {
             mkdir(
-                self::LOG_DIR,
+                $this->logPath,
                 (int)$this->config->getSetting('log.permissions.path', 0755),
                 true
             );

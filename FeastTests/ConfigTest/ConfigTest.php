@@ -65,7 +65,7 @@ class ConfigTest extends TestCase
                 APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'config.cache'
             )
         );
-        $this->assertInstanceOf(Config::class,$configFromCache);
+        $this->assertInstanceOf(Config::class, $configFromCache);
     }
 
     public function testGetEnvironmentNameDefault(): void
@@ -97,20 +97,20 @@ class ConfigTest extends TestCase
     public function testConstructNotCached(): void
     {
         $config = new Config();
-        $this->assertInstanceOf(Config::class,$config);
+        $this->assertInstanceOf(Config::class, $config);
     }
 
     public function testConstructNoLocal(): void
     {
         \Feast\Config\TempData::$localExists = false;
         $config = new Config();
-        $this->assertInstanceOf(Config::class,$config);
+        $this->assertInstanceOf(Config::class, $config);
     }
 
     public function testConstructOverrideEnv(): void
     {
         $config = new Config(overriddenEnvironment: 'development');
-        $this->assertInstanceOf(Config::class,$config);
+        $this->assertInstanceOf(Config::class, $config);
     }
 
     public function testConstructAfterInContainer(): void
@@ -135,9 +135,22 @@ class ConfigTest extends TestCase
         $this->expectException(ConfigException::class);
         new Config(overriddenEnvironment: 'potato');
     }
-    
+
+    public function testGetLogPath(): void
+    {
+        $config = new Config();
+        $this->assertEquals(APPLICATION_ROOT . 'storage/logs/new/', $config->getLogPath());
+    }
+
+    public function testGetStoragePath(): void
+    {
+        $config = new Config();
+        $this->assertEquals(APPLICATION_ROOT . 'storage/temp/', $config->getStoragePath());
+    }
+
     public function tearDown(): void
     {
         \Feast\Config\TempData::$allowIni = true;
     }
+
 }
