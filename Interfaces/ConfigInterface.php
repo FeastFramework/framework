@@ -75,4 +75,21 @@ interface ConfigInterface extends ServiceContainerItemInterface
      * @throws ServerFailureException
      */
     public function getFeatureFlag(string $flag, bool $defaultFlagValue = false): FeatureFlag;
+
+    /**
+     * Get storage path.
+     *
+     * Uses config key 'storage.path'. Defaults to /storage in the project directory. Always ensures trailing / is present.
+     * @return string
+     */
+    public function getStoragePath(): string;
+
+    /**
+     * Get log path.
+     *
+     * Uses config key 'log.path'. Defaults to /storage/logs in the project directory. Always ensures trailing / is present.
+     * @return string
+     */
+    public function getLogPath(): string;
+
 }

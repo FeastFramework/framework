@@ -143,6 +143,43 @@ class Config implements ServiceContainerItemInterface, ConfigInterface
     }
 
     /**
+     * Get storage path.
+     *
+     * Uses config key 'storage.path'. Defaults to /storage in the project directory. Always ensures trailing / is present.
+     *
+     * @return string
+     */
+    public function getStoragePath(): string
+    {
+        $storagePath = (string)$this->getSetting('storage.path', APPLICATION_ROOT . 'storage' . DIRECTORY_SEPARATOR);
+        return $this->getPathWithSuffix($storagePath);
+    }
+
+    /**
+     * Get log path.
+     *
+     * Uses config key 'log.path'. Defaults to /storage/logs in the project directory. Always ensures trailing / is present.
+     *
+     * @return string
+     */
+    public function getLogPath(): string
+    {
+        $logPath = (string)$this->getSetting(
+            'log.path',
+            APPLICATION_ROOT . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR
+        );
+        return $this->getPathWithSuffix($logPath);
+    }
+
+    private function getPathWithSuffix(string $path): string
+    {
+        if (str_ends_with($path, '/')) {
+            return $path;
+        }
+        return $path . '/';
+    }
+
+    /**
      * Builds out the config file in order, one section at a time
      *
      * @param array $config
