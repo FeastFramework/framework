@@ -14,7 +14,9 @@ $environments['production'] = [
         'otherTest' => new \Feast\Config\FeatureFlag(false),
         'trueTest' => new \Feast\Config\FeatureFlag(true),
         'falseTest' => new \Feast\Config\FeatureFlag(false),
-    ]
+    ],
+    'log.path' => APPLICATION_ROOT . 'storage/logs/new',
+    'storage.path' => APPLICATION_ROOT . 'storage/temp/'
 ];
 $environments['production:development'] = [
     'test' => 2,

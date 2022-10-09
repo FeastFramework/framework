@@ -244,6 +244,22 @@ pre-processing. Currently, config, routing, and basic database introspection inf
 
 It is **strongly** encouraged to use the cache in production but not required in development.
 
+### feast:cache:cache-all
+
+```
+php famine feast:cache:cache-all
+```
+
+This command will cache all available data. This will cache the config, the routing and the database all at once.
+
+### feast:cache:clear-all
+
+```
+php famine feast:cache:clear-all
+```
+
+This command will clear all cache data. This will clear the config, the routing and the database all at once.
+
 ### feast:cache:config-clear
 
 ```

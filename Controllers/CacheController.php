@@ -84,7 +84,22 @@ class CacheController extends CliController
     ): void {
         $databaseDetails->cache();
         $this->terminal->command('Database info cached!');
-    }       
+    }
 
+    #[Action(description: 'Cache all settings.')]
+    public function cacheAllGet(DatabaseDetailsInterface $databaseDetails, RouterInterface $router): void
+    {
+        $this->configGenerateGet();
+        $this->routerGenerateGet($router);
+        $this->dbinfoGenerateGet($databaseDetails);
+    }
+
+    #[Action(description: 'Clear all cached settings.')]
+    public function clearAllGet(): void
+    {
+        $this->configClearGet();
+        $this->routerClearGet();
+        $this->dbinfoClearGet();
+    }
 
 }
