@@ -11,6 +11,8 @@ recorded as just `dev`. Inheritance is covered below.
 
 [Built-in Configuration Directives](#built-in-configuration-directives)
 
+[Path Helper Methods](#path-helper-methods)
+
 [Feature Flags](#feature-flags)
 
 [Caching the Config](#caching-the-config)
@@ -230,13 +232,17 @@ $config = [
         '/usr/sbin/sendmail -oi -t -f ',
                               // The path for Sendmail on the server. SMTP support coming soon.
     'log' => [
-        'path' => APPLICATION_ROOT . 'storage/logs'; // Path where the log file is stored.
+        'path' => APPLICATION_ROOT . 'storage/logs', // Path where the log file is stored.
         'level' => \Feast\Enums\LogLevel::Error,
                               // One of the loglevel constants. This specifies the default loglevel.
         'permissions.file' => 0666,
                               // The permissions for creating a log file if it doesn't exist. This MUST be octal.
         'permissions.path' => 0755,
                               // The permissions for creating the log directory if it doesn't exist. This MUST be octal.
+        'syslog.enabled' => false, // Use syslog instead of file based logging.
+        'syslog.prefix' => false, // String Prefix to use for syslog prefix (or false for no prefix)
+        'syslog.facility' => LOG_USER,
+        'syslog.flags' => LOG_ODELAY                       
     ],
     'session' => [
         'enabled' => true // Enable sessions. This is the default value.
@@ -247,9 +253,19 @@ $config = [
         'strictIp' => true,   // Destroy session if the session IP does not match the current IP
         'strictIp' => false,  // Do not destroy session if the session IP does not match the current IP
     ],
-    'storage.path' => APPLICATION_ROOT . 'storage'; // Path for local file storage.
+    'storage.path' => APPLICATION_ROOT . 'storage', // Path for local file storage.
 ];
 ```
+
+[Back to Top](#configuring-feast)
+
+## Path Helper Methods
+
+`Config::getStoragePath()` - This method will return the storage path for files. Default is `/storage` in the project
+root.
+
+`Config::getLogPath()` - This method will return the storage path for the log file. Default is `/storage/logs` in the
+project root.
 
 [Back to Top](#configuring-feast)
 

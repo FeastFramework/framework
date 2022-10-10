@@ -40,6 +40,8 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
 
     private string $logPath;
     protected LogLevelCode $logLevel;
+    private bool $useSysLog = false;
+    private int $sysLogFacility = LOG_USER;
 
     /**
      * @throws ContainerException|NotFoundException
@@ -52,6 +54,9 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         );
         $this->logPath = $config->getLogPath();
         $this->makeLogDirIfNotExists();
+        if ($this->config->getSetting('log.syslog.enabled', false) === true) {
+            $this->openSysLog();
+        }
     }
 
     /**
@@ -166,7 +171,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
             $message = strtoupper($level) . ': ' . $message;
             $level = $this->getLevelFromString($level);
         }
-        if ($level instanceof LogLevelCode === false || $level->value < $this->logLevel->value) {
+        if ($level instanceof LogLevelCode === false || $level->value > $this->logLevel->value) {
             return;
         }
         $message = $this->interpolateContext($message, $context);
@@ -208,8 +213,11 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
      */
     public function rawLog(int $level, string $message): void
     {
-        if ($level < $this->logLevel->value) {
+        if ($level > $this->logLevel->value) {
             return;
+        }
+        if ($this->useSysLog) {
+            syslog($level, $message);
         }
         $fileName = $this->logPath . 'feast.log';
         if (!file_exists($fileName)) {
@@ -234,9 +242,27 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         }
     }
 
+    /**
+     * Open the syslogger.
+     *
+     * @return void
+     */
+    protected function openSysLog(): void
+    {
+        $this->useSysLog = true;
+        /** @var int $sysLogFacility */
+        $sysLogFacility = $this->config->getSetting('log.syslog.facility', LOG_USER);
+        /** @var int $sysLogFlags */
+        $sysLogFlags = $this->config->getSetting('log.syslog.flags', LOG_ODELAY);
+        /** @var false|string $prefix */
+        $prefix = $this->config->getSetting('log.syslog.prefix', false);
+
+        /** @psalm-suppress PossiblyFalseArgument - this error is incorrect. False is a valid prefix. */
+        openlog($prefix, $sysLogFlags, $sysLogFacility);
+    }
+
     private function getLevelFromString(string $level): LogLevelCode
     {
-        /** @noinspection PhpUnhandledExceptionInspection */
         return match (strtolower($level)) {
             LogLevel::DEBUG => LogLevelCode::DEBUG,
             LogLevel::INFO => LogLevelCode::INFO,

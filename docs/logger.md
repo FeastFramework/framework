@@ -28,4 +28,6 @@ Each logging level has a corresponding method in the logger that will log the me
 the config is at least as low as the level of the method. For example, if your config file is set to `notice`, then
 a `debug` message will not be logged, but an `error` will be.
 
+In addition, the [config](config.md) file has syslog related options if you wish to use syslog instead of the filesystem.
+
 While other methods exist in the Logger class, the level-specific ones should be used at all times.
