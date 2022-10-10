@@ -58,3 +58,12 @@ function touch($file) {
 function chmod() {
 
 }
+
+function syslog(int $level, string $message) {
+    echo $message;
+}
+
+function openlog(string|false $prefix, int $flags, int $facility): bool
+{
+    return true;
+}
