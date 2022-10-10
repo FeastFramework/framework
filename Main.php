@@ -117,7 +117,7 @@ class Main implements MainInterface
     protected function isJsonRequest(): bool
     {
         return isset($_SERVER['CONTENT_TYPE'])
-            && stripos((string)$_SERVER['CONTENT_TYPE'], 'application/json') !== false;
+            && stripos($_SERVER['CONTENT_TYPE'], 'application/json') !== false;
     }
 
     protected function buildInitialArguments(RouterInterface $router): void

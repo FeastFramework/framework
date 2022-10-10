@@ -912,7 +912,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      */
     protected function getCurrentRequestMethod(): string
     {
-        return !empty($_SERVER['REQUEST_METHOD']) ? (string)$_SERVER['REQUEST_METHOD'] : RequestMethod::GET->value;
+        return !empty($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : RequestMethod::GET->value;
     }
 
 }

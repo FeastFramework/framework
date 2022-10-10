@@ -65,14 +65,17 @@ class Session implements ServiceContainerItemInterface
         /** @var bool $strictIp */
         $strictIp = $config->getSetting('session.strictIp', false);
         if ($strictIp) {
-            if (isset($Feast->ipAddress) && $Feast->ipAddress !== (string)$_SERVER['REMOTE_ADDR']) {
+            /** @psalm-suppress PossiblyUndefinedArrayOffset */
+            if (isset($Feast->ipAddress) && $Feast->ipAddress !== $_SERVER['REMOTE_ADDR']) {
                 session_destroy();
                 $response = di(ResponseInterface::class);
 
-                $response->redirect((string)$_SERVER['REQUEST_URI']);
+                /** @psalm-suppress PossiblyUndefinedArrayOffset */
+                $response->redirect($_SERVER['REQUEST_URI']);
             }
         }
-        $Feast->ipAddress = (string)$_SERVER['REMOTE_ADDR'];
+        /** @psalm-suppress PossiblyUndefinedArrayOffset */
+        $Feast->ipAddress = $_SERVER['REMOTE_ADDR'];
     }
 
     /**
