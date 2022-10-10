@@ -22,12 +22,12 @@ namespace Feast\Enums;
 
 class LogLevelCode
 {
-    public const DEBUG = 100;
-    public const INFO = 200;
-    public const NOTICE = 300;
-    public const WARNING = 400;
-    public const ERROR = 500;
-    public const CRITICAL = 600;
-    public const ALERT = 700;
-    public const EMERGENCY = 800;
+    public const DEBUG = LOG_DEBUG;
+    public const INFO = LOG_INFO;
+    public const NOTICE = LOG_NOTICE;
+    public const WARNING = LOG_WARNING;
+    public const ERROR = LOG_ERR;
+    public const CRITICAL = LOG_CRIT;
+    public const ALERT = LOG_ALERT;
+    public const EMERGENCY = LOG_EMERG;
 }

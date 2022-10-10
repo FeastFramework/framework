@@ -23,6 +23,7 @@ use Feast\Config\Config;
 use Feast\Enums\LogLevelCode;
 use Feast\Logger\Logger;
 use Feast\Main;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\InvalidArgumentException;
 use Psr\Log\LogLevel;
@@ -52,13 +53,13 @@ class LoggerTest extends TestCase
             ]
         );
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $this->assertInstanceOf(Logger::class,$logger);
+        $this->assertInstanceOf(Logger::class, $logger);
     }
 
     public function testConstructInvalidLevel(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn('FEASTYBOYS');
+        $this->updateConfigStub($config, 'FeastyBoys', false);
         $this->expectException(InvalidArgumentException::class);
         new Logger($config, Main::RUN_AS_CLI);
     }
@@ -66,7 +67,7 @@ class LoggerTest extends TestCase
     public function testEmergency(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->emergency('This is an emergency');
         $output = $this->getActualOutputForAssertion();
@@ -76,7 +77,7 @@ class LoggerTest extends TestCase
     public function testAlert(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->alert('This is an alert');
         $output = $this->getActualOutputForAssertion();
@@ -86,7 +87,7 @@ class LoggerTest extends TestCase
     public function testWarning(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->warning('This is a warning');
         $output = $this->getActualOutputForAssertion();
@@ -96,7 +97,7 @@ class LoggerTest extends TestCase
     public function testError(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->error('This is an error');
         $output = $this->getActualOutputForAssertion();
@@ -116,7 +117,7 @@ class LoggerTest extends TestCase
     public function testDebug(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->debug('This is unimportant');
         $output = $this->getActualOutputForAssertion();
@@ -126,7 +127,7 @@ class LoggerTest extends TestCase
     public function testCritical(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->critical('This is critical');
         $output = $this->getActualOutputForAssertion();
@@ -146,7 +147,7 @@ class LoggerTest extends TestCase
     public function testLogHigherLevel(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::EMERGENCY);
+        $this->updateConfigStub($config, LogLevel::EMERGENCY, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->notice('you noticing me');
         $output = $this->getActualOutputForAssertion();
@@ -166,7 +167,7 @@ class LoggerTest extends TestCase
     public function testLogWithException(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->log(
             LogLevelCode::ALERT,
@@ -180,7 +181,7 @@ class LoggerTest extends TestCase
     public function testLogWithStringLevelAlert(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->log(LogLevel::ALERT, 'you noticing me {output}', ['output' => 'test']);
         $output = $this->getActualOutputForAssertion();
@@ -190,7 +191,7 @@ class LoggerTest extends TestCase
     public function testLogWithStringLevelCritical(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->log(LogLevel::CRITICAL, 'you noticing me {output}', ['output' => 'test']);
         $output = $this->getActualOutputForAssertion();
@@ -200,7 +201,7 @@ class LoggerTest extends TestCase
     public function testLogWithStringLevelError(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->log(LogLevel::ERROR, 'you noticing me {output}', ['output' => 'test']);
         $output = $this->getActualOutputForAssertion();
@@ -210,7 +211,7 @@ class LoggerTest extends TestCase
     public function testLogWithStringLevelWarning(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->log(LogLevel::WARNING, 'you noticing me {output}', ['output' => 'test']);
         $output = $this->getActualOutputForAssertion();
@@ -220,7 +221,7 @@ class LoggerTest extends TestCase
     public function testLogWithStringLevelNotice(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->log(LogLevel::NOTICE, 'you noticing me {output}', ['output' => 'test']);
         $output = $this->getActualOutputForAssertion();
@@ -230,7 +231,7 @@ class LoggerTest extends TestCase
     public function testLogWithStringLevelInfo(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::DEBUG);
+        $this->updateConfigStub($config, LogLevel::DEBUG, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->log(LogLevel::INFO, 'you noticing me {output}', ['output' => 'test']);
         $output = $this->getActualOutputForAssertion();
@@ -240,10 +241,134 @@ class LoggerTest extends TestCase
     public function testRawLogHigherLevel(): void
     {
         $config = $this->createStub(Config::class);
-        $config->method('getSetting')->willReturn(LogLevel::EMERGENCY);
+        $this->updateConfigStub($config, LogLevel::EMERGENCY, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
         $logger->rawLog(LogLevelCode::ALERT, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringNotContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogNoGo(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::ALERT, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::DEBUG, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringNotContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogDebug(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::DEBUG, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogNotice(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::NOTICE, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogWarning(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::WARNING, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogError(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::ERROR, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogCritical(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::CRITICAL, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogEmergency(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::EMERGENCY, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogAlert(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::ALERT, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    public function testRawLogSysLogInfo(): void
+    {
+        $config = $this->createStub(Config::class);
+        $this->updateConfigStub($config, LogLevel::DEBUG, true);
+        $logger = new Logger($config, Main::RUN_AS_CLI);
+        $logger->rawLog(LogLevelCode::INFO, 'you noticing me');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertStringContainsString('you noticing me', $output);
+    }
+
+    protected function updateConfigStub(Config|Stub $config, string $level, bool $useSysLog): void
+    {
+        $config->method('getSetting')->willReturnMap(
+            [
+                [
+                    'log.syslog.enabled',
+                    false,
+                    $useSysLog
+                ],
+                [
+                    'log.level',
+                    LogLevel::ERROR,
+                    $level
+                ],
+                [
+                    'log.syslog.facility',
+                    LOG_USER,
+                    LOG_USER
+                ],
+                [
+                    'log.syslog.flags',
+                    LOG_ODELAY,
+                    LOG_ODELAY
+                ],
+                [
+                    'log.syslog.prefix',
+                    false,
+                    false
+                ],
+
+            ]
+        );
     }
 }
