@@ -218,6 +218,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         }
         if ($this->useSysLog) {
             syslog($level, $message);
+            return;
         }
         $fileName = $this->logPath . 'feast.log';
         if (!file_exists($fileName)) {
