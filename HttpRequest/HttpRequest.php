@@ -329,8 +329,11 @@ abstract class HttpRequest implements HttpRequestInterface
      * @param string $password
      * @return HttpRequest
      */
-    public function authenticate(string $username, string $password): HttpRequestInterface
-    {
+    public function authenticate(
+        string $username,
+        #[\SensitiveParameter]
+        string $password
+    ): HttpRequestInterface {
         $this->username = $username;
         $this->password = $password;
 

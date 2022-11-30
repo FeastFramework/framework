@@ -438,7 +438,7 @@ class DateTest extends TestCase
     {
         $date = Date::createFromString('2018-01-31 00:00:00');
         $this->expectException(InvalidDateException::class);
-        $date->modify('+1 blorgh');
+        $date->modify('1 blorgh');
     }
 
     public function testGetAsDateTime(): void

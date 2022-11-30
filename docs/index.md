@@ -67,10 +67,10 @@ up with the following principles always in mind.
 
 ## Requirements
 
-The current release of FEAST requires >=PHP 8.1 and (if you wish to use the Curl service classes) PHP 8.1-curl. In
-addition, PHP 8.1-bcmath is recommended.
+The current release of FEAST requires >=PHP 8.2 and (if you wish to use the Curl service classes) PHP 8.2-curl. In
+addition, PHP 8.2-bcmath is recommended.
 
-The v1.x line of FEAST requires >=PHP 8.0. The same recommendations above apply
+The v1.x line of FEAST requires >=PHP 8.0 and v2.x line requires >=PHP 8.1. The same recommendations above apply
 
 FEAST currently works with the MySQL and PostgreSQL database management systems as well as with SQLite for simple
 queries.

@@ -44,23 +44,21 @@ class Database implements DatabaseInterface
     private PDO $connection;
     private DatabaseType $databaseType;
     private string $queryClass;
-    private LoggerInterface $logger;
     private string $escapeCharacter;
 
     /**
      * @param stdClass $connectionDetails
      * @param string $pdoClass
-     * @param LoggerInterface|null $logger
-     * @throws DatabaseException
+     * @param LoggerInterface $logger
      * @throws InvalidOptionException
      * @throws ServerFailureException
-     * @throws \Feast\ServiceContainer\NotFoundException
      */
-    public function __construct(stdClass $connectionDetails, string $pdoClass, ?LoggerInterface $logger)
-    {
-        $logger ??= di(LoggerInterface::INTERFACE_NAME);
-        $this->logger = $logger;
-
+    public function __construct(
+        #[\SensitiveParameter]
+        stdClass $connectionDetails,
+        string $pdoClass,
+        private readonly LoggerInterface $logger
+    ) {
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
         /** @var DatabaseType */
