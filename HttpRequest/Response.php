@@ -27,27 +27,30 @@ use stdClass;
 
 class Response
 {
-    
     public function __construct(protected string $rawResponse, protected ResponseCode $responseCode)
     {
-        
     }
-    
-    public function getResponseAsText(): string {
+
+    public function getResponseAsText(): string
+    {
         return $this->rawResponse;
     }
 
     public function getResultAsJson(): stdClass|array|null
     {
         try {
-            /** @var stdClass|array */
-            return json_decode(utf8_encode($this->rawResponse), flags: JSON_THROW_ON_ERROR);
+            /** @var stdClass */
+            return json_decode(
+                       mb_convert_encoding($this->rawResponse, 'UTF-8', ['ISO-8859-1', 'UTF-8']),
+                flags: JSON_THROW_ON_ERROR
+            );
         } catch (Exception) {
             return null;
         }
     }
-    
-    public function getResultAsXml(): ?SimpleXMLElement {
+
+    public function getResultAsXml(): ?SimpleXMLElement
+    {
         try {
             return new SimpleXMLElement($this->rawResponse, LIBXML_NOERROR | LIBXML_NOWARNING);
         } catch (Exception) {
