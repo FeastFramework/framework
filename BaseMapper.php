@@ -35,7 +35,7 @@ use stdClass;
  */
 abstract class BaseMapper
 {
-    /** @var string TABLE_NAME */
+    /** @var string|null TABLE_NAME */
     public const TABLE_NAME = null;
     protected const PRIMARY_KEY = null;
     protected const OBJECT_NAME = null;
