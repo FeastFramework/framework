@@ -439,7 +439,7 @@ class Date
      */
     public function modify(string $amount): Date
     {
-        $modification = strtotime('+' . $amount, $this->timestamp);
+        $modification = strtotime($amount, $this->timestamp);
         if ($modification === false) {
             throw new InvalidDateException('Invalid date modification');
         }
