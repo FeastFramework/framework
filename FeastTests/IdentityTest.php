@@ -63,15 +63,12 @@ class IdentityTest extends TestCase
     {
         di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $session = $this->createStub(Session::class);
-        $namespace = new stdClass();
-        $session->Feast_Login = $namespace;
 
         $config = $this->createStub(ConfigInterface::class);
         $config->method('getSetting')->willReturn('test');
 
         $testUser = new MockUser();
         $testUser->user = 'testUser';
-        $namespace->identity = $testUser;
         $identity = new Identity($config, $session);
         $user = $identity->getUser();
         $this->assertEquals(null, $user);
@@ -85,8 +82,6 @@ class IdentityTest extends TestCase
     {
         di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
         $session = $this->createStub(Session::class);
-        $namespace = new stdClass();
-        $session->Feast_Login = $namespace;
 
         $config = $this->createStub(ConfigInterface::class);
         $config->method('getSetting')->willReturn('test');
