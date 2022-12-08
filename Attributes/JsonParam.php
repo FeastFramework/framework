@@ -23,7 +23,7 @@ namespace Feast\Attributes;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class JsonParam
+readonly class JsonParam
 {
     public function __construct(public string $key = '')
     {

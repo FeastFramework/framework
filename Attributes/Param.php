@@ -25,7 +25,7 @@ use Feast\Enums\ParamType;
 use Feast\Terminal;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
-class Param
+readonly class Param
 {
     public function __construct(
         public string $type = '',

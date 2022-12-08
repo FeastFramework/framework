@@ -24,7 +24,7 @@ use Attribute;
 use Feast\Date;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class JsonItem
+readonly class JsonItem
 {
     /**
      * JsonItem constructor.

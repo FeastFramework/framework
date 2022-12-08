@@ -24,7 +24,7 @@ use Attribute;
 use Feast\Enums\RequestMethod;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class Path
+readonly class Path
 {
     final public const METHOD_GET = 1;
     final public const METHOD_POST = 2;

@@ -23,7 +23,7 @@ namespace Feast\Attributes;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class Action
+readonly class Action
 {
     public function __construct(public string $usage = '', public string $description = '')
     {
