@@ -18,7 +18,6 @@
 declare(strict_types=1);
 
 use Feast\Interfaces\ConfigInterface;
-use Feast\ServiceContainer\ServiceContainer;
 use Feast\Session\Identity;
 use Feast\Session\Session;
 use Mocks\MockUser;

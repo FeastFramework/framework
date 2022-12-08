@@ -84,7 +84,7 @@ abstract class BaseMapper
                     ),
                     'int' => (int)$val,
                     'bool' => $this->getBoolValue($val),
-                    default => utf8_encode((string)$val)
+                    default => mb_convert_encoding((string)$val, 'UTF-8', ['ISO-8859-1', 'UTF-8'])
                 };
             }
         }

@@ -27,7 +27,6 @@ use stdClass;
 
 class Response
 {
-
     public function __construct(protected string $rawResponse, protected ResponseCode $responseCode)
     {
     }
@@ -40,7 +39,7 @@ class Response
     public function getResultAsJson(): stdClass|array|null
     {
         try {
-            /** @var stdClass|array */
+            /** @var stdClass */
             return json_decode(
                        mb_convert_encoding($this->rawResponse, 'UTF-8', ['ISO-8859-1', 'UTF-8']),
                 flags: JSON_THROW_ON_ERROR
