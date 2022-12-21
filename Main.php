@@ -86,8 +86,8 @@ class Main implements MainInterface
         /** @var array{argv:array<string>} $_SERVER */
         $router->buildRouteForRequestUrl('CLI/index/index');
 
-        $_SERVER['argv'][0] = str_replace(':', DIRECTORY_SEPARATOR, $_SERVER['argv'][0]);
-        $path = 'CLI' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $_SERVER['argv']);
+        $_SERVER['argv'][0] = str_replace(':', '/', $_SERVER['argv'][0]);
+        $path = 'CLI' . '/' . implode('/', $_SERVER['argv']);
         $router->buildCliArguments($path);
     }
 
