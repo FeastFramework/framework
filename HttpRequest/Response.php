@@ -58,7 +58,7 @@ class Response
         }
     }
     
-    public function getResponseCode(): int
+    public function getResponseCode(): ResponseCode
     {
         return $this->responseCode;
     }
