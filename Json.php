@@ -41,14 +41,17 @@ class Json
      *
      * The field names are kept as is, unless a Feast\Attributes\JsonItem attribute decorates the property.
      *
-     * @param object $object
+     * @param object|array $object
      * @param int|null $propertyTypesFlag (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      * @return string
      * @throws ReflectionException
      * @see \Feast\Attributes\JsonItem
      */
-    public static function marshal(object $object, ?int $propertyTypesFlag = null): string
+    public static function marshal(object|array $object, ?int $propertyTypesFlag = null): string
     {
+        if ($object instanceof stdClass || is_array($object)) {
+            return json_encode($object);
+        }
         $return = new stdClass();
         $paramInfo = self::getClassParamInfo($object::class, $propertyTypesFlag);
         /**
@@ -98,15 +101,19 @@ class Json
      * @param class-string<returned>|returned $objectOrClass
      * @psalm-param object|class-string $objectOrClass
      * @param bool $skipConstructor
-     * @throws Exception\InvalidDateException
+     * @return returned|object
      * @throws JsonException
      * @throws ReflectionException
      * @throws ServerFailureException
+     * @throws Exception\InvalidDateException
      * @see \Feast\Attributes\JsonItem
-     * @return returned|object
      */
     public static function unmarshal(string $data, string|object $objectOrClass, bool $skipConstructor = false): object
     {
+        if ($objectOrClass === stdClass::class) {
+            /** @var stdClass */
+            return json_decode($data);
+        }
         if (is_string($objectOrClass)) {
             $object = self::getObjectFromClassString($objectOrClass, $skipConstructor);
         } else {

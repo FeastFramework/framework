@@ -39,7 +39,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
 
     private ResponseCode $responseCode = ResponseCode::HTTP_CODE_200;
     private bool $isJson = false;
-    private object|null $jsonResponse = null;
+    private object|array|null $jsonResponse = null;
     private ?int $jsonResponsePropertyTypes = null;
     private ?string $redirectPath = null;
     /** @var array<string,string> */
@@ -152,10 +152,10 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     /**
      * Mark the Response as a JSON response and send the passed in object.
      *
-     * @param object $response
+     * @param object|array $response
      * @param int|null $jsonResponsePropertyTypes (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      */
-    public function setJsonWithResponseObject(object $response, ?int $jsonResponsePropertyTypes = null): void
+    public function setJsonWithResponseObject(object|array $response, ?int $jsonResponsePropertyTypes = null): void
     {
         $this->jsonResponse = $response;
         $this->jsonResponsePropertyTypes = $jsonResponsePropertyTypes;
