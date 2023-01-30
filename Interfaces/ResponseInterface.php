@@ -88,10 +88,10 @@ interface ResponseInterface extends ServiceContainerItemInterface
     /**
      * Mark the Response as a JSON response and send the passed in object.
      *
-     * @param object $response
+     * @param object|array $response
      * @param int|null $jsonResponsePropertyTypes (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      */
-    public function setJsonWithResponseObject(object $response, ?int $jsonResponsePropertyTypes = null): void;
+    public function setJsonWithResponseObject(object|array $response, ?int $jsonResponsePropertyTypes = null): void;
 
     /**
      * Set an HTTP header. Overrides previous version set.

@@ -93,11 +93,11 @@ abstract class HttpController implements ControllerInterface
     }
 
     /**
-     * @param object $responseObject
+     * @param object|array $responseObject
      * @param int|null $jsonResponsePropertyTypes (see https://www.php.net/manual/en/class.reflectionproperty.php#reflectionproperty.constants.modifiers)
      * @return void
      */
-    public function sendJsonResponse(object $responseObject, ?int $jsonResponsePropertyTypes = null): void
+    public function sendJsonResponse(object|array $responseObject, ?int $jsonResponsePropertyTypes = null): void
     {
         $this->response->setJsonWithResponseObject($responseObject, $jsonResponsePropertyTypes);
     }
