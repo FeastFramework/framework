@@ -58,4 +58,9 @@ class Response
             return null;
         }
     }
+    
+    public function getResponseCode(): int
+    {
+        return $this->responseCode;
+    }
 }
