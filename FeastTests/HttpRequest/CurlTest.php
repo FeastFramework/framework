@@ -199,6 +199,18 @@ Test
         );
     }
 
+    public function testGetResponseCode(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/json');
+        $request->makeRequest();
+        $response = $request->getResponse();
+        $this->assertEquals(ResponseCode::HTTP_CODE_200, $response->getResponseCode());
+        $this->assertNull(
+            $request->getResponseAsXml()
+        );
+    }
+
     public function testGetResultAsJson(): void
     {
         $request = new Curl();
