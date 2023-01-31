@@ -50,7 +50,7 @@ class Json
     public static function marshal(object|array $object, ?int $propertyTypesFlag = null): string
     {
         if ($object instanceof stdClass || is_array($object)) {
-            return json_encode($object);
+            return json_encode(self::marshalArray((array)$object));
         }
         $return = new stdClass();
         $paramInfo = self::getClassParamInfo($object::class, $propertyTypesFlag);
