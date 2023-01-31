@@ -46,7 +46,7 @@ The HttpRequestInterface contains methods for working with web requests. This cl
 2. `getCookies` - Get the cookies for the request as an array.
 3. `getContentType` - Get the content type of the request.
 4. `getHeaders` - Get all the headers as an array.
-5. `getResponseCode` - Get the HTTP response code for the request.
+5. `getResponseCode` - Get the HTTP response code for the last request.
 
 [Back to Top](#services)
 
@@ -55,6 +55,7 @@ The HttpRequestInterface contains methods for working with web requests. This cl
 2. `getResponseAsString` - Gets the response as a string
 3. `getResponseAsXml` - Gets the response as a SimpleXMLElement.
 4. `getResponseAsJson` - Get the response as a stdClass from a JSON string.
+5. `getResponseCode` - Get the HTTP response code for the response.
 
 [Back to Top](#services)
 # Sample Service class request usage
