@@ -167,6 +167,47 @@ class JsonTest extends TestCase
         $this->assertEquals('ItWorks', $result->aClass->test);
     }
 
+    public function testMarshalArray(): void
+    {
+        $firstItem = new TestJsonItem();
+        $firstItem->firstName = 'FEAST';
+        $firstItem->lastName = 'Framework';
+        $secondItem = new TestJsonItem();
+        $secondItem->firstName = 'Jeremy';
+        $secondItem->lastName = 'Presutti';
+
+        $data = [$firstItem, $secondItem];
+
+        $result = Json::marshal($data);
+        $this->assertEquals('[{"first_name":"FEAST","last_name":"Framework","calls":null},{"first_name":"Jeremy","last_name":"Presutti","calls":null}]', $result);
+    }
+
+    public function testMarshalArrayStdClass(): void
+    {
+        $firstItem = new stdClass();
+        $firstItem->firstName = 'FEAST';
+        $firstItem->lastName = 'Framework';
+        $secondItem = new stdClass();
+        $secondItem->firstName = 'Jeremy';
+        $secondItem->lastName = 'Presutti';
+
+        $data = [$firstItem, $secondItem];
+
+        $result = Json::marshal($data);
+        $this->assertEquals('[{"firstName":"FEAST","lastName":"Framework"},{"firstName":"Jeremy","lastName":"Presutti"}]', $result);
+    }
+
+    public function testMarshalStdClass(): void
+    {
+        $item = new stdClass();
+        $item->firstName = 'FEAST';
+        $item->lastName = 'Framework';
+       
+
+        $result = Json::marshal($item);
+        $this->assertEquals('{"firstName":"FEAST","lastName":"Framework"}', $result);
+    }
+
     public function testUnmarshalMarshal(): void
     {
         $data = '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null},{"first_name":"PHP","last_name":"8.0","calls":null}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"aClass":{"test":"ItWorks"},"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-04:00","thirdTimestamp":"2021-04-15T20:56:24-04:00","fourthTimestamp":"20210405"}';
