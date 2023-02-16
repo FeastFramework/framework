@@ -1,36 +1,30 @@
-<phpunit backupGlobals="true" bootstrap="FeastTests/bootstrap.php" cacheResultFile="FeastTests/Coverage/.phpunit.result.cache">
-    <testsuites>
-        <testsuite name="unit">
-            <directory>FeastTests</directory>
-        </testsuite>
-    </testsuites>
-    <coverage
-            includeUncoveredFiles="false"
-            processUncoveredFiles="false"
-            pathCoverage="false"
-            ignoreDeprecatedCodeUnits="true"
-            disableCodeCoverageIgnore="true"
-    >
-        <include>
-            <directory suffix=".php">.</directory>
-            <file>Form.php</file>
-            <file>Email.php</file>
-            <file>Main.php</file>
-            <directory suffix=".php">Attributes</directory>
-            <directory suffix=".php">Collection</directory>
-            <file>Traits/Collection.php</file>
-            <directory>Controllers</directory>
-        </include>
-        <exclude>
-            <directory suffix=".php">FeastTests</directory>
-            <directory>Install</directory>
-            <file>PsalmLoader.php</file>
-            <file>../Autoloader.php</file>
-        </exclude>
-        <report>
-            <text outputFile="FeastTests/Coverage/coverage.txt" showUncoveredFiles="false" showOnlySummary="false"/>
-        </report>
-        <!-- ... -->
-    </coverage>
-
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="true" bootstrap="FeastTests/bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <testsuites>
+    <testsuite name="unit">
+      <directory>FeastTests</directory>
+    </testsuite>
+  </testsuites>
+  <coverage includeUncoveredFiles="false" pathCoverage="false" ignoreDeprecatedCodeUnits="true" disableCodeCoverageIgnore="true">
+    <include>
+      <directory suffix=".php">.</directory>
+      <file>Form.php</file>
+      <file>Email.php</file>
+      <file>Main.php</file>
+      <directory suffix=".php">Attributes</directory>
+      <directory suffix=".php">Collection</directory>
+      <file>Traits/Collection.php</file>
+      <directory>Controllers</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">FeastTests</directory>
+      <directory>Install</directory>
+      <file>PsalmLoader.php</file>
+      <file>../Autoloader.php</file>
+    </exclude>
+    <report>
+      <text outputFile="FeastTests/Coverage/coverage.txt" showUncoveredFiles="false" showOnlySummary="false"/>
+    </report>
+    <!-- ... -->
+  </coverage>
 </phpunit>
