@@ -31,10 +31,9 @@ use Feast\Enums\ServiceContainer;
 use Feast\Interfaces\ConfigInterface;
 use Feast\Interfaces\DatabaseInterface;
 use Feast\Main;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
-class CreateControllerTest extends TestCase
+class CreateControllerTest extends \FeastBaseTest
 {
 
     public function setUp(): void
@@ -153,6 +152,7 @@ class CreateControllerTest extends TestCase
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('FeatureFlag file NewFlag.php created.', trim($output));
     }
+
     public function testFormGetNoName(): void
     {
         $config = $this->createStub(Config::class);
@@ -491,7 +491,12 @@ class CreateControllerTest extends TestCase
 
     public function testPluginGetCreatedFromTemplateDir(): void
     {
-        $this->writeTempFile(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Plugin.php.txt', file_get_contents(Main::FRAMEWORK_ROOT . DIRECTORY_SEPARATOR . 'Install' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Plugin.php.txt'));
+        $this->writeTempFile(
+            APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Plugin.php.txt',
+            file_get_contents(
+                Main::FRAMEWORK_ROOT . DIRECTORY_SEPARATOR . 'Install' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'Plugin.php.txt'
+            )
+        );
         $config = $this->createStub(Config::class);
         $config->method('getSetting')->willReturnOnConsecutiveCalls(false);
         $controller = new CreateController(
@@ -643,7 +648,7 @@ class CreateControllerTest extends TestCase
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('Create a new CLI controller action from the template file.', trim($output));
     }
-    
+
     public function testCliActionGetControllerPathExistsAndControllerCliExists(): void
     {
         $config = $this->createStub(Config::class);
@@ -722,7 +727,10 @@ class CreateControllerTest extends TestCase
         );
         $controller->actionGet('Success', 'index', module: 'Failure');
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Modules' . DIRECTORY_SEPARATOR . 'Failure' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . ' created', trim($output));
+        $this->assertStringContainsString(
+            'Modules' . DIRECTORY_SEPARATOR . 'Failure' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . ' created',
+            trim($output)
+        );
         $this->assertStringNotContainsString('Controller.php created', trim($output));
     }
 
@@ -738,7 +746,10 @@ class CreateControllerTest extends TestCase
 
         $controller->actionGet('Failure', 'index', module: 'Failure');
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Modules' . DIRECTORY_SEPARATOR . 'Failure' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . ' created', trim($output));
+        $this->assertStringContainsString(
+            'Modules' . DIRECTORY_SEPARATOR . 'Failure' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . ' created',
+            trim($output)
+        );
         $this->assertStringContainsString('Controller.php created', trim($output));
         $this->assertStringContainsString('Action indexGet created', trim($output));
         $this->assertStringContainsString('index.phtml created', trim($output));
@@ -795,7 +806,7 @@ class CreateControllerTest extends TestCase
             new FieldDetails('user_id', 'tinyint', 'int', 'int'),
             new FieldDetails('created_at', 'datetime', '?\\' . Date::class, Date::class),
             new FieldDetails('username', 'varchar(255)', 'string', 'string')
-        ],'test_sequence'
+        ],  'test_sequence'
         );
         $connection->method('getDescribedTable')->willReturn($tableInfo);
 
@@ -803,9 +814,9 @@ class CreateControllerTest extends TestCase
 
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
-        $this->assertEquals(
-            str_replace("\r\n","\n",file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModel.txt')),
-            str_replace("\r\n","\n",$output)
+        $this->assertEqualsIgnoreLineEndingDiff(
+            file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModel.txt'),
+            $output
         );
     }
 
@@ -827,7 +838,7 @@ class CreateControllerTest extends TestCase
             new FieldDetails('user_id', 'tinyint', 'int', 'int'),
             new FieldDetails('created_at', 'datetime', '?\\' . Date::class, Date::class),
             new FieldDetails('username', 'varchar(255)', 'string', 'string')
-        ],'test_sequence'
+        ],  'test_sequence'
         );
         $connection->method('getDescribedTable')->willReturn($tableInfo);
 
@@ -836,9 +847,11 @@ class CreateControllerTest extends TestCase
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
-        $this->assertEquals(
-            str_replace("\r\n","\n",file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExists.txt')),
-            str_replace("\r\n","\n",$output)
+        $this->assertEqualsIgnoreLineEndingDiff(
+            file_get_contents(
+                APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExists.txt'
+            ),
+            $output
         );
     }
 
@@ -885,11 +898,12 @@ class CreateControllerTest extends TestCase
         $dbFactory->method('getConnection')->willReturn($connection);
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
-        $this->assertEquals(
-            str_replace("\r\n","\n",file_get_contents(
+        $this->assertEqualsIgnoreLineEndingDiff(
+
+            file_get_contents(
                 APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelCompoundPrimary.txt'
-            )),
-            str_replace("\r\n","\n",$output)
+            ),
+            $output
         );
     }
 
@@ -917,14 +931,13 @@ class CreateControllerTest extends TestCase
 
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
-        $this->assertEquals(
-            str_replace("\r\n","\n",file_get_contents(
+        $this->assertEqualsIgnoreLineEndingDiff(
+
+            file_get_contents(
                 APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelNoPrimary.txt'
-            )),
-            str_replace("\r\n","\n",$output)
+            ),
+            $output
         );
-    
-    
     }
 
     public function testCreateModelAlreadyExistsNoPrimary(): void
@@ -952,15 +965,15 @@ class CreateControllerTest extends TestCase
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
-        $this->assertEquals(
-            str_replace("\r\n","\n",file_get_contents(
+        $this->assertEqualsIgnoreLineEndingDiff(
+            file_get_contents(
                 APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExistsNoPrimary.txt'
-            )),
-            str_replace("\r\n","\n",$output)
+            ),
+            $output
         );
     }
 
-        protected function buildTestField(string $field, string $type, string $phpType): stdClass
+    protected function buildTestField(string $field, string $type, string $phpType): stdClass
     {
         $return = new stdClass();
         $return->name = $field;
@@ -989,11 +1002,5 @@ class CreateControllerTest extends TestCase
     {
         FileData::$files[$name] = $contents;
     }
-    
-    protected function linuxifyTestOutput(string $output): string
-    {
-        $output = str_replace('Model\\Generated\\ ','Model/Generated/ ',$output );
-        
-        return $output;
-    }
+
 }

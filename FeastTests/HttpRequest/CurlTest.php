@@ -23,9 +23,8 @@ use Feast\Exception\BadRequestException;
 use Feast\Exception\CurlException;
 use Feast\HttpRequest\Curl;
 use Feast\HttpRequest\HttpRequest;
-use PHPUnit\Framework\TestCase;
 
-class CurlTest extends TestCase
+class CurlTest extends \FeastBaseTest
 {
 
     public function testGet(): void
@@ -148,8 +147,8 @@ class CurlTest extends TestCase
         $request->get('https://www.google.com/html');
         $request->makeRequest();
         $this->assertEquals(200, $request->getResponseCode());
-        $this->assertEquals(
-            str_replace("\r\n","\n",'<!DOCTYPE html>
+        $this->assertEqualsIgnoreLineEndingDiff(
+            '<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -159,8 +158,8 @@ class CurlTest extends TestCase
 Test
 </body>
 </html>
-'),
-            str_replace("\r\n","\n",$request->getResponseAsString())
+',
+            $request->getResponseAsString()
         );
     }
 
@@ -170,8 +169,8 @@ Test
         $request->get('https://www.google.com/xml');
         $request->makeRequest();
         $this->assertEquals(200, $request->getResponseCode());
-        $this->assertEquals(
-            str_replace("\r\n","\n",'<?xml version="1.0"?>
+        $this->assertEqualsIgnoreLineEndingDiff(
+            '<?xml version="1.0"?>
 <html>
 <head>
     <meta charset="UTF-8"/>
@@ -181,8 +180,8 @@ Test
 Test
 </body>
 </html>
-'),
-            str_replace("\r\n","\n",$request->getResponseAsXml()->saveXML())
+',
+            $request->getResponseAsXml()->saveXML()
         );
     }
 

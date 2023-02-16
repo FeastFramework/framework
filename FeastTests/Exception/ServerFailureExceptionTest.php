@@ -26,9 +26,8 @@ use Feast\Interfaces\RequestInterface;
 use Feast\Interfaces\ResponseInterface;
 use Feast\Main;
 use Feast\ServiceContainer\ServiceContainer;
-use PHPUnit\Framework\TestCase;
 
-class ServerFailureExceptionTest extends TestCase
+class ServerFailureExceptionTest extends \FeastBaseTest
 {
 
     public function testPrintErrorJson(): void
@@ -64,10 +63,10 @@ class ServerFailureExceptionTest extends TestCase
         $exception = new ServerFailureException('Test', 302, 5, new \Exception('Test'), Main::RUN_AS_CLI);
         $exception->printParentException();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString(
-            str_replace("\r\n","\n",'Test
-Thrown on line'),
-            str_replace("\r\n","\n",$output)
+        $this->assertStringContainsStringIgnoreLineEndingDiff(
+            'Test
+Thrown on line',
+            $output
         );
     }
 
@@ -77,10 +76,10 @@ Thrown on line'),
         $exception = new ServerFailureException('Test', 302, 5, null, Main::RUN_AS_CLI);
         $exception->printError();
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString(
-            str_replace("\r\n","\n",'Test
-Thrown on line'),
-            str_replace("\r\n","\n",$output)
+        $this->assertStringContainsStringIgnoreLineEndingDiff(
+            'Test
+Thrown on line',
+            $output
         );
     }
 
