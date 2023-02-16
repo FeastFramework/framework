@@ -1,3 +1,4 @@
 vendor/*
 FeastTests/Coverage
 .fleet
+.idea

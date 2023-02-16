@@ -321,7 +321,7 @@ class ViewTest extends TestCase
         $this->view->addPostScript('test.js');
         $this->view->addPostScript('test.js', false);
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test.js"></script>',
             trim($this->view->getPostScripts())
         );
         $this->view->emptyView();
@@ -340,7 +340,7 @@ class ViewTest extends TestCase
             ]
         );
         $this->assertEquals(
-            '<link rel="stylesheet" type="text/css" href="/css/test.css" />' . "\n" . '<link rel="stylesheet" type="text/css" href="/css/test2.css" />',
+            '<link rel="stylesheet" type="text/css" href="/css/test.css" />' . PHP_EOL . '<link rel="stylesheet" type="text/css" href="/css/test2.css" />',
             trim($this->view->getCss())
         );
         $this->view->emptyView();
@@ -360,7 +360,7 @@ class ViewTest extends TestCase
             ]
         );
         $this->assertEquals(
-            '<link rel="stylesheet" type="text/css" href="/css/test.css" />' . "\n" . '<link rel="stylesheet" type="text/css" href="/css/test2.css" />',
+            '<link rel="stylesheet" type="text/css" href="/css/test.css" />' . PHP_EOL . '<link rel="stylesheet" type="text/css" href="/css/test2.css" />',
             trim($this->view->getCss())
         );
         $this->view->emptyView();
@@ -404,7 +404,7 @@ class ViewTest extends TestCase
         $this->view->addPreScript('test.js');
         $this->view->addPreScript('test.js', false);
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test.js"></script>',
             trim($this->view->getPreScripts())
         );
         $this->view->emptyView();
@@ -423,7 +423,7 @@ class ViewTest extends TestCase
             ]
         );
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>',
             trim($this->view->getPostScripts())
         );
         $this->view->emptyView();
@@ -443,7 +443,7 @@ class ViewTest extends TestCase
             ]
         );
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>',
             trim($this->view->getPostScripts())
         );
         $this->view->emptyView();
@@ -464,7 +464,7 @@ class ViewTest extends TestCase
             false
         );
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>',
             trim($this->view->getPostScripts())
         );
         $this->view->emptyView();
@@ -504,7 +504,7 @@ class ViewTest extends TestCase
             ]
         );
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>',
             trim($this->view->getPreScripts())
         );
         $this->view->emptyView();
@@ -524,7 +524,7 @@ class ViewTest extends TestCase
             ]
         );
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>',
             trim($this->view->getPreScripts())
         );
         $this->view->emptyView();
@@ -545,7 +545,7 @@ class ViewTest extends TestCase
             false
         );
         $this->assertEquals(
-            '<script type="text/javascript" src="/js/test.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>' . "\n" . '<script type="text/javascript" src="/js/test2.js"></script>',
+            '<script type="text/javascript" src="/js/test.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>' . PHP_EOL . '<script type="text/javascript" src="/js/test2.js"></script>',
             trim($this->view->getPreScripts())
         );
         $this->view->emptyView();
@@ -575,8 +575,7 @@ class ViewTest extends TestCase
     public function testShowViewWithLayout(): void
     {
         $this->expectOutputString(
-            'This is a layout.
-This file is used by ViewTest.php to ensure the view class is behaving correctly.'
+            'This is a layout.' . PHP_EOL . 'This file is used by ViewTest.php to ensure the view class is behaving correctly.'
         );
         $this->view->showView('Test', 'Test');
     }

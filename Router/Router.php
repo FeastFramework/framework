@@ -228,8 +228,8 @@ class Router implements ServiceContainerItemInterface, RouterInterface
                 $path .= '?' . http_build_query($arguments);
             }
         } else {
-            $path = $module ? $module . DIRECTORY_SEPARATOR : '';
-            $path .= $controller . DIRECTORY_SEPARATOR . $action;
+            $path = $module ? $module . '/' : '';
+            $path .= $controller . '/' . $action;
             if (count($arguments) != 0) {
                 /**
                  * @var string $key

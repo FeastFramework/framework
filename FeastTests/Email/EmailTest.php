@@ -61,7 +61,7 @@ class EmailTest extends TestCase
         $email->sendEmail();
         $output = $this->getActualOutputForAssertion();
         /** @noinspection PhpUndefinedFunctionInspection */
-        $this->assertEquals(\Feast\Email\getBody(), $output);
+        $this->assertEquals(str_replace("\r","",\Feast\Email\getBody()), str_replace("\r","",$output));
     }
 
     public function testEmailNoCcBccReplyTo(): void
@@ -85,7 +85,7 @@ class EmailTest extends TestCase
         $email->sendEmail();
         $output = $this->getActualOutputForAssertion();
         /** @noinspection PhpUndefinedFunctionInspection */
-        $this->assertEquals(\Feast\Email\getBodyNoCcBccReplyTo(), $output);
+        $this->assertEquals(str_replace("\r","",\Feast\Email\getBodyNoCcBccReplyTo()), str_replace("\r","",$output));
     }
 
     public function testEmailNoFrom(): void

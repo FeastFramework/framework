@@ -59,15 +59,15 @@ class CsvWriterTest extends TestCase
         $file->fpassthru();
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals(
-            '
+            str_replace("\r\n","\n",'
 name,language,years
 
 
 Jeremy,PHP,16
 German,JavaScript,6
 Erin,HTML,0
-',
-            $output
+'),
+            str_replace("\r\n","\n",$output)
         );
     }
 

@@ -52,15 +52,15 @@ function curl_exec($handle)
 {
     if (str_contains($handle->url, 'https://www.google.com/html')) {
         $handle->length = 401;
-        return \file_get_contents(__DIR__ . '/SampleResponses/GetHtml.txt');
+        return str_replace(PHP_EOL,"\n",\file_get_contents(__DIR__ . '/SampleResponses/GetHtml.txt'));
     }
     if (str_contains($handle->url, 'https://www.google.com/xml')) {
         $handle->length = 401;
-        return \file_get_contents(__DIR__ . '/SampleResponses/GetXml.txt');
+        return str_replace(PHP_EOL,"\n",\file_get_contents(__DIR__ . '/SampleResponses/GetXml.txt'));
     }
     if (str_contains($handle->url, 'https://www.google.com/json')) {
         $handle->length = 338;
-        return \file_get_contents(__DIR__ . '/SampleResponses/GetJson.txt');
+        return str_replace(PHP_EOL,"\n",\file_get_contents(__DIR__ . '/SampleResponses/GetJson.txt'));
     }
     return false;
 }

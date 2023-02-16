@@ -80,7 +80,7 @@ Thrown on line',
         $this->assertStringContainsString(
             'Test
 Thrown on line',
-            $output
+            str_replace("\r\n","\n",$output)
         );
     }
 
