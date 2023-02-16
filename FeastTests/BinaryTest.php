@@ -20,9 +20,8 @@ declare(strict_types=1);
 
 use Feast\Binary;
 use Feast\Exception\NotFoundException;
-use PHPUnit\Framework\TestCase;
 
-class BinaryTest extends TestCase
+class BinaryTest extends FeastBaseTest
 {
     protected Binary $binary;
 
@@ -96,7 +95,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast:migration'], ['famine', 'help', 'feast:migration']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . PHP_EOL. 'Available feast:migration commands',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast:migration commands',
             trim($output)
         );
     }
@@ -289,8 +288,8 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'small'], ['famine', 'small']);
         // If we got here, our code ran through the end of main
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals(
-            str_replace("\r\n","\n",'small
+        $this->assertEqualsIgnoreLineEndingDiff(
+            'small
 
 Usage: php famine small:create
 
@@ -298,8 +297,8 @@ Testing Helps
 
 Parameters
 --color=string      A random color
-{name} string       Name of service to create'),
-            trim(str_replace("\r\n","\n",$output))
+{name} string       Name of service to create',
+            trim($output)
         );
     }
 }

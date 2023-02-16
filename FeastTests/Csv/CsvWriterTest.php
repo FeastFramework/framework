@@ -21,9 +21,8 @@ declare(strict_types=1);
 namespace Csv;
 
 use Feast\Csv\CsvWriter;
-use PHPUnit\Framework\TestCase;
 
-class CsvWriterTest extends TestCase
+class CsvWriterTest extends \FeastBaseTest
 {
     public function testWrite(): void
     {
@@ -58,16 +57,16 @@ class CsvWriterTest extends TestCase
         $file->rewind();
         $file->fpassthru();
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals(
-            str_replace("\r\n","\n",'
+        $this->assertEqualsIgnoreLineEndingDiff(
+            '
 name,language,years
 
 
 Jeremy,PHP,16
 German,JavaScript,6
 Erin,HTML,0
-'),
-            str_replace("\r\n","\n",$output)
+',
+            $output
         );
     }
 
@@ -103,11 +102,12 @@ Erin,HTML,0
         $file->rewind();
         $file->fpassthru();
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals(
-            str_replace("\r\n","\n",'Jeremy,PHP,16
+        $this->assertEqualsIgnoreLineEndingDiff(
+
+            'Jeremy,PHP,16
 German,JavaScript,6
 Erin,HTML,0
-'),
+',
             $output
         );
     }
