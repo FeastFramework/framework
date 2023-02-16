@@ -13,7 +13,7 @@ jobs:
           php-version: '8.2'
           extensions: bcmath
           coverage: xdebug
-          tools: phpunit:9
+          tools: phpunit
       - name: Run PHPUnit
         run: phpunit -c FeastTests/githubphpunit.xml --coverage-clover coverage.xml
       - uses: codecov/codecov-action@v1
