@@ -104,10 +104,10 @@ Erin,HTML,0
         $file->fpassthru();
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals(
-            'Jeremy,PHP,16
+            str_replace("\r\n","\n",'Jeremy,PHP,16
 German,JavaScript,6
 Erin,HTML,0
-',
+'),
             $output
         );
     }
