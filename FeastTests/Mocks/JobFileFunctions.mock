@@ -22,7 +22,7 @@ namespace Feast\Jobs;
 
 function file_put_contents(string $path,string $data) : void {
     FileData::$files[$path] = $data;
-    $pathDetails = explode('/',$path);
+    $pathDetails = explode(DIRECTORY_SEPARATOR,$path);
     echo $pathDetails[count($pathDetails)-1] . $data;
 }
 
