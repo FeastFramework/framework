@@ -18,9 +18,8 @@
 declare(strict_types=1);
 
 use Feast\Help;
-use PHPUnit\Framework\TestCase;
 
-class HelpTest extends TestCase
+class HelpTest extends FeastBaseTest
 {
     protected Help $help;
 
@@ -42,7 +41,7 @@ Parameters
         
         $this->help->printCliMethodHelp('feast:create:service');
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals(str_replace("\r\n","\n", $expected), str_replace("\r\n","\n", $output));
+        $this->assertEqualsIgnoreLineEndingDiff($expected,$output);
     }
 
     public function testPrintCliClass(): void
@@ -59,7 +58,7 @@ Parameters
     {
         $this->help->printCliMethodHelp('small');
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringStartsWith('small' . "\n\n" . 'Usage: php famine small:create', str_replace("\r\n","\n",$output));
+        $this->assertStringStartsWithIgnoreLineEndingDiff('small' . "\n\n" . 'Usage: php famine small:create', $output);
     }
 
     public function testPrintCliMethodHelpWithoutParams(): void
@@ -72,7 +71,7 @@ Clear config cache file (if any) and regenerate.
 ';
         $this->help->printCliMethodHelp('feast:cache:config-generate');
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals(str_replace("\r\n","\n", $expected), str_replace("\r\n","\n", $output));
+        $this->assertEqualsIgnoreLineEndingDiff($expected,$output);
     }
 
     public function testPrintCliMethodNonExistentController(): void

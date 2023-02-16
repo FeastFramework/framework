@@ -23,6 +23,11 @@
                 <directory name="FeastTests"/>
             </errorLevel>
         </UndefinedClass>
+        <MissingDependency>
+            <errorLevel type="suppress">
+                <directory name="FeastTests"/>
+            </errorLevel>
+        </MissingDependency>
     </issueHandlers>
     <projectFiles>
         <directory name="Attributes"/>

@@ -21,9 +21,8 @@ declare(strict_types=1);
 use Feast\Enums\DocType;
 use Feast\Interfaces\ConfigInterface;
 use Feast\View;
-use PHPUnit\Framework\TestCase;
 
-class ViewTest extends TestCase
+class ViewTest extends FeastBaseTest
 {
     protected View $view;
 
@@ -32,7 +31,7 @@ class ViewTest extends TestCase
      */
     public function setUp(): void
     {
-        di(null,\Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
+        di(null, \Feast\Enums\ServiceContainer::CLEAR_CONTAINER);
 
         $config = $this->createStub(ConfigInterface::class);
         $config->method('getSetting')->will(
@@ -71,10 +70,10 @@ class ViewTest extends TestCase
     {
         $this->view->setDoctype(DocType::HTML_5);
 
-        $this->assertEquals(
-            str_replace("\r\n","\n",'<!DOCTYPE html>
-<html>'),
-            trim(str_replace("\r\n","\n",$this->view->getDtd()))
+        $this->assertEqualsIgnoreLineEndingDiff(
+            '<!DOCTYPE html>
+<html>',
+            trim($this->view->getDtd())
         );
         $this->assertEquals(DocType::HTML_5, $this->view->getDocType());
     }
@@ -82,11 +81,12 @@ class ViewTest extends TestCase
     public function testGetDoctypeXhtml10Strict(): void
     {
         $this->view->setDoctype(DocType::XHTML_1_0_STRICT);
-        $this->assertEquals(
-            str_replace("\r\n","\n",'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        $this->assertEqualsIgnoreLineEndingDiff(
+
+            '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">'),
-            str_replace("\r\n","\n",trim($this->view->getDtd()))
+<html xmlns="http://www.w3.org/1999/xhtml">',
+            trim($this->view->getDtd())
         );
         $this->assertEquals(DocType::XHTML_1_0_STRICT, $this->view->getDocType());
     }
