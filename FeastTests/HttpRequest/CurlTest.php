@@ -149,7 +149,7 @@ class CurlTest extends TestCase
         $request->makeRequest();
         $this->assertEquals(200, $request->getResponseCode());
         $this->assertEquals(
-            '<!DOCTYPE html>
+            str_replace("\r\n","\n",'<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -159,8 +159,8 @@ class CurlTest extends TestCase
 Test
 </body>
 </html>
-',
-            $request->getResponseAsString()
+'),
+            str_replace("\r\n","\n",$request->getResponseAsString())
         );
     }
 
