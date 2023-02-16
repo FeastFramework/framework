@@ -82,7 +82,7 @@ class CacheControllerTest extends TestCase
         );
         $controller->clearAllGet();
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Config cache cleared!' . "\n" . 'Router cache cleared!' . "\n" . 'Database info cache cleared!', trim($output));
+        $this->assertEquals('Config cache cleared!' . PHP_EOL . 'Router cache cleared!' . PHP_EOL . 'Database info cache cleared!', trim($output));
     }
 
     public function testRouterGenerateGet(): void
@@ -138,6 +138,6 @@ class CacheControllerTest extends TestCase
         );
         $controller->cacheAllGet($this->createStub(DatabaseDetailsInterface::class),$this->createStub(RouterInterface::class));
         $output = $this->getActualOutputForAssertion();
-        $this->assertEquals('Config cached!' . "\n" . 'Router cached!' . "\n" . 'Database info cached!', trim($output));
+        $this->assertEquals('Config cached!' . PHP_EOL . 'Router cached!' . PHP_EOL . 'Database info cached!', trim($output));
     }
 }

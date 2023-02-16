@@ -39,7 +39,7 @@ class ServeControllerTest extends TestCase
         $controller->serveGet();
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith('php -S localhost:8000 ', trim($output));
-        $this->assertStringEndsWith('bin/router.php', trim($output));
+        $this->assertStringEndsWith('bin' . DIRECTORY_SEPARATOR . 'router.php', trim($output));
     }
 
     public function testServeGetWithParams(): void
@@ -54,7 +54,7 @@ class ServeControllerTest extends TestCase
         $controller->serveGet('127.0.0.1', 5000, 7);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith('PHP_CLI_SERVER_WORKERS=7php -S 127.0.0.1:5000 ', trim($output));
-        $this->assertStringEndsWith('bin/router.php', trim($output));
+        $this->assertStringEndsWith('bin' . DIRECTORY_SEPARATOR . 'router.php', trim($output));
     }
 
 }

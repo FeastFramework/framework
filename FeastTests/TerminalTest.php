@@ -43,7 +43,7 @@ class TerminalTest extends TestCase
     public function testCommand(): void
     {
         $terminal = new Terminal(false);
-        $this->expectOutputString('test' . "\n");
+        $this->expectOutputString('test' . PHP_EOL);
         $terminal->command('test');
     }
 
@@ -62,7 +62,7 @@ class TerminalTest extends TestCase
     public function testError(): void
     {
         $terminal = new Terminal(false);
-        $this->expectOutputString('test' . "\n");
+        $this->expectOutputString('test' . PHP_EOL);
         $terminal->error('test');
     }
 
@@ -81,7 +81,7 @@ class TerminalTest extends TestCase
     public function testMessage(): void
     {
         $terminal = new Terminal(false);
-        $this->expectOutputString('test' . "\n");
+        $this->expectOutputString('test' . PHP_EOL);
         $terminal->message('test');
     }
 
@@ -107,9 +107,7 @@ class TerminalTest extends TestCase
     {
         $terminal = new Terminal(false);
         \Feast\ReadlineMock::$responses = ['Food', 'PHP', 'To crush your enemies', 'FEAST', 'Not Feast'];
-        $this->expectOutputString('What is best in life?
-Enter \'FEAST\' when finished.
-[][][][]');
+        $this->expectOutputString('What is best in life?' . PHP_EOL . 'Enter \'FEAST\' when finished.' . PHP_EOL . '[][][][]');
         $result = $terminal->getArrayFromPromptWithSentinel('What is best in life?', 'FEAST');
         $this->assertEquals(
             [

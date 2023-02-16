@@ -56,7 +56,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast'], ['famine', 'help', 'feast']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast commands',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast commands',
             trim($output)
         );
     }
@@ -66,7 +66,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast:create'], ['famine', 'help', 'feast:create']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast:create commands',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast:create commands',
             trim($output)
         );
     }
@@ -76,7 +76,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast:template'], ['famine', 'help', 'feast:template']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast:template commands',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast:template commands',
             trim($output)
         );
     }
@@ -86,7 +86,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast:job'], ['famine', 'help', 'feast:job']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast:job commands',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast:job commands',
             trim($output)
         );
     }
@@ -96,7 +96,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast:migration'], ['famine', 'help', 'feast:migration']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast:migration commands',
+            'Usage: php famine command options' . PHP_EOL. 'Available feast:migration commands',
             trim($output)
         );
     }
@@ -106,7 +106,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast:cache'], ['famine', 'help', 'feast:cache']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast:cache commands',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast:cache commands',
             trim($output)
         );
     }
@@ -116,7 +116,7 @@ class BinaryTest extends TestCase
         $this->binary->run(['famine', 'help', 'feast:maintenance'], ['famine', 'help', 'feast:maintenance']);
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast:maintenance',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast:maintenance',
             trim($output)
         );
     }
@@ -290,7 +290,7 @@ class BinaryTest extends TestCase
         // If we got here, our code ran through the end of main
         $output = $this->getActualOutputForAssertion();
         $this->assertEquals(
-            'small
+            str_replace("\r\n","\n",'small
 
 Usage: php famine small:create
 
@@ -298,8 +298,8 @@ Testing Helps
 
 Parameters
 --color=string      A random color
-{name} string       Name of service to create',
-            trim($output)
+{name} string       Name of service to create'),
+            trim(str_replace("\r\n","\n",$output))
         );
     }
 }

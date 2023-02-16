@@ -31,17 +31,18 @@ class HelpTest extends TestCase
 
     public function testPrintCliMethodHelpWithParams(): void
     {
-        $this->expectOutputString(
-            '
+        $expected = '
 Usage: php famine feast:create:service {name}
 
 Create a service class from the template file.
 
 Parameters
 {name} string       Name of service to create
-'
-        );
+';
+        
         $this->help->printCliMethodHelp('feast:create:service');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals(str_replace("\r\n","\n", $expected), str_replace("\r\n","\n", $output));
     }
 
     public function testPrintCliClass(): void
@@ -49,7 +50,7 @@ Parameters
         $this->help->printCliMethodHelp('feast:create');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringStartsWith(
-            'Usage: php famine command options' . "\n" . 'Available feast:create commands',
+            'Usage: php famine command options' . PHP_EOL . 'Available feast:create commands',
             trim($output)
         );
     }
@@ -58,20 +59,20 @@ Parameters
     {
         $this->help->printCliMethodHelp('small');
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringStartsWith('small' . "\n\n" . 'Usage: php famine small:create', $output);
+        $this->assertStringStartsWith('small' . "\n\n" . 'Usage: php famine small:create', str_replace("\r\n","\n",$output));
     }
 
     public function testPrintCliMethodHelpWithoutParams(): void
     {
-        $this->expectOutputString(
-            '
+        $expected = '
 Usage: php famine feast:cache:config-generate
 
 Clear config cache file (if any) and regenerate.
 
-'
-        );
+';
         $this->help->printCliMethodHelp('feast:cache:config-generate');
+        $output = $this->getActualOutputForAssertion();
+        $this->assertEquals(str_replace("\r\n","\n", $expected), str_replace("\r\n","\n", $output));
     }
 
     public function testPrintCliMethodNonExistentController(): void

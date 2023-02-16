@@ -505,7 +505,7 @@ class View extends stdClass implements ServiceContainerItemInterface
     ): string {
         $path = (string)$this->config->getSetting('siteurl');
 
-        return ($fullPath ? $path : '') . DIRECTORY_SEPARATOR . $this->router->getPath(
+        return ($fullPath ? $path : '') . '/' . $this->router->getPath(
                 $action,
                 $controller,
                 $arguments,

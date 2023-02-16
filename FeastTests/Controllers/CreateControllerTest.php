@@ -598,7 +598,7 @@ class CreateControllerTest extends TestCase
             new CliArguments(['famine', 'feast:create:action'])
         );
         $this->writeTempController(
-            APPLICATION_ROOT . 'Modules/success/Controllers/SuccessController.php',
+            APPLICATION_ROOT . 'Modules' . DIRECTORY_SEPARATOR . 'success' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'SuccessController.php',
             '\\Modules\\success',
             'Success'
         );
@@ -619,7 +619,7 @@ class CreateControllerTest extends TestCase
             new CliArguments(['famine', 'feast:create:action'])
         );
         $this->writeTempController(
-            APPLICATION_ROOT . 'Modules/CLI/Controllers/SuccessController.php',
+            APPLICATION_ROOT . 'Modules' . DIRECTORY_SEPARATOR . 'CLI' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'SuccessController.php',
             '\\Modules\\CLI',
             'Success'
         );
@@ -654,7 +654,7 @@ class CreateControllerTest extends TestCase
             new CliArguments(['famine', 'feast:create:action'])
         );
         $this->writeTempController(
-            APPLICATION_ROOT . 'Modules/CLI/Controllers/SuccessController.php',
+            APPLICATION_ROOT . 'Modules' . DIRECTORY_SEPARATOR . 'CLI' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'SuccessController.php',
             '\\Modules\\CLI',
             'Success'
         );
@@ -675,7 +675,7 @@ class CreateControllerTest extends TestCase
             new CliArguments(['famine', 'feast:create:action'])
         );
         $this->writeTempController(
-            APPLICATION_ROOT . 'Modules/success/Controllers/SuccessController.php',
+            APPLICATION_ROOT . 'Modules' . DIRECTORY_SEPARATOR . 'success' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'SuccessController.php',
             '\\Modules\\success',
             'Success',
             'indexGet'
@@ -695,7 +695,7 @@ class CreateControllerTest extends TestCase
             new CliArguments(['famine', 'feast:create:action'])
         );
         $this->writeTempController(
-            APPLICATION_ROOT . 'Modules/success/Controllers/SuccessController.php',
+            APPLICATION_ROOT . 'Modules' . DIRECTORY_SEPARATOR . 'success' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'SuccessController.php',
             '\\Modules\\success',
             'Success',
             null,
@@ -716,13 +716,13 @@ class CreateControllerTest extends TestCase
             new CliArguments(['famine', 'feast:create:action'])
         );
         $this->writeTempController(
-            APPLICATION_ROOT . 'Modules/Failure/Controllers/SuccessController.php',
+            APPLICATION_ROOT . 'Modules' . DIRECTORY_SEPARATOR . 'Failure' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . 'SuccessController.php',
             '\\Modules\\Failure',
             'Success'
         );
         $controller->actionGet('Success', 'index', module: 'Failure');
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Modules/Failure/Controllers/ created', trim($output));
+        $this->assertStringContainsString('Modules' . DIRECTORY_SEPARATOR . 'Failure' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . ' created', trim($output));
         $this->assertStringNotContainsString('Controller.php created', trim($output));
     }
 
@@ -738,7 +738,7 @@ class CreateControllerTest extends TestCase
 
         $controller->actionGet('Failure', 'index', module: 'Failure');
         $output = $this->getActualOutputForAssertion();
-        $this->assertStringContainsString('Modules/Failure/Controllers/ created', trim($output));
+        $this->assertStringContainsString('Modules' . DIRECTORY_SEPARATOR . 'Failure' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . ' created', trim($output));
         $this->assertStringContainsString('Controller.php created', trim($output));
         $this->assertStringContainsString('Action indexGet created', trim($output));
         $this->assertStringContainsString('index.phtml created', trim($output));
@@ -802,10 +802,10 @@ class CreateControllerTest extends TestCase
         $dbFactory->method('getConnection')->willReturn($connection);
 
         $controller->modelGet($dbFactory, 'users2', model: 'user');
-        $output = $this->getActualOutputForAssertion();
+        $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
         $this->assertEquals(
-            file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModel.txt'),
-            $output
+            str_replace("\r\n","\n",file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModel.txt')),
+            str_replace("\r\n","\n",$output)
         );
     }
 
@@ -835,10 +835,10 @@ class CreateControllerTest extends TestCase
 
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $controller->modelGet($dbFactory, 'users2', model: 'user');
-        $output = $this->getActualOutputForAssertion();
+        $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
         $this->assertEquals(
-            file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExists.txt'),
-            $output
+            str_replace("\r\n","\n",file_get_contents(APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExists.txt')),
+            str_replace("\r\n","\n",$output)
         );
     }
 
@@ -884,12 +884,12 @@ class CreateControllerTest extends TestCase
         $connection->method('getDescribedTable')->willReturn($tableInfo);
         $dbFactory->method('getConnection')->willReturn($connection);
         $controller->modelGet($dbFactory, 'users2', model: 'user');
-        $output = $this->getActualOutputForAssertion();
+        $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
         $this->assertEquals(
-            file_get_contents(
+            str_replace("\r\n","\n",file_get_contents(
                 APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelCompoundPrimary.txt'
-            ),
-            $output
+            )),
+            str_replace("\r\n","\n",$output)
         );
     }
 
@@ -916,12 +916,12 @@ class CreateControllerTest extends TestCase
         $dbFactory->method('getConnection')->willReturn($connection);
 
         $controller->modelGet($dbFactory, 'users2', model: 'user');
-        $output = $this->getActualOutputForAssertion();
+        $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
         $this->assertEquals(
-            file_get_contents(
+            str_replace("\r\n","\n",file_get_contents(
                 APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelNoPrimary.txt'
-            ),
-            $output
+            )),
+            str_replace("\r\n","\n",$output)
         );
     
     
@@ -951,12 +951,12 @@ class CreateControllerTest extends TestCase
 
         $controller->modelGet($dbFactory, 'users2', model: 'user');
         $controller->modelGet($dbFactory, 'users2', model: 'user');
-        $output = $this->getActualOutputForAssertion();
+        $output = $this->linuxifyTestOutput($this->getActualOutputForAssertion());
         $this->assertEquals(
-            file_get_contents(
+            str_replace("\r\n","\n",file_get_contents(
                 APPLICATION_ROOT . 'ExpectedOutputs' . DIRECTORY_SEPARATOR . 'testCreateModelAlreadyExistsNoPrimary.txt'
-            ),
-            $output
+            )),
+            str_replace("\r\n","\n",$output)
         );
     }
 
@@ -989,5 +989,11 @@ class CreateControllerTest extends TestCase
     {
         FileData::$files[$name] = $contents;
     }
-
+    
+    protected function linuxifyTestOutput(string $output): string
+    {
+        $output = str_replace('Model\\Generated\\ ','Model/Generated/ ',$output );
+        
+        return $output;
+    }
 }

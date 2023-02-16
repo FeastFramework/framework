@@ -151,7 +151,7 @@ class CurlTest extends TestCase
         $request->makeRequest();
         $this->assertEquals(ResponseCode::HTTP_CODE_200, $request->getResponseCode());
         $this->assertEquals(
-            '<!DOCTYPE html>
+            str_replace("\r\n","\n",'<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -161,8 +161,8 @@ class CurlTest extends TestCase
 Test
 </body>
 </html>
-',
-            $request->getResponseAsString()
+'),
+            str_replace("\r\n","\n",$request->getResponseAsString())
         );
     }
 
@@ -173,7 +173,7 @@ Test
         $request->makeRequest();
         $this->assertEquals(ResponseCode::HTTP_CODE_200, $request->getResponseCode());
         $this->assertEquals(
-            '<?xml version="1.0"?>
+            str_replace("\r\n","\n",'<?xml version="1.0"?>
 <html>
 <head>
     <meta charset="UTF-8"/>
@@ -183,8 +183,8 @@ Test
 Test
 </body>
 </html>
-',
-            $request->getResponseAsXml()->saveXML()
+'),
+            str_replace("\r\n","\n",$request->getResponseAsXml()->saveXML())
         );
     }
 

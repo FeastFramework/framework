@@ -66,9 +66,9 @@ class ServerFailureExceptionTest extends TestCase
         $exception->printParentException();
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString(
-            'Test
-Thrown on line',
-            $output
+            str_replace("\r\n","\n",'Test
+Thrown on line'),
+            str_replace("\r\n","\n",$output)
         );
     }
 
@@ -79,9 +79,9 @@ Thrown on line',
         $exception->printError();
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString(
-            'Test
-Thrown on line',
-            $output
+            str_replace("\r\n","\n",'Test
+Thrown on line'),
+            str_replace("\r\n","\n",$output)
         );
     }
 
