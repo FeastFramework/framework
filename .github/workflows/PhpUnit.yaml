@@ -1,4 +1,4 @@
-name: PHPUnit
+name: PHPUnit Linux
 
 on: [push, pull_request]
 
