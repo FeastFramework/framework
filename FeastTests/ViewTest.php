@@ -22,7 +22,7 @@ use Feast\Enums\DocType;
 use Feast\Interfaces\ConfigInterface;
 use Feast\View;
 
-class ViewTest extends FeastBaseTest
+class ViewTest extends OsSafeTestCase
 {
     protected View $view;
 

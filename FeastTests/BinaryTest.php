@@ -21,7 +21,7 @@ declare(strict_types=1);
 use Feast\Binary;
 use Feast\Exception\NotFoundException;
 
-class BinaryTest extends FeastBaseTest
+class BinaryTest extends OsSafeTestCase
 {
     protected Binary $binary;
 

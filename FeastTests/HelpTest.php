@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 use Feast\Help;
 
-class HelpTest extends FeastBaseTest
+class HelpTest extends OsSafeTestCase
 {
     protected Help $help;
 

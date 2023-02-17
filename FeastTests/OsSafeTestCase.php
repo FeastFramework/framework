@@ -19,7 +19,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
-abstract class FeastBaseTest extends TestCase
+abstract class OsSafeTestCase extends TestCase
 {
     protected function assertEqualsIgnoreLineEndingDiff(string $expected, string $actual): void
     {
@@ -28,7 +28,7 @@ abstract class FeastBaseTest extends TestCase
 
     protected function assertStringContainsStringIgnoreLineEndingDiff(string $needle, string $haystack): void
     {
-        $this->assertStringContainsString(str_replace("\r\n", "\n", $needle), str_replace("\r\n","\n",$haystack));
+        $this->assertStringContainsString(str_replace("\r\n", "\n", $needle), str_replace("\r\n", "\n", $haystack));
     }
 
     protected function assertStringStartsWithIgnoreLineEndingDiff(string $prefix, string $haystack): void
