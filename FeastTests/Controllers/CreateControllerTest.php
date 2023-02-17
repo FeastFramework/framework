@@ -33,7 +33,7 @@ use Feast\Interfaces\DatabaseInterface;
 use Feast\Main;
 use stdClass;
 
-class CreateControllerTest extends \FeastBaseTest
+class CreateControllerTest extends \OsSafeTestCase
 {
 
     public function setUp(): void

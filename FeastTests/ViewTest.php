@@ -25,7 +25,7 @@ use Feast\View;
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
-class ViewTest extends FeastBaseTest
+class ViewTest extends OsSafeTestCase
 {
     protected View $view;
 

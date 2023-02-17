@@ -22,7 +22,7 @@ namespace Csv;
 
 use Feast\Csv\CsvWriter;
 
-class CsvWriterTest extends \FeastBaseTest
+class CsvWriterTest extends \OsSafeTestCase
 {
     public function testWrite(): void
     {
