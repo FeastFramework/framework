@@ -1,0 +1,19 @@
+name: PHPUnit
+
+on: [push, pull_request]
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          extensions: bcmath
+          coverage: xdebug
+          tools: phpunit:9
+      - name: Run PHPUnit
+        run: phpunit -c FeastTests/githubphpunit.xml --coverage-clover coverage.xml
+     
