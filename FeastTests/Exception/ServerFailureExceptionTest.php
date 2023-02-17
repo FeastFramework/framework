@@ -28,7 +28,7 @@ use Feast\Interfaces\ResponseInterface;
 use Feast\Main;
 use Feast\ServiceContainer\ServiceContainer;
 
-class ServerFailureExceptionTest extends \FeastBaseTest
+class ServerFailureExceptionTest extends \OsSafeTestCase
 {
 
     public function testPrintErrorJson(): void

@@ -26,7 +26,7 @@ use Feast\Exception\CurlException;
 use Feast\HttpRequest\Curl;
 use Feast\HttpRequest\HttpRequest;
 
-class CurlTest extends \FeastBaseTest
+class CurlTest extends \OsSafeTestCase
 {
 
     public function testGet(): void
