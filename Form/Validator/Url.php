@@ -52,7 +52,7 @@ class Url implements Validator
             $errors[] = [$key, 'URL'];
             $valid = false;
         }
-        
+
         return $valid;
     }
 

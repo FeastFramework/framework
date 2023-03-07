@@ -42,7 +42,7 @@ abstract class BaseMapper
     /** @var string|null SEQUENCE_NAME */
     protected const SEQUENCE_NAME = null;
     public const CONNECTION = 'default';
-    public const NOT_NULL = 'not_null';
+    final public const NOT_NULL = 'not_null';
     protected DatabaseInterface $connection;
 
     /**

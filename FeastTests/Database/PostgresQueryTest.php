@@ -83,11 +83,19 @@ class PostgresQueryTest extends TestCase
         $query->replace('test', ['test' => 'test']);
     }
 
-    public function testWhere(): void
+    public function testWhereMulti(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->where('test = ?', ['test']);
-        $this->assertEquals('SELECT test FROM test WHERE (test = ?)', $query->__toString());
+        $query->from('test', ['test'])->where('test = ? and feast = ?', 'test', 'framework');
+        $this->assertEquals('SELECT test FROM test WHERE (test = ? and feast = ?)', (string)$query);
+        $this->assertEquals('SELECT test FROM test WHERE (test = \'test\' and feast = \'framework\')', $query->getRawQueryWithParams());
+    }
+
+    public function testWhereSingle(): void
+    {
+        $query = $this->getValidQuery();
+        $query->from('test', ['test'])->where('test = ?', 'test');
+        $this->assertEquals('SELECT test FROM test WHERE (test = ?)', (string)$query);
     }
 
     public function testWhereNonArray(): void
@@ -189,7 +197,7 @@ class PostgresQueryTest extends TestCase
     public function testGetRawQueryNoParams(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->where('1=1', ['test']);
+        $query->from('test', ['test'])->where('1=1', 'test');
         $this->assertEquals('SELECT test FROM test WHERE (1=1)', $query->getRawQueryWithParams());
     }
 
@@ -266,8 +274,8 @@ class PostgresQueryTest extends TestCase
     public function testHavingMulti(): void
     {
         $query = $this->getValidQuery();
-        $query->from('test', ['test'])->having('test > ?', ['1']);
-        $this->assertEquals('SELECT test FROM test HAVING (test > ?)', $query->__toString());
+        $query->from('test', ['test'])->having('test > ? and test2 > ?', '1','2');
+        $this->assertEquals('SELECT test FROM test HAVING (test > ? and test2 > ?)', (string)$query);
     }
     
 

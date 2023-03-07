@@ -25,7 +25,7 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
 class CliArguments implements ServiceContainerItemInterface
 {
 
-    public function __construct(protected array $arguments)
+    public function __construct(protected array $arguments = [])
     {
     }
 

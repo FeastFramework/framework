@@ -42,7 +42,7 @@ class Simple extends HttpRequest implements HttpRequestInterface
         }
         $url = $this->url;
         $context = [];
-        $context['method'] = $this->method;
+        $context['method'] = $this->method->value;
         $context['user_agent'] = $this->userAgent;
         $context['request_fulluri'] = true;
         $header = 'Accept-language: ' . $this->language . "\r\n";

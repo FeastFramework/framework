@@ -27,7 +27,7 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
 
 interface RouterInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     /**
      * Update the "runAs". Needed to properly route in case of cached router.

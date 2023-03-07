@@ -23,8 +23,8 @@ namespace Feast\Form;
 class Label
 {
 
-    public const LABEL_POSITION_FIRST = 'first';
-    public const LABEL_POSITION_LAST = 'last';
+    final public const LABEL_POSITION_FIRST = 'first';
+    final public const LABEL_POSITION_LAST = 'last';
 
     public function __construct(
         public string $text = '',

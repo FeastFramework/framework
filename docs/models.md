@@ -305,6 +305,7 @@ see [feast:migration](cli.md#feastmigration) in the CLI docs.
 If you have cached your database info (see [feast:cache:dbinfo-generate](cli.md#feastcachedbinfo-generate)), then the
 cache will automatically re-generate after migrations are ran.
 
+
 ### List Migrations
 
 You can quickly get a list of all migrations as well as their status by running `php famine feast:migration:list`
@@ -343,14 +344,15 @@ All bindings in the below methods are passed in as a prepared statement executio
 ##### Where
 
 The `where` method creates a where clause on the query. It takes in a statement (or the where clause)
-and bindings as either a `\Feast\Date` argument, a scalar, or an array of bindings for multiple. Each call to
-the `where` method will create a parenthesis wrapped group, allowing you to focus only on what you need for that piece
-of the statement.
+and bindings as either a `\Feast\Date` argument, or a scalar. Multiple bindings may be passed in as needed. In versions
+of FEAST Framework prior to 2.0, multiple bindings are passed in as an array. Each call to the `where` method will create
+a parenthesis wrapped group, allowing you to focus only on what you need for that piece of the statement.
 
 Example
 
 ```php
-$query->where('test = ? or test_name = ?', ['feast','feast])->where('active' => 1);
+$query->where('test = ? or test_name = ?', ['feast','feast'])->where('active' => 1); // In version 1.x
+$query->where('test = ? or test_name = ?', 'feast','feast')->where('active' => 1); // In version 2.0.0 and above
 // This will result in the following where clause on the query. 
 // where (test = ? or test_name = ?) and (active = ?) 
 ```

@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Database;
 
+use Feast\Enums\ResponseCode;
 use Feast\Exception\DatabaseException;
 use Feast\Exception\ServerFailureException;
 use Feast\Interfaces\ConfigInterface;
@@ -75,7 +76,7 @@ class DatabaseFactory implements ServiceContainerItemInterface, DatabaseFactoryI
 
             return $connectionObject;
         }
-        throw new DatabaseException('Invalid Database Specified', 500, 500);
+        throw new DatabaseException('Invalid Database Specified', ResponseCode::HTTP_CODE_500, 500);
     }
 
     /**

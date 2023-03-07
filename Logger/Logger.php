@@ -39,7 +39,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
     use DependencyInjected;
 
     private string $logPath;
-    private ?int $logLevel;
+    protected LogLevelCode $logLevel;
     private bool $useSysLog = false;
     private int $sysLogFacility = LOG_USER;
 
@@ -171,11 +171,11 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
             $message = strtoupper($level) . ': ' . $message;
             $level = $this->getLevelFromString($level);
         }
-        if ($level > $this->logLevel) {
+        if ($level instanceof LogLevelCode === false || $level->value > $this->logLevel->value) {
             return;
         }
         $message = $this->interpolateContext($message, $context);
-        $this->rawLog((int)$level, (date('[Y-m-d H:i:s] ')) . trim($message));
+        $this->rawLog($level->value, (date('[Y-m-d H:i:s] ')) . trim($message));
         if (isset($context['exception']) && $context['exception'] instanceof Throwable) {
             $exception = $context['exception'];
 
@@ -213,7 +213,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
      */
     public function rawLog(int $level, string $message): void
     {
-        if ($level > $this->logLevel) {
+        if ($level > $this->logLevel->value) {
             return;
         }
         if ($this->useSysLog) {
@@ -262,7 +262,7 @@ class Logger implements LoggerInterface, ServiceContainerItemInterface, \Feast\I
         openlog($prefix, $sysLogFlags, $sysLogFacility);
     }
 
-    private function getLevelFromString(string $level): int
+    private function getLevelFromString(string $level): LogLevelCode
     {
         return match (strtolower($level)) {
             LogLevel::DEBUG => LogLevelCode::DEBUG,

@@ -18,9 +18,16 @@
 
 declare(strict_types=1);
 
-namespace Feast\Exception;
+namespace Feast\Enums;
 
-class ResponseException extends ServerFailureException
+enum DocType: string
 {
-
+    case HTML_4_01_FRAMESET = 'html401frame';
+    case HTML_4_01_STRICT = 'html401strict';
+    case HTML_4_01_TRANSITIONAL = 'html401transitional';
+    case HTML_5 = 'html5';
+    case XHTML_1_0_FRAMESET = 'xhtml1frame';
+    case XHTML_1_0_STRICT = 'xhtml1strict';
+    case XHTML_1_0_TRANSITIONAL = 'xhtml1transitional';
+    case XHTML_1_1 = 'xhtml11';
 }

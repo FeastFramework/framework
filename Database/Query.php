@@ -33,7 +33,7 @@ use Throwable;
 abstract class Query
 {
     use DebugQuery;
-    
+
     public const DIRECTION_ASC = 'ASC';
     public const DIRECTION_DESC = 'DESC';
     public const JOIN_INNER = 'INNER JOIN';
@@ -71,25 +71,21 @@ abstract class Query
     /**
      * Add where clause.
      *
-     * Bindings can be a scalar or Feast\Date or an array for multiple bindings.
+     * Bindings can be a scalar or Feast\Date and are variadic for multiple bindings.
      *
      * @param string $statement
-     * @param Date|string|int|bool|float|array|null $bindings
+     * @param Date|string|int|bool|float|null ...$bindings
      * @return static
      */
-    public function where(string $statement, Date|string|int|bool|float|array|null $bindings = null): static
+    public function where(string $statement, Date|string|int|bool|float|null ...$bindings): static
     {
-        if ( is_bool($bindings) ) {
-            $bindings = $bindings ? 'true' : 'false';
-        } elseif (is_array($bindings) ) {
-            $newBinding = [];
-            /** @var Date|string|int|bool|float|null $binding */
-            foreach ($bindings as $binding) {
-                $newBinding[] = $this->filterBinding($binding);
-            }
-            $bindings = $newBinding;
+        $newBinding = [];
+        /** @var Date|string|int|bool|float|null $binding */
+        foreach ($bindings as $binding) {
+            $newBinding[] = $this->filterBinding($binding);
         }
-        $this->where[] = ['statement' => $statement, 'bindings' => $bindings];
+       
+        $this->where[] = ['statement' => $statement, 'bindings' => $newBinding];
 
         return $this;
     }
@@ -97,25 +93,21 @@ abstract class Query
     /**
      * Add having clause.
      *
-     * Bindings can be a scalar or an array for multiple bindings.
+     * Bindings can be a scalar or Feast\Date and are variadic for multiple bindings.
      *
      * @param string $statement
-     * @param Date|string|int|bool|float|array|null $bindings
+     * @param Date|string|int|bool|float|null ...$bindings
      * @return static
      */
-    public function having(string $statement, Date|string|int|bool|float|array|null $bindings = null): static
+    public function having(string $statement, Date|string|int|bool|float|null ...$bindings): static
     {
-        if ( is_bool($bindings) ) {
-            $bindings = $bindings ? 'true' : 'false';
-        } elseif (is_array($bindings) ) {
-            $newBinding = [];
-            /** @var Date|string|int|bool|float|null $binding */
-            foreach ($bindings as $binding) {
-                $newBinding[] = $this->filterBinding($binding);
-            }
-            $bindings = $newBinding;
+        $newBinding = [];
+        /** @var Date|string|int|bool|float|null $binding */
+        foreach ($bindings as $binding) {
+            $newBinding[] = $this->filterBinding($binding);
         }
-        $this->having[] = ['statement' => $statement, 'bindings' => $bindings];
+
+        $this->having[] = ['statement' => $statement, 'bindings' => $newBinding];
 
         return $this;
     }
@@ -468,7 +460,7 @@ abstract class Query
     {
         return null;
     }
-    
+
     protected function filterBinding(string|int|bool|Date|float|null $binding): string|int|bool|Date|float|null
     {
         return $binding;

@@ -30,9 +30,9 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
  */
 interface DatabaseFactoryInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
-    public const DEFAULT_CONNECTION = 'default';
+    final public const DEFAULT_CONNECTION = 'default';
 
     /**
      * Get the specified connection

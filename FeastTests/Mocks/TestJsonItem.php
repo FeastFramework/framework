@@ -85,6 +85,9 @@ class TestJsonItem
     #[JsonItem(dateFormat: 'Ymd')]
     public DateTime $fourthTimestamp;
 
+    #[JsonItem(timezoneId: 'America/New_York')]
+    public string $timezoneId;
+    
     #[JsonItem(included: false)]
     public string $notIncluded;
 

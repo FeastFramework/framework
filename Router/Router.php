@@ -330,8 +330,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
         $routeGroup = $this->routes->$requestMethod;
         /** @var RouteData $routeData */
         foreach ((array)$routeGroup as $routeData) {
-            $arguments = [];
-            if (preg_match_all($routeData->pattern, $checkString, $arguments)) {
+            if (preg_match_all($routeData->pattern, $checkString)) {
                 return $routeData;
             }
         }
@@ -354,7 +353,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
             $instance = $parameter->newInstance();
             if ($instance->paramType === ParamType::PARAM) {
                 $parameterList[] = $instance->name;
-            } elseif ($instance->paramType === ParamType::FLAG) {
+            } else {
                 $flagList[$instance->name] = $instance->name;
             }
         }
@@ -884,7 +883,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
                 $methodName,
                 $pathAttribute->name,
                 $pathAttribute->defaults,
-                $methodType,
+                $methodType->value,
                 $module
             );
         }
@@ -913,7 +912,7 @@ class Router implements ServiceContainerItemInterface, RouterInterface
      */
     protected function getCurrentRequestMethod(): string
     {
-        return !empty($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : RequestMethod::GET;
+        return !empty($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : RequestMethod::GET->value;
     }
 
 }

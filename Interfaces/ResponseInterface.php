@@ -21,7 +21,7 @@ declare(strict_types=1);
 namespace Feast\Interfaces;
 
 use Exception;
-use Feast\Exception\ResponseException;
+use Feast\Enums\ResponseCode;
 use Feast\ServiceContainer\ServiceContainerItemInterface;
 use Feast\View;
 
@@ -30,15 +30,15 @@ use Feast\View;
  */
 interface ResponseInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     /**
      * Set the response code.
      *
-     * @param int $responseCode
-     * @throws ResponseException
+     * @param ResponseCode $responseCode
+     * @throws Exception
      */
-    public function setResponseCode(int $responseCode): void;
+    public function setResponseCode(ResponseCode $responseCode): void;
 
     /**
      * Send http response header.
@@ -73,10 +73,9 @@ interface ResponseInterface extends ServiceContainerItemInterface
      * Set redirect path.
      *
      * @param string $path
-     * @param int $code
-     * @throws ResponseException
+     * @param ResponseCode $code
      */
-    public function redirect(string $path, int $code = 302): void;
+    public function redirect(string $path, ResponseCode $code = ResponseCode::HTTP_CODE_302): void;
 
     /**
      * Get the redirect path for a redirect.

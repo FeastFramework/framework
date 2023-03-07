@@ -38,9 +38,9 @@ use Feast\Request;
 use Feast\Router\Router;
 use Feast\View;
 
-define('APPLICATION_ROOT', __DIR__ . '/');
-define('CONTROLLERS_FOLDER', 'Controllers');
-define('PLUGINS_FOLDER', 'Plugins');
+const APPLICATION_ROOT = __DIR__ . '/';
+const CONTROLLERS_FOLDER = 'Controllers';
+const PLUGINS_FOLDER = 'Plugins';
 
 // Initialize autoloader
 require_once(APPLICATION_ROOT . 'Autoloader.php');

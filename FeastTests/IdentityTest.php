@@ -18,7 +18,6 @@
 declare(strict_types=1);
 
 use Feast\Interfaces\ConfigInterface;
-use Feast\ServiceContainer\ServiceContainer;
 use Feast\Session\Identity;
 use Feast\Session\Session;
 use Mocks\MockUser;
@@ -41,7 +40,7 @@ class IdentityTest extends TestCase
         $config = $this->createStub(ConfigInterface::class);
         $config->method('getSetting')->willReturn('test');
 
-        $identity = new Identity($config, $session);
+        $identity = new Identity($config,$session);
         $user = $identity->getUser();
         $this->assertEquals('testUser', $user->user);
     }
@@ -69,7 +68,7 @@ class IdentityTest extends TestCase
 
         $testUser = new MockUser();
         $testUser->user = 'testUser';
-        $identity = new Identity($config, $session);
+        $identity = new Identity($config,$session);
         $user = $identity->getUser();
         $this->assertEquals(null, $user);
 
@@ -89,7 +88,7 @@ class IdentityTest extends TestCase
         $testUser = new MockUser();
         $testUser->user = 'testUser';
 
-        $identity = new Identity($config, $session);
+        $identity = new Identity($config,$session);
         $identity->saveUser($testUser);
 
         $user = $identity->getUser();

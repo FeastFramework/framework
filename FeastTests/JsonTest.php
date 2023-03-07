@@ -117,9 +117,11 @@ class JsonTest extends TestCase
         $item->thirdTimestamp->setTimezone(new DateTimeZone('America/New_York'));
         $item->fourthTimestamp->setTimezone(new DateTimeZone('America/New_York'));
 
+        $item->timezoneId = 'America/New_York';
+        
         $data = Json::marshal($item);
         $this->assertEquals(
-            '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4,"moreCalls":5},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null,"stringCalls":"test"},{"first_name":"PHP","last_name":"8.0","calls":null,"moreCalls":3,"stringCalls":"other test"}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"aClass":{"test":"ItWorks"},"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-04:00","thirdTimestamp":"2021-04-15T20:56:24-04:00","fourthTimestamp":"20210405"}',
+            '{"first_name":"FEAST","last_name":"Framework","test_item":{"first_name":"Jeremy","last_name":"Presutti","calls":4,"moreCalls":5},"second_item":{"also_first_name":"Orlando","also_last_name":"Florida"},"items":[{"first_name":"PHP","last_name":"7.4","calls":null,"stringCalls":"test"},{"first_name":"PHP","last_name":"8.0","calls":null,"moreCalls":3,"stringCalls":"other test"}],"cards":["4",5,["6"]],"otherItems":{"first":{"first_name":"Json","last_name":"Serializer","calls":null},"second":{"first_name":"Item","last_name":"Parsing","calls":null}},"thirdItems":{"test":"theTest","test2":"theTest2"},"otherSet":[{"first_name":"Json","last_name":"Serializer","calls":null},{"first_name":"Item","last_name":"Parsing","calls":null}],"thirdSet":["theTest","theTest2"],"calls":null,"count":4,"aClass":{"test":"ItWorks"},"timestamp":"20210415","otherTimestamp":"2021-04-05T06:41:00-04:00","thirdTimestamp":"2021-04-15T20:56:24-04:00","fourthTimestamp":"20210405","timezoneId":"America\/New_Yonk"}',
             $data
         );
     }

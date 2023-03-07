@@ -29,7 +29,7 @@ use Feast\ServiceContainer\ServiceContainerItemInterface;
  */
 interface ProfilerInterface extends ServiceContainerItemInterface
 {
-    public const INTERFACE_NAME = self::class;
+    final public const INTERFACE_NAME = self::class;
 
     /**
      * Return the total time of execution up to this point.

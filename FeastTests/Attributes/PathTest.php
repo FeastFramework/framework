@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace Attributes;
 
 use Feast\Attributes\Path;
+use Feast\Enums\RequestMethod;
 use PHPUnit\Framework\TestCase;
 
 class PathTest extends TestCase
@@ -28,42 +29,42 @@ class PathTest extends TestCase
     public function testGetMethodGetOnly(): void
     {
         $path = new Path('/index', 'index', Path::METHOD_GET);
-        $this->assertEquals(['GET'], $path->getMethods());
+        $this->assertEquals([RequestMethod::GET], $path->getMethods());
     }
 
     public function testGetMethodPostOnly(): void
     {
         $path = new Path('/index', 'index', Path::METHOD_POST);
-        $this->assertEquals(['POST'], $path->getMethods());
+        $this->assertEquals([RequestMethod::POST], $path->getMethods());
     }
 
     public function testGetMethodPutOnly(): void
     {
         $path = new Path('/index', 'index', Path::METHOD_PUT);
-        $this->assertEquals(['PUT'], $path->getMethods());
+        $this->assertEquals([RequestMethod::PUT], $path->getMethods());
     }
 
     public function testGetMethodDeleteOnly(): void
     {
         $path = new Path('/index', 'index', Path::METHOD_DELETE);
-        $this->assertEquals(['DELETE'], $path->getMethods());
+        $this->assertEquals([RequestMethod::DELETE], $path->getMethods());
     }
 
     public function testGetMethodPatchOnly(): void
     {
         $path = new Path('/index', 'index', Path::METHOD_PATCH);
-        $this->assertEquals(['PATCH'], $path->getMethods());
+        $this->assertEquals([RequestMethod::PATCH], $path->getMethods());
     }
 
     public function testGetMethodGetAndPost(): void
     {
         $path = new Path('/index', 'index', Path::METHOD_GET | Path::METHOD_POST);
-        $this->assertEquals(['GET', 'POST'], $path->getMethods());
+        $this->assertEquals([RequestMethod::GET, RequestMethod::POST], $path->getMethods());
     }
 
     public function testGetMethodAll(): void
     {
         $path = new Path('/index', 'index', Path::METHOD_ALL);
-        $this->assertEquals(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], $path->getMethods());
+        $this->assertEquals([RequestMethod::GET, RequestMethod::POST, RequestMethod::PUT, RequestMethod::DELETE, RequestMethod::PATCH], $path->getMethods());
     }
 }

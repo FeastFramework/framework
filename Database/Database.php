@@ -42,30 +42,40 @@ class Database implements DatabaseInterface
     use DebugQuery;
 
     private PDO $connection;
-    private string $databaseType;
+    private DatabaseType $databaseType;
     private string $queryClass;
-    private LoggerInterface $logger;
     private string $escapeCharacter;
 
     /**
      * @param stdClass $connectionDetails
      * @param string $pdoClass
-     * @param LoggerInterface|null $logger
-     * @throws DatabaseException
+     * @param LoggerInterface $logger
      * @throws InvalidOptionException
      * @throws ServerFailureException
-     * @throws \Feast\ServiceContainer\NotFoundException
      */
-    public function __construct(stdClass $connectionDetails, string $pdoClass, ?LoggerInterface $logger)
-    {
-        $logger ??= di(LoggerInterface::INTERFACE_NAME);
-        $this->logger = $logger;
-
+    public function __construct(
+        #[\SensitiveParameter]
+        stdClass $connectionDetails,
+        string $pdoClass,
+        private readonly LoggerInterface $logger
+    ) {
         $username = (string)$connectionDetails->user;
         $password = (string)$connectionDetails->pass;
-        $this->databaseType = (string)$connectionDetails->connectionType;
-        /** @psalm-suppress DeprecatedMethod (will be removed in 2.0) */
-        $this->queryClass = (string)($connectionDetails->queryClass ?? $this->getQueryClass());
+        /** @var DatabaseType */
+        $this->databaseType = $connectionDetails->connectionType;
+        $queryClass = (string)($connectionDetails->queryClass ?? '');
+        if ($queryClass === '') {
+            throw new InvalidOptionException(
+                'queryClass not passed in. Expected a class that inherits \Feast\Database\Query '
+            );
+        }
+        if (!class_exists($queryClass)) {
+            throw new InvalidOptionException('queryClass ' . $queryClass . ' not found.');
+        }
+        if (!is_subclass_of($queryClass, Query::class)) {
+            throw new InvalidOptionException('queryClass ' . $queryClass . ' does not extend \Feast\Database\Query.');
+        }
+        $this->queryClass = $queryClass;
         $options = $this->getConfigOptions($connectionDetails);
 
         // Get connection string
@@ -189,26 +199,6 @@ class Database implements DatabaseInterface
     {
         /** @var Query */
         return new ($this->queryClass)($this->connection, $this->logger);
-    }
-
-    /**
-     * Get Query class from DatabaseType (Deprecated)
-     *
-     * @return string
-     * @throws DatabaseException
-     * @deprecated
-     */
-    public function getQueryClass(): string
-    {
-        trigger_error(
-            'The method ' . self::class . '::getQueryClass is deprecated. Set the queryClass option in your database config.',
-            E_USER_DEPRECATED
-        );
-        return match ($this->databaseType) {
-            DatabaseType::MYSQL => MySQLQuery::class,
-            DatabaseType::SQLITE => SQLiteQuery::class,
-            default => throw new DatabaseException('Invalid Database Type')
-        };
     }
 
     /**
@@ -381,7 +371,6 @@ class Database implements DatabaseInterface
      * @param string $hostname
      * @param int $port
      * @return string
-     * @throws ServerFailureException
      */
     private function getConnectionString(string $database, string $hostname = 'localhost', int $port = 3306): string
     {
@@ -391,18 +380,16 @@ class Database implements DatabaseInterface
             DatabaseType::SQLITE =>
             sprintf('sqlite:%s', $database),
             DatabaseType::POSTGRES =>
-            sprintf('pgsql:host=%s;port=%s;dbname=%s', $hostname, $port, $database),
-            default =>
-            throw new DatabaseException('Invalid Database type')
+            sprintf('pgsql:host=%s;port=%s;dbname=%s', $hostname, $port, $database)
         };
     }
 
     /**
      * Get Database type.
      *
-     * @return string
+     * @return DatabaseType
      */
-    public function getDatabaseType(): string
+    public function getDatabaseType(): DatabaseType
     {
         return $this->databaseType;
     }

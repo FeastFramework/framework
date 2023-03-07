@@ -22,9 +22,6 @@ use Feast\Date;
 use Feast\Exception\InvalidDateException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class DateTest extends TestCase
 {
 

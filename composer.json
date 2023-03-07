@@ -11,14 +11,19 @@
         }
     ],
     "require": {
-        "php": "^8.0.0",
+        "php": "^8.2.0",
         "ext-pdo": "*",
         "ext-xml": "*",
-        "ext-readline": "*"
+        "ext-readline": "*",
+        "ext-ctype": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*",
+        "ext-fileinfo": "*"
     },
     "suggest": {
         "ext-mysql": "*",
-        "ext-pdo_mysql": "*"
+        "ext-pdo_mysql": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "psalm/phar": "^4.7"

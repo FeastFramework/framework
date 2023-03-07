@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Feast\Email;
 
+use Feast\Enums\ResponseCode;
 use Feast\Exception\NotFoundException;
 
 class Attachment
@@ -41,7 +42,7 @@ class Attachment
     public function setContentFromFile(string $fileName): static
     {
         if (is_file($fileName) === false || is_readable($fileName) === false) {
-            throw new NotFoundException('Invalid file', 500);
+            throw new NotFoundException('Invalid file', ResponseCode::HTTP_CODE_500);
         }
         $file = file_get_contents($fileName);
         $this->setContent($file);

@@ -37,7 +37,7 @@ class DatabaseTest extends TestCase
 {
 
     protected function getValidConnection(
-        ?string $connectionType = DatabaseType::MYSQL,
+        ?DatabaseType $connectionType = DatabaseType::MYSQL,
         ?string $queryClass = MySQLQuery::class,
         bool $options = false
     ): Database {
@@ -121,8 +121,8 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = 'This Database Doesn\'t Exist';
-        $this->expectException(DatabaseException::class);
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $this->expectException(\TypeError::class);
         new Database($details, PDOMock::class, $logger);
     }
 
@@ -135,6 +135,7 @@ class DatabaseTest extends TestCase
         $details->name = 'Test';
         $details->url = 'mysql:host=localhost;port=3306;';
         $details->connectionType = DatabaseType::MYSQL;
+        $details->queryClass = MySQLQuery::class;
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $database = new Database($details, PDOMock::class, $logger);
         $this->assertInstanceOf(Database::class, $database);
@@ -148,12 +149,13 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
+        $details->queryClass = MySQLQuery::class;
         $this->expectException(InvalidOptionException::class);
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         new Database($details, \stdClass::class, $logger);
     }
 
-    public function testInstantiationWithDeprecatedMethodMySQL(): void
+    public function testInstantiationInvalidDbClass(): void
     {
         $details = new \stdClass();
         $details->host = 'localhost';
@@ -161,12 +163,40 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::MYSQL;
+        $details->queryClass = 'completegibberishdefinitelynotaclass';
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
-        $database = new Database($details, PDOMock::class, $logger);
-        $this->assertInstanceOf(Database::class, $database);
+        $this->expectException(InvalidOptionException::class);
+        new Database($details, \stdClass::class, $logger);
     }
 
-    public function testInstantiationWithDeprecatedMethodSqLite(): void
+    public function testInstantiationNonExtendedDbClass(): void
+    {
+        $details = new \stdClass();
+        $details->host = 'localhost';
+        $details->user = 'root';
+        $details->pass = 'test';
+        $details->name = 'Test';
+        $details->connectionType = DatabaseType::MYSQL;
+        $details->queryClass = \stdClass::class;
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $this->expectException(InvalidOptionException::class);
+        new Database($details, \stdClass::class, $logger);
+    }
+
+    public function testInstantiationWithRemovedFormerlyDeprecatedMethodMySQL(): void
+    {
+        $details = new \stdClass();
+        $details->host = 'localhost';
+        $details->user = 'root';
+        $details->pass = 'test';
+        $details->name = 'Test';
+        $details->connectionType = DatabaseType::MYSQL;
+        $this->expectException(InvalidOptionException::class);
+        $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
+        $database = new Database($details, PDOMock::class, $logger);
+    }
+
+    public function testInstantiationWithRemovedFormerlyDeprecatedMethodSqLite(): void
     {
         $details = new \stdClass();
         $details->host = 'localhost';
@@ -174,9 +204,9 @@ class DatabaseTest extends TestCase
         $details->pass = 'test';
         $details->name = 'Test';
         $details->connectionType = DatabaseType::SQLITE;
+        $this->expectException(InvalidOptionException::class);
         $logger = $this->createMock(LoggerInterface::INTERFACE_NAME);
         $database = new Database($details, PDOMock::class, $logger);
-        $this->assertInstanceOf(Database::class, $database);
     }
 
     public function testInsert(): void
@@ -248,22 +278,10 @@ class DatabaseTest extends TestCase
         $this->assertEquals(DatabaseType::MYSQL, $database->getDatabaseType());
     }
 
-    public function testGetQueryClassMySQL(): void
-    {
-        $database = $this->getValidConnection();
-        $this->assertEquals(MySQLQuery::class, $database->getQueryClass());
-    }
-
     public function testGetDatabaseTypeSqlite(): void
     {
         $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
         $this->assertEquals(DatabaseType::SQLITE, $database->getDatabaseType());
-    }
-
-    public function testGetQueryClassSqlite(): void
-    {
-        $database = $this->getValidConnection(DatabaseType::SQLITE, SQLiteQuery::class);
-        $this->assertEquals(SQLiteQuery::class, $database->getQueryClass());
     }
 
     public function testDelete(): void

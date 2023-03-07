@@ -28,7 +28,6 @@ use Feast\ServiceContainer\ServiceContainer;
 abstract class CliController implements ControllerInterface
 {
     protected Terminal $terminal;
-    protected CliArguments $cliArguments;
 
     /**
      * @throws NotFoundException
@@ -36,12 +35,11 @@ abstract class CliController implements ControllerInterface
     public function __construct(
         ServiceContainer $di,
         ?ConfigInterface $config = null,
-        ?CliArguments $cliArguments = null
+        protected CliArguments $cliArguments = new CliArguments()
     ) {
         $config ??= $di->get(ConfigInterface::INTERFACE_NAME);
-        $this->cliArguments = $cliArguments ?? new CliArguments([]);
         /** @var bool|null $setting */
-        $setting = $config->getSetting('ttycolor', null);
+        $setting = $config->getSetting('ttycolor');
         $this->terminal = new Terminal($setting);
     }
 

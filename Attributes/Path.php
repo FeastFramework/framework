@@ -24,14 +24,14 @@ use Attribute;
 use Feast\Enums\RequestMethod;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class Path
+readonly class Path
 {
-    public const METHOD_GET = 1;
-    public const METHOD_POST = 2;
-    public const METHOD_PUT = 4;
-    public const METHOD_DELETE = 8;
-    public const METHOD_PATCH = 16;
-    public const METHOD_ALL = self::METHOD_GET | self::METHOD_POST | self::METHOD_PUT | self::METHOD_DELETE | self::METHOD_PATCH;
+    final public const METHOD_GET = 1;
+    final public const METHOD_POST = 2;
+    final public const METHOD_PUT = 4;
+    final public const METHOD_DELETE = 8;
+    final public const METHOD_PATCH = 16;
+    final public const METHOD_ALL = self::METHOD_GET | self::METHOD_POST | self::METHOD_PUT | self::METHOD_DELETE | self::METHOD_PATCH;
 
     /**
      * Path constructor.
@@ -50,7 +50,7 @@ class Path
     }
 
     /**
-     * @return array<string>
+     * @return array<RequestMethod>
      */
     public function getMethods(): array
     {

@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace Feast;
 
 use Feast\Enums\ResponseCode;
-use Feast\Exception\ResponseException;
 use Feast\Interfaces\ResponseInterface;
 use Feast\Interfaces\RouterInterface;
 use Feast\ServiceContainer\ContainerException;
@@ -38,7 +37,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
 {
     use DependencyInjected;
 
-    private int $responseCode = ResponseCode::HTTP_CODE_200;
+    private ResponseCode $responseCode = ResponseCode::HTTP_CODE_200;
     private bool $isJson = false;
     private object|array|null $jsonResponse = null;
     private ?int $jsonResponsePropertyTypes = null;
@@ -57,16 +56,11 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
     /**
      * Set the response code.
      *
-     * @param int $responseCode
-     * @throws ResponseException
+     * @param ResponseCode $responseCode
      */
-    public function setResponseCode(int $responseCode): void
+    public function setResponseCode(ResponseCode $responseCode): void
     {
-        if (ResponseCode::isValidResponseCode($responseCode)) {
-            $this->responseCode = $responseCode;
-        } else {
-            throw new ResponseException('Invalid response code!');
-        }
+        $this->responseCode = $responseCode;
     }
 
     /**
@@ -74,7 +68,7 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      */
     public function sendResponseCode(): void
     {
-        http_response_code($this->responseCode);
+        http_response_code($this->responseCode->value);
     }
 
     /**
@@ -83,7 +77,8 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      * @param View $view
      * @param RouterInterface $router
      * @param string $routePath
-     * @throws JsonException|ReflectionException
+     * @throws JsonException
+     * @throws ReflectionException
      */
     public function sendResponse(View $view, RouterInterface $router, string $routePath): void
     {
@@ -146,10 +141,9 @@ class Response implements ServiceContainerItemInterface, ResponseInterface
      * Set redirect path.
      *
      * @param string $path
-     * @param int $code
-     * @throws ResponseException
+     * @param ResponseCode $code
      */
-    public function redirect(string $path, int $code = 302): void
+    public function redirect(string $path, ResponseCode $code = ResponseCode::HTTP_CODE_302): void
     {
         $this->redirectPath = $path;
         $this->setResponseCode($code);

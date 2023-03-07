@@ -243,7 +243,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::EMERGENCY, false);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::ALERT, 'you noticing me');
+        $logger->rawLog(LogLevelCode::ALERT->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringNotContainsString('you noticing me', $output);
     }
@@ -253,7 +253,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::ALERT, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::DEBUG, 'you noticing me');
+        $logger->rawLog(LogLevelCode::DEBUG->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringNotContainsString('you noticing me', $output);
     }
@@ -263,7 +263,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::DEBUG, 'you noticing me');
+        $logger->rawLog(LogLevelCode::DEBUG->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }
@@ -273,7 +273,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::NOTICE, 'you noticing me');
+        $logger->rawLog(LogLevelCode::NOTICE->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }
@@ -283,7 +283,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::WARNING, 'you noticing me');
+        $logger->rawLog(LogLevelCode::WARNING->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }
@@ -293,7 +293,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::ERROR, 'you noticing me');
+        $logger->rawLog(LogLevelCode::ERROR->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }
@@ -303,7 +303,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::CRITICAL, 'you noticing me');
+        $logger->rawLog(LogLevelCode::CRITICAL->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }
@@ -313,7 +313,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::EMERGENCY, 'you noticing me');
+        $logger->rawLog(LogLevelCode::EMERGENCY->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }
@@ -323,7 +323,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::ALERT, 'you noticing me');
+        $logger->rawLog(LogLevelCode::ALERT->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }
@@ -333,7 +333,7 @@ class LoggerTest extends TestCase
         $config = $this->createStub(Config::class);
         $this->updateConfigStub($config, LogLevel::DEBUG, true);
         $logger = new Logger($config, Main::RUN_AS_CLI);
-        $logger->rawLog(LogLevelCode::INFO, 'you noticing me');
+        $logger->rawLog(LogLevelCode::INFO->value, 'you noticing me');
         $output = $this->getActualOutputForAssertion();
         $this->assertStringContainsString('you noticing me', $output);
     }

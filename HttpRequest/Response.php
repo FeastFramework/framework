@@ -27,8 +27,7 @@ use stdClass;
 
 class Response
 {
-
-    public function __construct(protected string $rawResponse, protected int $responseCode)
+    public function __construct(protected string $rawResponse, protected ResponseCode $responseCode)
     {
     }
 
@@ -37,7 +36,7 @@ class Response
         return $this->rawResponse;
     }
 
-    public function getResultAsJson(): ?stdClass
+    public function getResultAsJson(): stdClass|array|null
     {
         try {
             /** @var stdClass */
@@ -59,7 +58,7 @@ class Response
         }
     }
     
-    public function getResponseCode(): int
+    public function getResponseCode(): ResponseCode
     {
         return $this->responseCode;
     }

@@ -160,7 +160,7 @@ Test
         $this->assertEquals('text', $arguments['type'][0]);
         $this->assertEquals('pass', $arguments['type'][1]);
         $request->makeRequest();
-        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('POST', $request->getMethod()->value);
     }
 
     public function testPut(): void
@@ -175,7 +175,7 @@ Test
         );
 
         $this->assertTrue($request->getUrl() === 'https://www.google.com');
-        $this->assertEquals('PUT', $request->getMethod());
+        $this->assertEquals('PUT', $request->getMethod()->value);
         $request->makeRequest();
     }
 
@@ -191,7 +191,7 @@ Test
         );
 
         $this->assertTrue($request->getUrl() === 'https://www.google.com');
-        $this->assertEquals('PATCH', $request->getMethod());
+        $this->assertEquals('PATCH', $request->getMethod()->value);
         $request->makeRequest();
     }
 

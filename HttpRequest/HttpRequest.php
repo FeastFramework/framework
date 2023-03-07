@@ -40,7 +40,7 @@ abstract class HttpRequest implements HttpRequestInterface
     public const CONTENT_TYPE_JSON = 'application/json';
     public const DEFAULT_USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) FeastFramework/1.0';
 
-    protected string $method;
+    protected RequestMethod $method;
     /** @var array<string,string> $cookies */
     protected array $cookies;
     protected array $arguments;
@@ -49,7 +49,7 @@ abstract class HttpRequest implements HttpRequestInterface
     protected ?string $username = null;
     protected ?string $password = null;
     protected ?Response $response = null;
-    protected ?int $responseCode = null;
+    protected ?ResponseCode $responseCode = null;
     protected string $userAgent;
     protected ?string $referer = null;
     protected ?string $contentType = null;
@@ -145,9 +145,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Set request method.
      *
-     * @param string $method
+     * @param RequestMethod $method
      */
-    private function setMethod(string $method): void
+    private function setMethod(RequestMethod $method): void
     {
         $this->contentType = null;
         $this->arguments = [];
@@ -259,10 +259,9 @@ abstract class HttpRequest implements HttpRequestInterface
      * Set the url for the request.
      *
      * @param string $url
-     * @return HttpRequest
-     * @throws ServerFailureException
+     * @throws BadRequestException
      */
-    private function setUrl(string $url): HttpRequestInterface
+    private function setUrl(string $url): void
     {
         $this->url = $url;
         if (!str_contains($url, 'http://') && !str_contains($url, 'https://')) {
@@ -278,8 +277,6 @@ abstract class HttpRequest implements HttpRequestInterface
         } else {
             $this->baseUrl = $url;
         }
-
-        return $this;
     }
 
     /**
@@ -295,9 +292,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Get request method.
      *
-     * @return string
+     * @return RequestMethod
      */
-    public function getMethod(): string
+    public function getMethod(): RequestMethod
     {
         return $this->method;
     }
@@ -332,8 +329,11 @@ abstract class HttpRequest implements HttpRequestInterface
      * @param string $password
      * @return HttpRequest
      */
-    public function authenticate(string $username, string $password): HttpRequestInterface
-    {
+    public function authenticate(
+        string $username,
+        #[\SensitiveParameter]
+        string $password
+    ): HttpRequestInterface {
         $this->username = $username;
         $this->password = $password;
 
@@ -426,7 +426,9 @@ abstract class HttpRequest implements HttpRequestInterface
             return;
         }
         $status = explode(' ', $responseHeaders[0]);
-        $this->responseCode = !empty($status[1]) ? (int)$status[1] : ResponseCode::HTTP_CODE_500;
+        $responseCode = !empty($status[1]) ? (int)$status[1] : ResponseCode::HTTP_CODE_500->value;
+        $this->responseCode = ResponseCode::tryFrom($responseCode) ?? ResponseCode::HTTP_CODE_500;
+
         foreach ($responseHeaders as $header) {
             $headerData = explode(': ', $header);
             if (strtolower($headerData[0]) === 'set-cookie') {
@@ -474,9 +476,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Get the request result as a json object.
      *
-     * @return stdClass|null
+     * @return array|stdClass|null
      */
-    public function getResponseAsJson(): ?stdClass
+    public function getResponseAsJson(): null|array|stdClass
     {
         if ($this->response === null) {
             return null;
@@ -499,6 +501,7 @@ abstract class HttpRequest implements HttpRequestInterface
 
     /**
      * Get the \Feast\Response object for a finished request.
+     *
      * @return Response|null
      */
     public function getResponse(): ?Response
@@ -542,9 +545,9 @@ abstract class HttpRequest implements HttpRequestInterface
     /**
      * Get the http response code for the request.
      *
-     * @return int|null
+     * @return ResponseCode|null
      */
-    public function getResponseCode(): ?int
+    public function getResponseCode(): ?ResponseCode
     {
         return $this->responseCode;
     }

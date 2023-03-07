@@ -23,6 +23,7 @@ declare(strict_types=1);
 #             DO NOT MODIFY THIS FILE AT ALL             #
 ##########################################################
 #
+
 use Feast\Autoloader;
 use Feast\Interfaces\RouterInterface;
 

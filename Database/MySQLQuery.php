@@ -217,8 +217,6 @@ class MySQLQuery extends Query
                 $sql .= '(' . $where['statement'] . ') and ';
                 if (is_array($where['bindings'])) {
                     $this->bindings = array_merge($this->bindings, array_values($where['bindings']));
-                } elseif ($where['bindings'] !== null) {
-                    $this->bindings[] = $where['bindings'];
                 }
             }
             $sql = substr($sql, 0, -5);
@@ -249,8 +247,6 @@ class MySQLQuery extends Query
                 $havingBinding = $having['bindings'];
                 if (is_array($havingBinding)) {
                     $this->bindings = array_merge($this->bindings, array_values($havingBinding));
-                } else {
-                    $this->bindings[] = $havingBinding;
                 }
             }
             $sql = substr($sql, 0, -5);

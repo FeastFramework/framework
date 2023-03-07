@@ -23,7 +23,7 @@ namespace Feast\Attributes;
 use Attribute;
 
 #[Attribute(Attribute::TARGET_METHOD)]
-class AccessControl
+readonly class AccessControl
 {
     /**
      * AccessControl constructor.
