@@ -192,6 +192,7 @@ class Json
             $dateFormat = Date::ATOM;
             $included = true;
             $omitEmpty = false;
+            $timezone = null;
             $attributes = $property->getAttributes(JsonItem::class);
             foreach ($attributes as $attribute) {
                 /** @var JsonItem $attributeObject */
@@ -201,13 +202,15 @@ class Json
                 $dateFormat = $attributeObject->dateFormat;
                 $included = $attributeObject->included;
                 $omitEmpty = $attributeObject->omitEmpty;
+                $timezone = $attributeObject->timezoneId;
             }
             $return[$property->getName()] = [
                 'name' => $name,
                 'type' => $type,
                 'dateFormat' => $dateFormat,
                 'included' => $included,
-                'omitEmpty' => $omitEmpty
+                'omitEmpty' => $omitEmpty,
+                'timezone' => $timezone
             ];
         }
         return $return;
