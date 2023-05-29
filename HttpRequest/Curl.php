@@ -136,11 +136,12 @@ class Curl extends HttpRequest implements HttpRequestInterface
         }
         $headerSize = (int)curl_getinfo($this->curl, CURLINFO_HEADER_SIZE);
         $header = substr($response, 0, $headerSize);
-        $this->parseResponseHeaders(explode("\n", $header));
+        $this->parseResponseCode(explode("\n", $header));
         $this->response = new Response(
             substr($response, $headerSize),
             ($this->responseCode ?? ResponseCode::HTTP_CODE_500)
         );
+        $this->parseHeaders(explode("\n", $header));
         curl_close($this->curl);
 
         return $this;

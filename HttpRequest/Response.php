@@ -21,14 +21,57 @@ declare(strict_types=1);
 namespace Feast\HttpRequest;
 
 use Exception;
+use Feast\Collection\Collection;
+use Feast\Collection\CollectionList;
 use Feast\Enums\ResponseCode;
 use SimpleXMLElement;
 use stdClass;
 
 class Response
 {
+
+    protected CollectionList $headers;
+    protected ?string $contentType = null;
+    protected ?string $contentTypeHeader = null;
     public function __construct(protected string $rawResponse, protected ResponseCode $responseCode)
     {
+        $this->headers = new CollectionList('string');
+    }
+    
+    public function addHeader(string $name, string $value): void
+    {
+        /** @var string|null $currentValue */
+        $currentValue = $this->headers->get(strtolower($name));
+        if ( $currentValue !== null ) {
+            $value = $currentValue . ', ' . $value;
+        }
+        $this->headers->add(strtolower($name), $value);
+    }
+    
+    public function getHeader(string $name): string|null
+    {
+        if ( strtolower($name) === 'content-type' ) {
+            return $this->getContentType();
+        }
+        /** @var string|null */
+        return $this->headers->get(strtolower($name));
+    }
+    
+    public function getContentType(): string|null
+    {
+        return $this->contentType;
+    }
+    
+    public function getContentTypeHeader(): string|null
+    {
+        return $this->contentTypeHeader;
+    }
+    
+    public function parseContentType(string $contentType): void
+    {
+        [$contentTypeShort] = explode(';', $contentType);
+        $this->contentType = $contentTypeShort;
+        $this->contentTypeHeader = $contentType;
     }
 
     public function getResponseAsText(): string

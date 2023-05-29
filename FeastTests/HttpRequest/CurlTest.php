@@ -210,6 +210,73 @@ Test
         );
     }
 
+    public function testGetResponseContentType(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/json');
+        $request->makeRequest();
+        $response = $request->getResponse();
+        $this->assertEquals('application/json', $request->getResponseContentType());
+        $this->assertEquals('application/json; charset=UTF-8', $response->getContentTypeHeader());
+        $this->assertNull(
+            $request->getResponseAsXml()
+        );
+    }
+
+    public function testGetResponseContentTypeNoRequestMade(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/json');
+        $response = $request->getResponse();
+        $this->assertNull($request->getResponseContentType());
+        $this->assertNull(
+            $request->getResponseAsXml()
+        );
+    }
+
+    public function testGetHeaderContentType(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/json');
+        $request->makeRequest();
+        $this->assertEquals('application/json', $request->getResponseHeader('Content-Type'));
+        $this->assertNull(
+            $request->getResponseAsXml()
+        );
+    }
+
+    public function testGetHeader(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/json');
+        $request->makeRequest();
+        $this->assertEquals('no-cache', $request->getResponseHeader('Pragma'));
+        $this->assertNull(
+            $request->getResponseAsXml()
+        );
+    }
+
+    public function testGetHeaderNoRequestMade(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/json');
+        $this->assertNull($request->getResponseHeader('Pragma'));
+        $this->assertNull(
+            $request->getResponseAsXml()
+        );
+    }
+
+    public function testGetHeaderMulti(): void
+    {
+        $request = new Curl();
+        $request->get('https://www.google.com/json');
+        $request->makeRequest();
+        $this->assertEquals('no-store, no-cache, must-revalidate', $request->getResponseHeader('Cache-Control'));
+        $this->assertNull(
+            $request->getResponseAsXml()
+        );
+    }
+
     public function testGetResultAsJson(): void
     {
         $request = new Curl();
