@@ -76,13 +76,20 @@ class Date
      */
     public static function createFromTimestamp(int $timestamp, ?string $timezone = null): self
     {
-        // Timestamp based
-        return new self(
+        $serverTimezone = date_default_timezone_get();
+        if ($timezone) {
+            date_default_timezone_set($timezone);
+        }
+
+        $params = [
             date('Y', $timestamp), date('m', $timestamp), date('d', $timestamp), date('H', $timestamp),
             date('i', $timestamp),
             date('s', $timestamp),
             $timezone
-        );
+        ];
+        date_default_timezone_set($serverTimezone);
+        
+        return new self(...$params);
     }
 
     /**
@@ -109,18 +116,27 @@ class Date
      */
     public static function createFromString(string $date, ?string $timezone = null): self
     {
+        // Timestamp based
+        $serverTimezone = date_default_timezone_get();
+        if ($timezone) {
+            date_default_timezone_set($timezone);
+        }
+
         if (str_contains($date, '-') && str_contains($date, '/')) {
             throw new InvalidDateException('Invalid date string - ' . $date);
         }
         if (strtotime($date) === false) {
             throw new InvalidDateException('Invalid date string - ' . $date);
         }
-        $date = date('Y-m-d H:i:s', strtotime($date));
+        $date = date('Y-m-d H:i:s', strtotime($date . ' ' . ($timezone ?: '')));
 
-        return new self(
+        $params = [
             substr($date, 0, 4), substr($date, 5, 2), substr($date, 8, 2), substr($date, 11, 2),
-            substr($date, 14, 2), substr($date, 17, 2), $timezone
-        );
+            substr($date, 14, 2), substr($date, 17, 2), $timezone];
+        
+        date_default_timezone_set($serverTimezone);
+        
+        return new self(...$params);
     }
 
     /**
