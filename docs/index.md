@@ -119,6 +119,8 @@ The release plan for FEAST can be found [here](release-schedule.md).
 
 [Sessions](sessions.md)
 
+[Deferred Actions](deferred.md)
+
 ## Scheduled and Queued Jobs
 
 [Queueable Jobs](queues.md)
