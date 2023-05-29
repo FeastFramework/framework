@@ -415,11 +415,11 @@ abstract class HttpRequest implements HttpRequestInterface
     abstract public function makeRequest(): HttpRequestInterface;
 
     /**
-     * Parse HTTP Headers for cookies.
+     * Parse HTTP Headers for response code.
      *
      * @param array<string> $responseHeaders
      */
-    protected function parseResponseHeaders(array $responseHeaders): void
+    protected function parseResponseCode(array $responseHeaders): void
     {
         if (empty($responseHeaders)) {
             $this->responseCode = ResponseCode::HTTP_CODE_500;
@@ -427,10 +427,31 @@ abstract class HttpRequest implements HttpRequestInterface
         }
         $status = explode(' ', $responseHeaders[0]);
         $this->responseCode = !empty($status[1]) ? (int)$status[1] : ResponseCode::HTTP_CODE_500;
+    }
+
+    /**
+     * Parse HTTP Headers for cookies.
+     *
+     * @param array<string> $responseHeaders
+     */
+    protected function parseHeaders(array $responseHeaders): void
+    {
+        if (empty($responseHeaders)) {
+            return;
+        }
         foreach ($responseHeaders as $header) {
-            $headerData = explode(': ', $header);
+            $headerData = explode(': ', $header,2);
+            if ( !isset($headerData[1])) {
+                continue;
+            }
             if (strtolower($headerData[0]) === 'set-cookie') {
                 $this->parseCookie($headerData[1]);
+            } elseif (strtolower($headerData[0]) === 'content-type') {
+                /** @psalm-suppress PossiblyNullReference - Will not be null at this point */
+                $this->response->parseContentType($headerData[1]);
+            } else {
+                /** @psalm-suppress PossiblyNullReference - Will not be null at this point */
+                $this->response->addHeader($headerData[0], $headerData[1]);
             }
         }
     }
@@ -505,6 +526,24 @@ abstract class HttpRequest implements HttpRequestInterface
     {
         return $this->response;
     }
+
+    public function getResponseHeader(string $name): ?string
+    {
+        if ($this->response === null) {
+            return null;
+        }
+        return $this->response->getHeader($name);
+    }
+
+    public function getResponseContentType(): ?string
+    {
+        if ($this->response === null) {
+            return null;
+        }
+        return $this->response->getContentType();
+    }
+
+
 
     /**
      * Get cookies from the request.

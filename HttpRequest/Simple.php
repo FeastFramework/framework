@@ -68,9 +68,9 @@ class Simple extends HttpRequest implements HttpRequestInterface
          * @psalm-suppress RedundantCondition
          * @psalm-suppress TypeDoesNotContainNull - Technically these are correct but to facilitate not using http requests on unit tests, we are allowing for it to be null. 
          */
-        $this->parseResponseHeaders($http_response_header ?? []);
+        $this->parseResponseCode($http_response_header ?? []);
         $this->response = new Response($response,($this->getResponseCode() ??  ResponseCode::HTTP_CODE_500));
-
+        $this->parseHeaders($http_response_header ?? []);
         return $this;
     }
 

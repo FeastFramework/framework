@@ -58,6 +58,7 @@ The HttpRequestInterface contains methods for working with web requests. This cl
 5. `getResponseCode` - Get the HTTP response code for the response.
 
 [Back to Top](#services)
+
 # Sample Service class request usage
 ```php
 $this->httpRequest->postJson(self::URL . '/subscribers');

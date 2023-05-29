@@ -59,7 +59,7 @@ function curl_exec($handle)
         return str_replace(PHP_EOL,"\n",\file_get_contents(__DIR__ . '/SampleResponses/GetXml.txt'));
     }
     if (str_contains($handle->url, 'https://www.google.com/json')) {
-        $handle->length = 338;
+        $handle->length = 352;
         return str_replace(PHP_EOL,"\n",\file_get_contents(__DIR__ . '/SampleResponses/GetJson.txt'));
     }
     return false;
