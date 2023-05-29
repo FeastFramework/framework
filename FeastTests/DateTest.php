@@ -513,4 +513,29 @@ class DateTest extends TestCase
         $date->setTimezone('America/Chicago');
         $this->assertEquals('2020-07-13 05:39:52', $date->getFormattedDate());
     }
+
+    public function testCreateFromTimestampMatch()
+    {
+        $timestamp = 1634567890;
+        $date = Date::createFromTimestamp($timestamp, 'America/New_York');
+        $dateTime = $date->getAsDateTime();
+        $this->assertEquals($timestamp, $dateTime->getTimestamp());
+    }
+
+    public function testCreateFromFormatTimestampMatch()
+    {
+        $timestamp = 1634567890;
+        $date = Date::createFromFormat('U',(string)$timestamp, 'America/New_York');
+        $dateTime = $date->getAsDateTime();
+        $this->assertEquals($timestamp, $dateTime->getTimestamp());
+    }
+
+    public function testCreateFromStringDateMatch()
+    {
+        $timestamp = '1970/01/02 01:02:03';
+        $date = Date::createFromString($timestamp, 'America/Chicago');
+        $dateTime = $date->getAsDateTime();
+        $this->assertEquals($timestamp, $dateTime->format('Y/m/d H:i:s'));
+        $this->assertEquals(111723, $dateTime->getTimestamp());
+    }
 }
