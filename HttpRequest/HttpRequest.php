@@ -520,6 +520,7 @@ abstract class HttpRequest implements HttpRequestInterface
 
     /**
      * Get the \Feast\Response object for a finished request.
+     * 
      * @return Response|null
      */
     public function getResponse(): ?Response
@@ -527,6 +528,12 @@ abstract class HttpRequest implements HttpRequestInterface
         return $this->response;
     }
 
+    /**
+     * Get a response header by name.
+     * 
+     * @param string $name
+     * @return string|null
+     */
     public function getResponseHeader(string $name): ?string
     {
         if ($this->response === null) {
@@ -535,6 +542,10 @@ abstract class HttpRequest implements HttpRequestInterface
         return $this->response->getHeader($name);
     }
 
+    /**
+     * Get response content type.
+     * @return string|null
+     */
     public function getResponseContentType(): ?string
     {
         if ($this->response === null) {

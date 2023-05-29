@@ -30,7 +30,11 @@ abstract class Deferred
             $this->deferredAction();
         }
     }
-    
+
+    /**
+     * Cancel this deferred call.
+     * @return void
+     */
     public final function cancelDeferral(): void
     {
         $this->cancelled = true;
